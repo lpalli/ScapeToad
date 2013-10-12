@@ -262,14 +262,15 @@ public class CartogramFeature {
             LinearRing[] holes = null;
             if (nholes > 0) {
                 holes = new LinearRing[nholes];
-            }
 
-            for (int holecnt = 0; holecnt < nholes; holecnt++) {
-                LineString hole = p.getInteriorRingN(holecnt);
-                Coordinate[] holeCoords = CartogramFeature
-                        .regularizeCoordinates(hole.getCoordinates(), maxlen);
+                for (int holecnt = 0; holecnt < nholes; holecnt++) {
+                    LineString hole = p.getInteriorRingN(holecnt);
+                    Coordinate[] holeCoords = CartogramFeature
+                            .regularizeCoordinates(hole.getCoordinates(),
+                                    maxlen);
 
-                holes[holecnt] = gf.createLinearRing(holeCoords);
+                    holes[holecnt] = gf.createLinearRing(holeCoords);
+                }
             }
 
             Polygon p2 = gf.createPolygon(regShell, holes);
