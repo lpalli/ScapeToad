@@ -56,17 +56,21 @@ public class SizeErrorStyle implements Style {
         _defaultStyle = new BasicStyle(Color.ORANGE);
     }
 
+    @Override
     public Object clone() {
         return null;
     }
 
+    @Override
     public void initialize(Layer layer) {
     }
 
+    @Override
     public boolean isEnabled() {
         return _enabled;
     }
 
+    @Override
     public void paint(Feature f, Graphics2D g, Viewport viewport)
             throws NoninvertibleTransformException {
 
@@ -78,6 +82,7 @@ public class SizeErrorStyle implements Style {
 
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         _enabled = enabled;
     }

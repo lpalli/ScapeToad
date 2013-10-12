@@ -32,6 +32,7 @@ import javax.swing.AbstractAction;
  */
 public class ActionShowAbout extends AbstractAction {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         try {
             AboutBox abox = new AboutBox();

@@ -79,6 +79,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
 
     }
 
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         try {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

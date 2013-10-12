@@ -40,6 +40,7 @@ public class ActionLayerRemove extends AbstractAction {
     /**
      * Removes the selected layer from the layer manager.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         // Get the selected layers.
         Layer[] lyrs = AppContext.layerListPanel.getSelectedLayers();

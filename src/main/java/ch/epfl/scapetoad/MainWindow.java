@@ -97,6 +97,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext,
      * @param message
      *            the message to display in the status bar.
      */
+    @Override
     public void setStatusMessage(String message) {
     }
 
@@ -106,12 +107,14 @@ public class MainWindow extends JFrame implements LayerViewPanelContext,
      * @param warning
      *            the warning message to display.
      */
+    @Override
     public void warnUser(String warning) {
     }
 
     /**
      * Handles an exception.
      */
+    @Override
     public void handleThrowable(Throwable t) {
         if (AppContext.DEBUG) {
             t.printStackTrace();
@@ -397,6 +400,7 @@ class MainToolbar extends JPanel {
  */
 class ActionZoomToFullExtent extends AbstractAction {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         AppContext.mainWindow.update();
@@ -413,6 +417,7 @@ class ActionZoomToFullExtent extends AbstractAction {
 
 class ActionCreateCartogram extends AbstractAction {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (AppContext.cartogramWizard == null
@@ -551,6 +556,7 @@ class ExportShapeFileDialogAction extends AbstractAction {
     /**
      * Method which performs the previously specified action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (mActionToPerform == "closeDialogWithoutSaving") {
@@ -742,6 +748,7 @@ class ExportSvgFileDialogAction extends AbstractAction {
     /**
      * Method which performs the previously specified action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (mActionToPerform == "closeDialogWithoutSaving") {

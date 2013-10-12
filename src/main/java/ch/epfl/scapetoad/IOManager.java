@@ -566,6 +566,7 @@ class ShapeFilenameFilter implements FilenameFilter {
     /**
      * This is the method used for filtering.
      */
+    @Override
     public boolean accept(File dir, String name) {
 
         if (name.endsWith(".shp") || name.endsWith(".SHP")) {
@@ -586,6 +587,7 @@ class SVGFilenameFilter implements FilenameFilter {
     /**
      * This is the method used for filtering.
      */
+    @Override
     public boolean accept(File dir, String name) {
 
         if (name.endsWith(".svg") || name.endsWith(".SVG")) {
@@ -666,6 +668,7 @@ class OpenLayerErrorDialogAction extends AbstractAction {
     /**
      * Method which performs the action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         mDialog.setVisible(false);
         mDialog.dispose();

@@ -35,6 +35,7 @@ public class ActionQuit extends AbstractAction {
     /**
      * Terminates ScapeToad.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (AppContext.cartogramWizard != null) {

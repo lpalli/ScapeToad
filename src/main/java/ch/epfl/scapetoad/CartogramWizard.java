@@ -476,6 +476,7 @@ public class CartogramWizard extends JFrame {
             final String label2) {
 
         Runnable doSetRunningStatus = new Runnable() {
+            @Override
             public void run() {
                 mRunningPanel.updateProgressBar(progress);
                 mRunningPanel.updateProgressLabel1(label1);
@@ -899,6 +900,7 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
 
     }
 
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         try {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -1085,6 +1087,7 @@ class CartogramWizardPanelOne extends JPanel {
      * wizard. This is an overriden method from its super class. Once the job
      * done, we call the super class' setVisible method.
      */
+    @Override
     public void setVisible(boolean visible) {
 
         if (visible) {
@@ -1394,6 +1397,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     } // CartogramWizardPanelTwo.<init>
 
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             updateAttributeName();
@@ -1464,6 +1468,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     } // CartogramWizardPanelTwo.attributeIsDensityValue
 
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         try {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -1803,6 +1808,7 @@ class CartogramWizardPanelFour extends JPanel {
     /**
      * If the panel is shown, update the layer list before displaying the panel.
      */
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             // this.updateLayerList();
@@ -2005,6 +2011,7 @@ class CartogramWizardFinishedPanel extends JPanel {
      * Adapts the finished panels according to the current cartogram wizard
      * settings (parameters and error message).
      */
+    @Override
     public void setVisible(boolean visible) {
 
         if (visible) {
@@ -2128,6 +2135,7 @@ class CartogramWizardGoToStepAction extends AbstractAction {
         mStep = step;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         mWizard.goToStep(mStep);
     }
@@ -2142,6 +2150,7 @@ class CartogramWizardGoToStepAction extends AbstractAction {
  */
 class CartogramWizardCloseAction extends AbstractAction {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         Cartogram cg = AppContext.cartogramWizard.getCartogram();
@@ -2186,6 +2195,7 @@ class CartogramWizardComputeAction extends AbstractAction {
     /**
      * This method launches the cartogram computation process.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         // Hide the 3rd wizard panel.
@@ -2588,6 +2598,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
 
     } // CartogramWizardOptionsWindow.saveChanges
 
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         try {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -2605,6 +2616,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
      * This method gets called on a state change of the advanced options check
      * box. It enables or disables the advanced options.
      */
+    @Override
     public void stateChanged(ChangeEvent e) {
         boolean enabled = mAdvancedOptionsCheckBox.isSelected();
         mManualParametersPane.setEnabled(enabled);
@@ -2651,6 +2663,7 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
      * Method which performs this action; it creates and opens the Advanced
      * Options dialog.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (mActionToPerform == "showDialog") {
@@ -2694,6 +2707,7 @@ class CartogramWizardShowURL extends AbstractAction {
     /**
      * Method which performs this action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         try {
@@ -2713,12 +2727,14 @@ class CartogramWizardShowURL extends AbstractAction {
  */
 class CartogramWizardWindowListener implements WindowListener {
 
+    @Override
     public void windowActivated(WindowEvent e) {
     }
 
     /**
      * Method invoked in response to a window close event.
      */
+    @Override
     public void windowClosed(WindowEvent e) {
     } // CartogramWizardWindowListener.windowClosed
 
@@ -2726,6 +2742,7 @@ class CartogramWizardWindowListener implements WindowListener {
      * Method invoked in response to a window closing event. It creates a
      * CartogramWizardCloseAction which is automatically performed.
      */
+    @Override
     public void windowClosing(WindowEvent e) {
 
         ActionEvent closeEvent = new ActionEvent(e.getSource(), e.getID(),
@@ -2737,15 +2754,19 @@ class CartogramWizardWindowListener implements WindowListener {
 
     } // CartogramWizardWindowListener.windowClosed
 
+    @Override
     public void windowDeactivated(WindowEvent e) {
     }
 
+    @Override
     public void windowDeiconified(WindowEvent e) {
     }
 
+    @Override
     public void windowIconified(WindowEvent e) {
     }
 
+    @Override
     public void windowOpened(WindowEvent e) {
     }
 
@@ -2958,6 +2979,7 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
     /**
      * Method which performs the previously specified action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (mActionToPerform == "showDialog") {
@@ -3190,6 +3212,7 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
     /**
      * Method which performs the previously specified action.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         if (mActionToPerform == "showDialog") {
@@ -3221,6 +3244,7 @@ class CartogramWizardSaveReportAction extends AbstractAction {
      * Shows a save dialog and writes the computation report to the specified
      * file.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         // Create the File Save dialog.

@@ -225,6 +225,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      * The construct method is an overriden method from SwingWorker which does
      * initiate the computation process.
      */
+    @Override
     public Object construct() {
 
         try {
@@ -434,6 +435,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      * terminates the computation, adds all layers and produces the computation
      * report.
      */
+    @Override
     public void finished() {
 
         // If there was an error, stop here.
