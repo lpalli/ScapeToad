@@ -304,6 +304,10 @@ public class CartogramWizard extends JFrame {
 
             case 4:
                 mPanelFour.setVisible(false);
+                break;
+
+            default:
+                throw new UnsupportedOperationException();
 
         }
 
@@ -357,6 +361,10 @@ public class CartogramWizard extends JFrame {
                 mPanelFour.setVisible(true);
                 mCurrentStep = 4;
                 mWizardStepIconPanel.setStepIcon(5);
+                break;
+
+            default:
+                throw new UnsupportedOperationException();
 
         }
 
@@ -818,6 +826,9 @@ class WizardStepIconPanel extends JPanel {
             case 7:
                 mIconLabel.setIcon(mIcon7);
                 break;
+
+            default:
+                throw new UnsupportedOperationException();
         }
 
     } // WizardStepIcon.setStepIcon
