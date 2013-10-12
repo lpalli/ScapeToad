@@ -49,7 +49,6 @@ import javax.swing.SwingConstants;
 
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerTreeModel;
-import com.vividsolutions.jump.workbench.ui.ErrorHandler;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanelContext;
 import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
@@ -61,8 +60,7 @@ import com.vividsolutions.jump.workbench.ui.renderer.RenderingManager;
  * @author christian@swisscarto.ch
  * @version v1.0.0, 2007-11-28
  */
-public class MainWindow extends JFrame implements LayerViewPanelContext,
-        ErrorHandler {
+public class MainWindow extends JFrame implements LayerViewPanelContext {
 
     /**
      * 
