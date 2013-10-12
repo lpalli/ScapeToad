@@ -537,7 +537,7 @@ public class CartogramLayer {
         while (featIter.hasNext()) {
             Feature feat = (Feature) featIter.next();
             Double attrValue = (Double) feat.getAttribute(attrName);
-            if (attrValue.isNaN() || attrValue == null) {
+            if (attrValue == null || attrValue.isNaN()) {
                 feat.setAttribute(attrName, new Double(0.0));
             }
         }
