@@ -47,7 +47,7 @@ public class SizeErrorLegend extends JFrame {
 
         // Loading the size error legend image from the resources.
         ClassLoader cldr = this.getClass().getClassLoader();
-        URL iconURL = cldr.getResource("SizeErrorLegend.png");
+        URL iconURL = cldr.getResource("resources/SizeErrorLegend.png");
         ImageIcon sizeErrorImage = new ImageIcon(iconURL);
 
         // Create a new label containing the icon.

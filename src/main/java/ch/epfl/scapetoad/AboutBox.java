@@ -56,7 +56,7 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         JTextPane aboutPane = new JTextPane();
         String aboutText = null;
         try {
-            InputStream inStream = cldr.getResource("AboutText.html")
+            InputStream inStream = cldr.getResource("resources/AboutText.html")
                     .openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;

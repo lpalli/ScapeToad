@@ -297,7 +297,8 @@ class MainToolbar extends JPanel {
 
         // Full extent button
 
-        java.net.URL imageURL = cldr.getResource("full-extent-32.gif");
+        java.net.URL imageURL = cldr
+                .getResource("resources/full-extent-32.gif");
         ImageIcon fullExtentIcon = new ImageIcon(imageURL);
 
         JButton fullExtentButton = new JButton("Full extent", fullExtentIcon);
@@ -314,7 +315,8 @@ class MainToolbar extends JPanel {
 
         // Add layer button
 
-        java.net.URL addLayerURL = cldr.getResource("addLayer-32.png");
+        java.net.URL addLayerURL = cldr
+                .getResource("resources/addLayer-32.png");
         ImageIcon addLayerIcon = new ImageIcon(addLayerURL);
 
         JButton addLayerButton = new JButton("Add layer", addLayerIcon);
@@ -331,7 +333,8 @@ class MainToolbar extends JPanel {
 
         // Create cartogram button
 
-        java.net.URL createCartogramURL = cldr.getResource("buildAndGo-32.png");
+        java.net.URL createCartogramURL = cldr
+                .getResource("resources/buildAndGo-32.png");
         ImageIcon createCartogramIcon = new ImageIcon(createCartogramURL);
 
         JButton createCartogramButton = new JButton("Create cartogram",
@@ -349,7 +352,8 @@ class MainToolbar extends JPanel {
 
         // Export to SVG button
 
-        java.net.URL svgURL = cldr.getResource("export-to-svg-32.png");
+        java.net.URL svgURL = cldr
+                .getResource("resources/export-to-svg-32.png");
         ImageIcon svgIcon = new ImageIcon(svgURL);
 
         JButton svgButton = new JButton("Export to SVG", svgIcon);
@@ -366,7 +370,8 @@ class MainToolbar extends JPanel {
 
         // Export to SHP button
 
-        java.net.URL shpURL = cldr.getResource("export-to-shp-32.png");
+        java.net.URL shpURL = cldr
+                .getResource("resources/export-to-shp-32.png");
         ImageIcon shpIcon = new ImageIcon(shpURL);
 
         JButton shpButton = new JButton("Export to Shape", shpIcon);

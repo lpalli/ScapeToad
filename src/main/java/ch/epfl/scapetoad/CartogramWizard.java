@@ -678,7 +678,7 @@ class ScapeToadIconPanel extends JPanel {
 
         // Loading the ScapeToad icon from the resources.
         ClassLoader cldr = this.getClass().getClassLoader();
-        URL iconURL = cldr.getResource("ScapeToad-25p.png");
+        URL iconURL = cldr.getResource("resources/ScapeToad-25p.png");
         ImageIcon scapeToadIcon = new ImageIcon(iconURL);
 
         // Create a new label containing the icon.
@@ -757,13 +757,13 @@ class WizardStepIconPanel extends JPanel {
 
         // Loading the step icons from the resources.
         ClassLoader cldr = this.getClass().getClassLoader();
-        mIcon1 = new ImageIcon(cldr.getResource("WizardStep1.png"));
-        mIcon2 = new ImageIcon(cldr.getResource("WizardStep2.png"));
-        mIcon3 = new ImageIcon(cldr.getResource("WizardStep3.png"));
-        mIcon4 = new ImageIcon(cldr.getResource("WizardStep4.png"));
-        mIcon5 = new ImageIcon(cldr.getResource("WizardStep5.png"));
-        mIcon6 = new ImageIcon(cldr.getResource("WizardStep6.png"));
-        mIcon7 = new ImageIcon(cldr.getResource("WizardStep7.png"));
+        mIcon1 = new ImageIcon(cldr.getResource("resources/WizardStep1.png"));
+        mIcon2 = new ImageIcon(cldr.getResource("resources/WizardStep2.png"));
+        mIcon3 = new ImageIcon(cldr.getResource("resources/WizardStep3.png"));
+        mIcon4 = new ImageIcon(cldr.getResource("resources/WizardStep4.png"));
+        mIcon5 = new ImageIcon(cldr.getResource("resources/WizardStep5.png"));
+        mIcon6 = new ImageIcon(cldr.getResource("resources/WizardStep6.png"));
+        mIcon7 = new ImageIcon(cldr.getResource("resources/WizardStep7.png"));
 
         // Create a new label containing the icon.
         mIconLabel = new JLabel(mIcon1);
@@ -844,7 +844,8 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
 
         // Get the wizard content from a text file.
         ClassLoader cldr = this.getClass().getClassLoader();
-        URL wizardStepZeroURL = cldr.getResource("WizardIntroduction.html");
+        URL wizardStepZeroURL = cldr
+                .getResource("resources/WizardIntroduction.html");
 
         // Get the content from the text file.
         String wizardStepZeroContent = null;
@@ -878,7 +879,7 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
 
         // ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1008,7 +1009,7 @@ class CartogramWizardPanelOne extends JPanel {
 
         // Adding the polygon image
         ClassLoader cldr = this.getClass().getClassLoader();
-        URL iconURL = cldr.getResource("Topology.png");
+        URL iconURL = cldr.getResource("resources/Topology.png");
         ImageIcon topologyImage = new ImageIcon(iconURL);
 
         // Create a new label containing the image.
@@ -1029,8 +1030,8 @@ class CartogramWizardPanelOne extends JPanel {
         // Get the content from the text file.
         String layerMenuText = null;
         try {
-            InputStream inStream = cldr.getResource("LayerMenuText.rtf")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/LayerMenuText.rtf").openStream();
 
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -1058,7 +1059,7 @@ class CartogramWizardPanelOne extends JPanel {
 
         // ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1288,8 +1289,8 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         // Get the content from the text file.
         String attributeMenuText = null;
         try {
-            InputStream inStream = cldr.getResource("AttributeMenuText.rtf")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/AttributeMenuText.rtf").openStream();
 
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -1321,8 +1322,8 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         // Get the content from the text file.
         String attributeTypeText = null;
         try {
-            InputStream inStream = cldr.getResource("AttributeTypeText.html")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/AttributeTypeText.html").openStream();
 
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -1372,7 +1373,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
         // ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1524,8 +1525,8 @@ class CartogramWizardPanelThree extends JPanel {
         ClassLoader cldr = this.getClass().getClassLoader();
         String simLayerText = null;
         try {
-            InputStream inStream = cldr.getResource("SimLayersText.rtf")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/SimLayersText.rtf").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -1559,8 +1560,8 @@ class CartogramWizardPanelThree extends JPanel {
         JTextPane constLayerTextPane = new JTextPane();
         String constLayerText = null;
         try {
-            InputStream inStream = cldr.getResource("ConstLayersText.rtf")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/ConstLayersText.rtf").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -1613,7 +1614,7 @@ class CartogramWizardPanelThree extends JPanel {
 
         // ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1700,7 +1701,7 @@ class CartogramWizardPanelFour extends JPanel {
         String deformationText = null;
         try {
             InputStream inStream = cldr.getResource(
-                    "AmountOfDeformationText.rtf").openStream();
+                    "resources/AmountOfDeformationText.rtf").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -1736,8 +1737,8 @@ class CartogramWizardPanelFour extends JPanel {
         JTextPane advancedTextPane = new JTextPane();
         String advancedText = null;
         try {
-            InputStream inStream = cldr.getResource("AdvancedOptionsText.rtf")
-                    .openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/AdvancedOptionsText.rtf").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -1778,7 +1779,7 @@ class CartogramWizardPanelFour extends JPanel {
 
         // ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1977,7 +1978,7 @@ class CartogramWizardFinishedPanel extends JPanel {
 
         ClassLoader cldr = this.getClass().getClassLoader();
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         mHelpButton = new JButton(helpIcon);
@@ -2329,7 +2330,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         String deformationText = null;
         try {
             InputStream inStream = cldr.getResource(
-                    "DeformationGridLayerText.html").openStream();
+                    "resources/DeformationGridLayerText.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -2388,8 +2389,8 @@ class CartogramWizardOptionsWindow extends JDialog implements
         mManualParametersPane = new JTextPane();
         String manualParametersText = null;
         try {
-            InputStream inStream = cldr
-                    .getResource("ManualParametersText.html").openStream();
+            InputStream inStream = cldr.getResource(
+                    "resources/ManualParametersText.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -2414,7 +2415,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         mGrid1Pane = new JTextPane();
         String grid1Text = null;
         try {
-            InputStream inStream = cldr.getResource("Grid1Text.html")
+            InputStream inStream = cldr.getResource("resources/Grid1Text.html")
                     .openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -2464,7 +2465,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         mBiasPane = new JTextPane();
         String biasText = null;
         try {
-            InputStream inStream = cldr.getResource("BiasText.html")
+            InputStream inStream = cldr.getResource("resources/BiasText.html")
                     .openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -2527,7 +2528,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
 
         // ADD THE HELP BUTTON
 
-        java.net.URL imageURL = cldr.getResource("help-22.png");
+        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
