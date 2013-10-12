@@ -64,6 +64,10 @@ import com.vividsolutions.jump.workbench.ui.renderer.RenderingManager;
 public class MainWindow extends JFrame implements LayerViewPanelContext,
         ErrorHandler {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     MainPanel mMainPanel = null;
     MainMenu mMainMenu = null;
 
@@ -159,6 +163,11 @@ public class MainWindow extends JFrame implements LayerViewPanelContext,
 
 class MainPanel extends JPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     MainPanel(JFrame contentFrame) {
 
         // Set the layout parameters.
@@ -209,6 +218,11 @@ class MainPanel extends JPanel {
 class LayerListPanel extends JPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The default constructor for the layer list panel.
      */
     LayerListPanel(JFrame contentFrame) {
@@ -243,6 +257,11 @@ class LayerListPanel extends JPanel {
  * @version v1.0.0, 2007-11-28
  */
 class MapPanel extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * The default constructor for the map panel.
@@ -292,6 +311,11 @@ class MapPanel extends JPanel {
  * @version v1.0.0, 2007-11-28
  */
 class MainToolbar extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * The default constructor for the map panel.
@@ -402,6 +426,11 @@ class MainToolbar extends JPanel {
  */
 class ActionZoomToFullExtent extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -418,6 +447,11 @@ class ActionZoomToFullExtent extends AbstractAction {
 }
 
 class ActionCreateCartogram extends AbstractAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -442,6 +476,10 @@ class ActionCreateCartogram extends AbstractAction {
  */
 class ExportShapeFileDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     JButton mOkButton;
     JButton mCancelButton;
     JLabel mLayerMenuLabel;
@@ -532,6 +570,10 @@ class ExportShapeFileDialog extends JDialog {
  */
 class ExportShapeFileDialogAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mActionToPerform = "closeDialogWithoutSaving";
     ExportShapeFileDialog mDialog = null;
 
@@ -584,6 +626,10 @@ class ExportShapeFileDialogAction extends AbstractAction {
  */
 class ExportSvgFileDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     JButton mOkButton;
     JButton mCancelButton;
     JPanel mLayerListPanel;
@@ -738,6 +784,10 @@ class ExportSvgFileDialog extends JDialog {
  */
 class ExportSvgFileDialogAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mActionToPerform = "closeDialogWithoutSaving";
     ExportSvgFileDialog mDialog = null;
 

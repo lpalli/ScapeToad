@@ -38,6 +38,11 @@ import com.Ostermiller.util.Browser;
  */
 public class AboutBox extends JDialog implements HyperlinkListener {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The constructor for the about box window.
      */
     AboutBox() {

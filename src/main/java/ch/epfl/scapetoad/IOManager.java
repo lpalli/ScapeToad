@@ -609,6 +609,10 @@ class SVGFilenameFilter implements FilenameFilter {
  */
 class OpenLayerErrorDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     JButton mOkButton;
     JLabel mNoShapeFileLabel;
     JLabel mSelectShapeFileLabel;
@@ -658,6 +662,10 @@ class OpenLayerErrorDialog extends JDialog {
  */
 class OpenLayerErrorDialogAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     OpenLayerErrorDialog mDialog;
 
     OpenLayerErrorDialogAction(OpenLayerErrorDialog dialog) {

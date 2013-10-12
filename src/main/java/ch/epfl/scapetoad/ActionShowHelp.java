@@ -35,6 +35,11 @@ import com.Ostermiller.util.Browser;
 public class ActionShowHelp extends AbstractAction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Opens the browser and points it to the ScapeToad help web site.
      */
     @Override

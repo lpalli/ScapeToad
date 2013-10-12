@@ -38,6 +38,11 @@ import com.vividsolutions.jump.workbench.model.Layer;
 public class ActionLayerRemove extends AbstractAction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Removes the selected layer from the layer manager.
      */
     @Override

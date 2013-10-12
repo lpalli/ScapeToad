@@ -35,6 +35,11 @@ import com.vividsolutions.jump.workbench.model.Layer;
 public class ActionLayerAdd extends AbstractAction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Shows an open dialog and adds the selected Shape file to the layer
      * manager.
      */

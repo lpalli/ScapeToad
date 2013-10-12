@@ -33,6 +33,11 @@ import javax.swing.AbstractAction;
 public class ActionQuit extends AbstractAction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Terminates ScapeToad.
      */
     @Override

@@ -33,6 +33,11 @@ import javax.swing.AbstractAction;
 public class ActionLayerSave extends AbstractAction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * This method is automatically called after a save layer event.
      */
     @Override

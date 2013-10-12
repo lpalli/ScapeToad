@@ -39,6 +39,11 @@ import com.Ostermiller.util.Browser;
  */
 public class SizeErrorLegend extends JFrame {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public SizeErrorLegend() {
 
         setTitle("Size Error");

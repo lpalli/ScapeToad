@@ -80,6 +80,10 @@ import com.vividsolutions.jump.workbench.model.Layer;
  */
 public class CartogramWizard extends JFrame {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     int mCurrentStep = -1;
     CartogramWizardPanelZero mPanelZero = null;
     CartogramWizardPanelOne mPanelOne = null;
@@ -669,6 +673,11 @@ public class CartogramWizard extends JFrame {
 class ScapeToadIconPanel extends JPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The default constructor for the ScapeToad icon panel.
      */
     ScapeToadIconPanel(JFrame contentFrame) {
@@ -707,6 +716,11 @@ class ScapeToadIconPanel extends JPanel {
 class CartogramWizardTitlePanel extends JPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The default constructor for the panel.
      */
     CartogramWizardTitlePanel(JFrame contentFrame) {
@@ -736,6 +750,11 @@ class CartogramWizardTitlePanel extends JPanel {
 }
 
 class WizardStepIconPanel extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     JLabel mIconLabel;
 
@@ -817,6 +836,11 @@ class WizardStepIconPanel extends JPanel {
  * @version v1.0.0, 2007-12-01
  */
 class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * The default constructor for the panel.
@@ -925,6 +949,10 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
  */
 class CartogramWizardPanelOne extends JPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     CartogramWizard mCartogramWizard = null;
     JComboBox mLayerMenu = null;
 
@@ -1159,6 +1187,10 @@ class CartogramWizardPanelOne extends JPanel {
  */
 class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     CartogramWizard mCartogramWizard = null;
     JComboBox mAttributeMenu = null;
     String mCurrentCartogramLayer = null;
@@ -1496,6 +1528,11 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
  */
 class CartogramWizardPanelThree extends JPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     CartogramWizard mCartogramWizard = null;
 
     /**
@@ -1646,6 +1683,11 @@ class CartogramWizardPanelThree extends JPanel {
  * the size for the grid to overlay.
  */
 class CartogramWizardPanelFour extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     CartogramWizard mCartogramWizard = null;
 
@@ -1839,6 +1881,11 @@ class CartogramWizardPanelFour extends JPanel {
 class CartogramWizardRunningPanel extends JPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The cartogram wizard.
      */
     CartogramWizard mCartogramWizard = null;
@@ -1935,6 +1982,11 @@ class CartogramWizardRunningPanel extends JPanel {
  * This class shows the finished panel in the cartogram wizard.
  */
 class CartogramWizardFinishedPanel extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Attributes for the text to display and for the report.
@@ -2124,6 +2176,10 @@ class CartogramWizardFinishedPanel extends JPanel {
  */
 class CartogramWizardGoToStepAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     CartogramWizard mWizard = null;
     int mStep = -1;
 
@@ -2149,6 +2205,11 @@ class CartogramWizardGoToStepAction extends AbstractAction {
  * @version v1.0.0, 2008-02-12
  */
 class CartogramWizardCloseAction extends AbstractAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -2177,6 +2238,10 @@ class CartogramWizardCloseAction extends AbstractAction {
  */
 class CartogramWizardComputeAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * A reference to the cartogram wizard. This is needed in order to extract
      * the selected options.
@@ -2277,6 +2342,11 @@ class CartogramWizardComputeAction extends AbstractAction {
  */
 class CartogramWizardOptionsWindow extends JDialog implements
         HyperlinkListener, ChangeListener {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     JCheckBox mAdvancedOptionsCheckBox = null;
 
@@ -2639,6 +2709,10 @@ class CartogramWizardOptionsWindow extends JDialog implements
  */
 class CartogramWizardAdvancedOptionsAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mActionToPerform = "showDialog";
     CartogramWizardOptionsWindow mDialog = null;
 
@@ -2694,6 +2768,10 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
  */
 class CartogramWizardShowURL extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mUrl = null;
 
     /**
@@ -2788,6 +2866,11 @@ class CartogramWizardWindowListener implements WindowListener {
  * @version v1.0.0, 2007-02-01
  */
 class CartogramWizardSimulaneousLayerWindow extends JDialog {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * An inline panel contained in the scroll view, containing the layer check
@@ -2962,6 +3045,10 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
  */
 class CartogramWizardSimulaneousLayerAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mActionToPerform = "showDialog";
     CartogramWizardSimulaneousLayerWindow mDialog = null;
 
@@ -3018,6 +3105,11 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
  * @version v1.0.0, 2007-02-01
  */
 class CartogramWizardConstrainedLayerWindow extends JDialog {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * An inline panel contained in the scroll view, containing the layer check
@@ -3195,6 +3287,10 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
  */
 class CartogramWizardConstrainedLayerAction extends AbstractAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String mActionToPerform = "showDialog";
     CartogramWizardConstrainedLayerWindow mDialog = null;
 
@@ -3248,6 +3344,11 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
  * This actions saves the computation report.
  */
 class CartogramWizardSaveReportAction extends AbstractAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Shows a save dialog and writes the computation report to the specified
