@@ -8,9 +8,6 @@
 
 package ch.epfl.scapetoad;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -227,34 +224,6 @@ public class CartogramNewman {
                 gridPointsY[i] = iy;
                 i++;
             }
-        }
-
-    }
-
-    /**
-     * Writes the grid of points into a text file.
-     */
-    private void writeGridOfPointsToFile(String fileName) {
-
-        FileOutputStream out;
-        PrintStream p;
-
-        try {
-            out = new FileOutputStream(fileName);
-            p = new PrintStream(out);
-
-            int i = 0;
-            for (int iy = 0; iy <= gridSize.y; iy++) {
-                for (int ix = 0; ix <= gridSize.x; ix++) {
-                    p.printf("%f %f\n", gridPointsX[i], gridPointsY[i]);
-                    i++;
-                }
-            }
-
-            p.close();
-        } catch (Exception e) {
-            System.err
-                    .println("[CartogramNewman.writeGridOfPointsToFile] Error writing to file.");
         }
 
     }
