@@ -19,8 +19,15 @@
 	
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+
 import javax.swing.ImageIcon;
 import javax.swing.JWindow;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jump.task.DummyTaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
@@ -49,9 +56,35 @@ import ch.epfl.scapetoad.MainWindow;
 public class ScapeToad {
 
     /**
+     * Initialize the logging system.
+     */
+    private static void initLog() throws ClassNotFoundException,
+            SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException {
+        // Get the log4j configuration file URL
+        URL log4jFile = ScapeToad.class.getClassLoader().getResource(
+                "resources/log4j.xml");
+        // Get the class and method
+        Class<?> domConfigurator = Class
+                .forName("org.apache.log4j.xml.DOMConfigurator");
+        Method configure = domConfigurator.getMethod("configure", URL.class);
+        // Initialize the logging system using the log4j configuration file
+        configure.invoke(null, log4jFile);
+    }
+
+    /**
      * The main method for the ScapeToad application.
      */
     public static void main(String args[]) {
+        // Initialize the logging system
+        try {
+            initLog();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log logger = LogFactory.getLog(ScapeToad.class);
+        logger.debug("Starting...");
 
         // If we have no command line arguments, launch the GUI.
         if (args.length == 0) {
