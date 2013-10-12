@@ -102,8 +102,7 @@ public class CartogramWizard extends JFrame {
     /**
      * The panel shown after cartogram computation.
      */
-    final CartogramWizardFinishedPanel mFinishedPanel = new CartogramWizardFinishedPanel(
-            this);
+    final CartogramWizardFinishedPanel mFinishedPanel = new CartogramWizardFinishedPanel();
 
     /**
      * The name of the selected cartogram layer (the master layer).
@@ -178,22 +177,21 @@ public class CartogramWizard extends JFrame {
         // Add icon panel at the left of the wizard window.
         // This panel contains the ScapeToad icon.
         if (mScapeToadIconPanel == null) {
-            mScapeToadIconPanel = new ScapeToadIconPanel(this);
+            mScapeToadIconPanel = new ScapeToadIconPanel();
         }
 
         mScapeToadIconPanel.setLocation(30, 90);
         this.add(mScapeToadIconPanel);
 
         // Add title panel.
-        CartogramWizardTitlePanel titlePanel = new CartogramWizardTitlePanel(
-                this);
+        CartogramWizardTitlePanel titlePanel = new CartogramWizardTitlePanel();
 
         titlePanel.setLocation(30, 20);
         this.add(titlePanel);
 
         // Add icon panel at the left of the wizard window.
         // This panel contains the ScapeToad icon.
-        mWizardStepIconPanel = new WizardStepIconPanel(this);
+        mWizardStepIconPanel = new WizardStepIconPanel();
         mWizardStepIconPanel.setLocation(380, 20);
         this.add(mWizardStepIconPanel);
 
@@ -680,7 +678,7 @@ class ScapeToadIconPanel extends JPanel {
     /**
      * The default constructor for the ScapeToad icon panel.
      */
-    ScapeToadIconPanel(JFrame contentFrame) {
+    ScapeToadIconPanel() {
 
         // Setting some panel parameters.
         this.setSize(100, 155);
@@ -723,7 +721,7 @@ class CartogramWizardTitlePanel extends JPanel {
     /**
      * The default constructor for the panel.
      */
-    CartogramWizardTitlePanel(JFrame contentFrame) {
+    CartogramWizardTitlePanel() {
 
         // Setting panel parameters.
         this.setSize(350, 45);
@@ -769,7 +767,7 @@ class WizardStepIconPanel extends JPanel {
     /**
      * The default constructor for the ScapeToad icon panel.
      */
-    WizardStepIconPanel(JFrame contentFrame) {
+    WizardStepIconPanel() {
 
         // Setting some panel parameters.
         this.setSize(220, 30);
@@ -2027,7 +2025,7 @@ class CartogramWizardFinishedPanel extends JPanel {
     /**
      * Initializes the new panel.
      */
-    CartogramWizardFinishedPanel(JFrame contentFrame) {
+    CartogramWizardFinishedPanel() {
         this.setLocation(160, 90);
         this.setSize(440, 340);
         setLayout(null);

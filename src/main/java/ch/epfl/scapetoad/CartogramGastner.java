@@ -803,12 +803,8 @@ public class CartogramGastner {
      */
     private double[] projectPoint(double x, double y) {
 
-        double deltax, deltay, den, t, u, temp;
+        double deltax, deltay, den, t, temp;
         long gaussx, gaussy;
-
-        // Get the grid size and the cellsize.
-        double cellSizeX = mExtent.getWidth() / lx;
-        double cellSizeY = mExtent.getHeight() / ly;
 
         // Make a copy of the point coordinate.
         double px = x;
@@ -855,7 +851,6 @@ public class CartogramGastner {
 
         }
         t = ((cx - ax) * (cy - dy) + (ay - cy) * (cx - dx)) / den;
-        u = ((bx - ax) * (cy - ay) + (ay - by) * (cx - ax)) / den;
 
         px = (1 - (ax + t * (bx - ax)) / lx) * mExtent.getMinX()
                 + (ax + t * (bx - ax)) / lx * mExtent.getMaxX();

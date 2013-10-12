@@ -26,7 +26,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.zip.DataFormatException;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.Feature;
@@ -428,22 +427,6 @@ public class CartogramLayer {
     } // CartogramLayer.regularizeLayer
 
     /**
-     * Snaps all points of the layer to a grid with given cell size.
-     * 
-     * @param lyr
-     *            the layer to snap.
-     * @param snappingDistance
-     *            the size of the grid cells.
-     * @param snapRegion
-     *            a envelope with the snapping region. This enables the snapping
-     *            to the same grid over several different layers.
-     */
-    public static void snapLayer(Layer lyr, double snappingDistance,
-            Envelope snapRegion) {
-        // Nothing to do
-    } // CartogramLayer.snapLayer
-
-    /**
      * Projects a layer using a cartogram grid. Returns the projected layer.
      */
     public static Layer projectLayerWithGrid(Layer lyr, CartogramGrid grid) {
@@ -503,8 +486,6 @@ public class CartogramLayer {
 
         FeatureCollectionWrapper fcw = cartogramLayer
                 .getFeatureCollectionWrapper();
-
-        FeatureSchema fs = fcw.getFeatureSchema();
 
         Iterator featIter = fcw.iterator();
         while (featIter.hasNext()) {

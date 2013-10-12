@@ -88,7 +88,6 @@ public class IOManager {
                 errDial.setModal(true);
                 errDial.setVisible(true);
             }
-            String shpDirectory = fd.getDirectory();
             String shpPath = fd.getDirectory() + fd.getFile();
 
             Layer lyr = IOManager.readShapefile(shpPath);
@@ -327,8 +326,6 @@ public class IOManager {
                 // Get the colors and transparency for this layer.
                 Color fillColor = layer.getBasicStyle().getFillColor();
                 Color strokeColor = layer.getBasicStyle().getLineColor();
-                int alpha = layer.getBasicStyle().getAlpha();
-                double opacity = (double) alpha / 255.0;
 
                 // Output every Feature.
                 FeatureCollection fc = layer.getFeatureCollectionWrapper();
@@ -494,7 +491,7 @@ public class IOManager {
                 Polygon p = (Polygon) geom;
                 Coordinate[] coords = p.getExteriorRing().getCoordinates();
                 String subPath = IOManager.coordinatesToSvgPath(coords, env,
-                        scaleFactor, minX, maxX, minY, maxY);
+                        scaleFactor, minX, minY);
                 path = path + subPath;
 
                 // Interior rings.
@@ -502,13 +499,13 @@ public class IOManager {
                 for (int i = 0; i < nrings; i++) {
                     coords = p.getInteriorRingN(i).getCoordinates();
                     subPath = IOManager.coordinatesToSvgPath(coords, env,
-                            scaleFactor, minX, maxX, minY, maxX);
+                            scaleFactor, minX, minY);
                     path = path + subPath;
                 }
             } else {
                 Coordinate[] coords = geom.getCoordinates();
                 String subPath = IOManager.coordinatesToSvgPath(coords, env,
-                        scaleFactor, minX, maxX, minY, maxY);
+                        scaleFactor, minX, minY);
                 path = path + subPath;
             }
 
@@ -526,13 +523,12 @@ public class IOManager {
      * @param env
      *            the Envelope we use for the coordinate conversion.
      * @param minX
-     *            , maxX, minY, maxY the maximum coordinates for the SVG
-     *            coordinates and corresponding to the Envelope env.
+     *            , minY, the minimum coordinates for the SVG coordinates and
+     *            corresponding to the Envelope env.
      * @return a string for use in a SVG path element.
      */
     public static String coordinatesToSvgPath(Coordinate[] coords,
-            Envelope env, double scaleFactor, double minX, double maxX,
-            double minY, double maxY) {
+            Envelope env, double scaleFactor, double minX, double minY) {
         String path = "M ";
         int ncoords = coords.length;
         if (ncoords == 0) {

@@ -942,10 +942,6 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
         if (mLegendValues == null) {
 
-            double attrMin = CartogramLayer.minValueForAttribute(masterLayer,
-                    mMasterAttribute);
-            double attrMean = CartogramLayer.meanValueForAttribute(masterLayer,
-                    mMasterAttribute);
             int nvalues = 3;
 
             double maxLog = Math.floor(Math.log10(attrMax));

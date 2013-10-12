@@ -175,7 +175,7 @@ class MainPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
 
         // Create the toolbar.
-        MainToolbar toolbar = new MainToolbar(contentFrame);
+        MainToolbar toolbar = new MainToolbar();
         toolbar.setAlignmentX(LEFT_ALIGNMENT);
         this.add(toolbar);
 
@@ -185,8 +185,7 @@ class MainPanel extends JPanel {
 
         JScrollPane rightScrollPane = new JScrollPane(AppContext.mapPanel);
 
-        JScrollPane leftScrollPane = new JScrollPane(new LayerListPanel(
-                contentFrame));
+        JScrollPane leftScrollPane = new JScrollPane(new LayerListPanel());
 
         // Set the minimum sizes for the scroll panes.
         Dimension minimumSize = new Dimension(150, 200);
@@ -225,7 +224,7 @@ class LayerListPanel extends JPanel {
     /**
      * The default constructor for the layer list panel.
      */
-    LayerListPanel(JFrame contentFrame) {
+    LayerListPanel() {
 
         LayerTreeModel layerTreeModel = new LayerTreeModel(
                 AppContext.layerViewPanel);
@@ -320,7 +319,7 @@ class MainToolbar extends JPanel {
     /**
      * The default constructor for the map panel.
      */
-    MainToolbar(JFrame contentFrame) {
+    MainToolbar() {
 
         ClassLoader cldr = this.getClass().getClassLoader();
 

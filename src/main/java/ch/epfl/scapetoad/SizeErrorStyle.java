@@ -135,7 +135,6 @@ public class SizeErrorStyle implements Style {
 
         boolean valueFound = false;
         int limitIndex = 0;
-        BasicStyle s = null;
         while (valueFound == false && limitIndex < _limits.size()) {
             Double limit = (Double) _limits.get(limitIndex);
             if (value.doubleValue() <= limit.doubleValue()) {

@@ -316,7 +316,6 @@ public class CartogramFeature {
                 // How much times we have to divide the line segment into 2?
                 double dblndiv = Math.log(seglen / maxlen) / Math.log(2);
                 dblndiv = Math.ceil(dblndiv);
-                int ndiv = (int) Math.round(dblndiv);
                 int nseg = (int) Math.round(Math.pow(2.0, dblndiv));
 
                 // Compute the vector AB (from coord i to coord i+1).

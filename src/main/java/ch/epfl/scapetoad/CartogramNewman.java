@@ -197,14 +197,12 @@ public class CartogramNewman {
         extent = cartogramGrid.envelope();
 
         // Fill the diffusion grid using the cartogram grid values.
-        double[][] cgridx = cartogramGrid.getXCoordinates();
-        double[][] cgridy = cartogramGrid.getYCoordinates();
         double[][] cgridv = cartogramGrid.getCurrentDensityArray();
-        fillDiffusionGrid(cgridx, cgridy, cgridv);
+        fillDiffusionGrid(cgridv);
     }
 
     // Fills fftrho using the provided grid values.
-    private void fillDiffusionGrid(double[][] x, double[][] y, double[][] v) {
+    private void fillDiffusionGrid(double[][] v) {
         for (int i = 0; i < gridSize.x; i++) {
             for (int j = 0; j < gridSize.y; j++) {
                 fftrho[i][j] = v[i][j];
@@ -271,7 +269,6 @@ public class CartogramNewman {
         densitySnapshot(0.0, s);
 
         // Integrate the points.
-        int step = 0;
         double t = 0.5 * blur * blur;
         double h = INITH;
 
@@ -284,7 +281,6 @@ public class CartogramNewman {
 
             // Increase the time by 2h and rotate snapshots
             t += 2.0 * h;
-            step += 2;
             s = sp;
 
             // Adjust the time-step.
