@@ -89,13 +89,13 @@ public class CartogramGastner {
      * Array for the x position at t > 0. x[j][k] is the x-coordinate for the
      * element that was at position (j,k) at time t = 0.
      */
-    private double[][] x;
+    private double[][] iX;
 
     /**
      * Array for the y position at t > 0. y[j][k] is the y-coordinate for the
      * element that was at position (j,k) at time t = 0.
      */
-    private double[][] y;
+    private double[][] iY;
 
     // Arrays for the velocity field at position (x[j][k], y[j][k]).
     private double[][] vx;
@@ -184,8 +184,8 @@ public class CartogramGastner {
         rho = new double[lx + 1][ly + 1];
         gridvx = new double[lx + 1][ly + 1];
         gridvy = new double[lx + 1][ly + 1];
-        x = new double[lx + 1][ly + 1];
-        y = new double[lx + 1][ly + 1];
+        iX = new double[lx + 1][ly + 1];
+        iY = new double[lx + 1][ly + 1];
         vx = new double[lx + 1][ly + 1];
         vy = new double[lx + 1][ly + 1];
         xappr = new double[lx + 1][ly + 1];
@@ -333,8 +333,8 @@ public class CartogramGastner {
 
         for (j = 0; j <= lx; j++) {
             for (k = 0; k <= ly; k++) {
-                x[j][k] = j;
-                y[j][k] = k;
+                iX[j][k] = j;
+                iY[j][k] = k;
             }
         }
 
@@ -363,8 +363,8 @@ public class CartogramGastner {
             for (j = 0; j <= lx; j++) {
                 for (k = 0; k <= ly; k++) {
 
-                    double xinterpol = x[j][k] + h * vx[j][k];
-                    double yinterpol = y[j][k] + h * vy[j][k];
+                    double xinterpol = iX[j][k] + h * vx[j][k];
+                    double yinterpol = iY[j][k] + h * vy[j][k];
                     if (xinterpol < 0.0 || yinterpol < 0.0) {
                         if (AppContext.DEBUG) {
                             System.out
@@ -376,9 +376,9 @@ public class CartogramGastner {
 
                     vyplus = interpolateBilinear(gridvy, xinterpol, yinterpol);
 
-                    xguess = x[j][k] + 0.5 * h * (vx[j][k] + vxplus);
+                    xguess = iX[j][k] + 0.5 * h * (vx[j][k] + vxplus);
 
-                    yguess = y[j][k] + 0.5 * h * (vy[j][k] + vyplus);
+                    yguess = iY[j][k] + 0.5 * h * (vy[j][k] + vyplus);
 
                     double[] ptappr = new double[2];
                     ptappr[0] = xappr[j][k];
@@ -416,16 +416,17 @@ public class CartogramGastner {
 
             for (j = 0; j <= lx; j++) {
                 for (k = 0; k <= ly; k++) {
-                    if ((x[j][k] - xappr[j][k]) * (x[j][k] - xappr[j][k])
-                            + (y[j][k] - yappr[j][k]) * (y[j][k] - yappr[j][k]) > maxchange) {
-                        maxchange = (x[j][k] - xappr[j][k])
-                                * (x[j][k] - xappr[j][k])
-                                + (y[j][k] - yappr[j][k])
-                                * (y[j][k] - yappr[j][k]);
+                    if ((iX[j][k] - xappr[j][k]) * (iX[j][k] - xappr[j][k])
+                            + (iY[j][k] - yappr[j][k])
+                            * (iY[j][k] - yappr[j][k]) > maxchange) {
+                        maxchange = (iX[j][k] - xappr[j][k])
+                                * (iX[j][k] - xappr[j][k])
+                                + (iY[j][k] - yappr[j][k])
+                                * (iY[j][k] - yappr[j][k]);
                     }
 
-                    x[j][k] = xappr[j][k];
-                    y[j][k] = yappr[j][k];
+                    iX[j][k] = xappr[j][k];
+                    iY[j][k] = yappr[j][k];
                     vx[j][k] = interpolateBilinear(gridvx, xappr[j][k],
                             yappr[j][k]);
                     vy[j][k] = interpolateBilinear(gridvy, xappr[j][k],
@@ -664,11 +665,11 @@ public class CartogramGastner {
         for (i = 1; i <= IMAX; i++) {
             temp = interpolateBilinear(gridvx, ptappr[0], ptappr[1]);
 
-            fx = ptappr[0] - 0.5 * h * temp - x[j][k] - 0.5 * h * vx[j][k];
+            fx = ptappr[0] - 0.5 * h * temp - iX[j][k] - 0.5 * h * vx[j][k];
 
             temp = interpolateBilinear(gridvy, ptappr[0], ptappr[1]);
 
-            fy = ptappr[1] - 0.5 * h * temp - y[j][k] - 0.5 * h * vy[j][k];
+            fy = ptappr[1] - 0.5 * h * temp - iY[j][k] - 0.5 * h * vy[j][k];
 
             tempobj = new Double(ptappr[0]);
             gaussx = tempobj.intValue();
@@ -687,8 +688,8 @@ public class CartogramGastner {
                 gaussyplus = gaussy + 1;
             }
 
-            deltax = x[j][k] - gaussx;
-            deltay = y[j][k] - gaussy;
+            deltax = iX[j][k] - gaussx;
+            deltay = iY[j][k] - gaussy;
 
             dfxdx = 1
                     - 0.5
@@ -820,22 +821,22 @@ public class CartogramGastner {
         deltax = px - gaussx;
         deltay = py - gaussy;
 
-        double ax = (1 - deltax) * this.x[(int) gaussx][(int) gaussy] + deltax
-                * this.x[(int) (gaussx + 1)][(int) gaussy];
-        double ay = (1 - deltax) * this.y[(int) gaussx][(int) gaussy] + deltax
-                * this.y[(int) (gaussx + 1)][(int) gaussy];
-        double bx = (1 - deltax) * this.x[(int) gaussx][(int) (gaussy + 1)]
-                + deltax * this.x[(int) (gaussx + 1)][(int) (gaussy + 1)];
-        double by = (1 - deltax) * this.y[(int) gaussx][(int) (gaussy + 1)]
-                + deltax * this.y[(int) (gaussx + 1)][(int) (gaussy + 1)];
-        double cx = (1 - deltay) * this.x[(int) gaussx][(int) gaussy] + deltay
-                * this.x[(int) gaussx][(int) (gaussy + 1)];
-        double cy = (1 - deltay) * this.y[(int) gaussx][(int) gaussy] + deltay
-                * this.y[(int) gaussx][(int) (gaussy + 1)];
-        double dx = (1 - deltay) * this.x[(int) (gaussx + 1)][(int) gaussy]
-                + deltay * this.x[(int) (gaussx + 1)][(int) (gaussy + 1)];
-        double dy = (1 - deltay) * this.y[(int) (gaussx + 1)][(int) gaussy]
-                + deltay * this.y[(int) (gaussx + 1)][(int) (gaussy + 1)];
+        double ax = (1 - deltax) * iX[(int) gaussx][(int) gaussy] + deltax
+                * iX[(int) (gaussx + 1)][(int) gaussy];
+        double ay = (1 - deltax) * iY[(int) gaussx][(int) gaussy] + deltax
+                * iY[(int) (gaussx + 1)][(int) gaussy];
+        double bx = (1 - deltax) * iX[(int) gaussx][(int) (gaussy + 1)]
+                + deltax * iX[(int) (gaussx + 1)][(int) (gaussy + 1)];
+        double by = (1 - deltax) * iY[(int) gaussx][(int) (gaussy + 1)]
+                + deltax * iY[(int) (gaussx + 1)][(int) (gaussy + 1)];
+        double cx = (1 - deltay) * iX[(int) gaussx][(int) gaussy] + deltay
+                * iX[(int) gaussx][(int) (gaussy + 1)];
+        double cy = (1 - deltay) * iY[(int) gaussx][(int) gaussy] + deltay
+                * iY[(int) gaussx][(int) (gaussy + 1)];
+        double dx = (1 - deltay) * iX[(int) (gaussx + 1)][(int) gaussy]
+                + deltay * iX[(int) (gaussx + 1)][(int) (gaussy + 1)];
+        double dy = (1 - deltay) * iY[(int) (gaussx + 1)][(int) gaussy]
+                + deltay * iY[(int) (gaussx + 1)][(int) (gaussy + 1)];
 
         den = (bx - ax) * (cy - dy) + (ay - by) * (cx - dx);
         if (Math.abs(den) < 1e-12) {
@@ -900,10 +901,10 @@ public class CartogramGastner {
 
                 // Extract the coordinates for the cell polygon.
                 Coordinate[] coords = new Coordinate[5];
-                coords[0] = new Coordinate(x[i][j], y[i][j]);
-                coords[1] = new Coordinate(x[i][j + 1], y[i][j + 1]);
-                coords[2] = new Coordinate(x[i + 1][j + 1], y[i + 1][j + 1]);
-                coords[3] = new Coordinate(x[i + 1][j], y[i + 1][j]);
+                coords[0] = new Coordinate(iX[i][j], iY[i][j]);
+                coords[1] = new Coordinate(iX[i][j + 1], iY[i][j + 1]);
+                coords[2] = new Coordinate(iX[i + 1][j + 1], iY[i + 1][j + 1]);
+                coords[3] = new Coordinate(iX[i + 1][j], iY[i + 1][j]);
                 coords[4] = coords[0];
 
                 // Create the polygon.

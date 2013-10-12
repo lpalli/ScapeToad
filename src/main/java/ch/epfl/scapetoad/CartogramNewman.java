@@ -124,8 +124,8 @@ public class CartogramNewman {
     public CartogramNewman(CartogramGrid g) {
         cartogramGrid = g;
         gridSize = g.getGridSize();
-        gridSize.x--;
-        gridSize.y--;
+        gridSize.iX--;
+        gridSize.iY--;
     }
 
     /**
@@ -163,10 +163,10 @@ public class CartogramNewman {
      */
     private void initializeArrays() throws InterruptedException {
         try {
-            rhot = new double[5][gridSize.x][gridSize.y];
-            fftrho = new double[gridSize.x][gridSize.y];
-            fftexpt = new double[gridSize.x][gridSize.y];
-            expky = new double[gridSize.y];
+            rhot = new double[5][gridSize.iX][gridSize.iY];
+            fftrho = new double[gridSize.iX][gridSize.iY];
+            fftexpt = new double[gridSize.iX][gridSize.iY];
+            expky = new double[gridSize.iY];
         } catch (Exception e) {
             System.out.println("Out of memory error.");
             throw new InterruptedException(
@@ -182,7 +182,7 @@ public class CartogramNewman {
         readPopulationDensity();
 
         // Transform fftrho.
-        DoubleDCT_2D transform = new DoubleDCT_2D(gridSize.x, gridSize.y);
+        DoubleDCT_2D transform = new DoubleDCT_2D(gridSize.iX, gridSize.iY);
         transform.forward(fftrho, false);
     }
 
@@ -200,8 +200,8 @@ public class CartogramNewman {
 
     // Fills fftrho using the provided grid values.
     private void fillDiffusionGrid(double[][] v) {
-        for (int i = 0; i < gridSize.x; i++) {
-            for (int j = 0; j < gridSize.y; j++) {
+        for (int i = 0; i < gridSize.iX; i++) {
+            for (int j = 0; j < gridSize.iY; j++) {
                 fftrho[i][j] = v[i][j];
             }
         }
@@ -212,14 +212,14 @@ public class CartogramNewman {
      * points).
      */
     private void createGridOfPoints() {
-        gridPointsX = new double[(gridSize.x + 1) * (gridSize.y + 1)];
-        gridPointsY = new double[(gridSize.x + 1) * (gridSize.y + 1)];
+        gridPointsX = new double[(gridSize.iX + 1) * (gridSize.iY + 1)];
+        gridPointsY = new double[(gridSize.iX + 1) * (gridSize.iY + 1)];
 
         int i = 0;
         double ix, iy;
 
-        for (iy = 0.0f; iy <= gridSize.y; iy++) {
-            for (ix = 0.0f; ix <= gridSize.x; ix++) {
+        for (iy = 0.0f; iy <= gridSize.iY; iy++) {
+            for (ix = 0.0f; ix <= gridSize.iX; ix++) {
                 gridPointsX[i] = ix;
                 gridPointsY[i] = iy;
                 i++;
@@ -279,16 +279,16 @@ public class CartogramNewman {
         double expkx;
 
         // Calculate the expky array, to save time in the next part
-        for (iy = 0; iy < gridSize.y; iy++) {
-            ky = Math.PI * iy / gridSize.y;
+        for (iy = 0; iy < gridSize.iY; iy++) {
+            ky = Math.PI * iy / gridSize.iY;
             expky[iy] = Math.exp(-ky * ky * t);
         }
 
         // Multiply the FT of the density by the appropriate factors
-        for (ix = 0; ix < gridSize.x; ix++) {
-            kx = Math.PI * ix / gridSize.x;
+        for (ix = 0; ix < gridSize.iX; ix++) {
+            kx = Math.PI * ix / gridSize.iX;
             expkx = Math.exp(-kx * kx * t);
-            for (iy = 0; iy < gridSize.y; iy++) {
+            for (iy = 0; iy < gridSize.iY; iy++) {
                 fftexpt[ix][iy] = expkx * expky[iy] * fftrho[ix][iy];
 
                 // Save a copy to the rhot[s] array on which we will perform the
@@ -298,7 +298,7 @@ public class CartogramNewman {
         }
 
         // Perform the back-transform
-        DoubleDCT_2D dct = new DoubleDCT_2D(gridSize.x, gridSize.y);
+        DoubleDCT_2D dct = new DoubleDCT_2D(gridSize.iX, gridSize.iY);
         dct.inverse(rhot[s], false);
 
     }
@@ -333,7 +333,7 @@ public class CartogramNewman {
         // Do all three Runga-Kutta steps for each point in turn.
         double esqmax = 0.0;
         double drsqmax = 0.0;
-        int npoints = (gridSize.x + 1) * (gridSize.y + 1);
+        int npoints = (gridSize.iX + 1) * (gridSize.iY + 1);
         for (int p = 0; p < npoints; p++) {
             double rx1 = gridPointsX[p];
             double ry1 = gridPointsY[p];
@@ -427,14 +427,14 @@ public class CartogramNewman {
 
             if (rx3 < 0) {
                 rx3 = 0;
-            } else if (rx3 > gridSize.x) {
-                rx3 = gridSize.x;
+            } else if (rx3 > gridSize.iX) {
+                rx3 = gridSize.iX;
             }
 
             if (ry3 < 0) {
                 ry3 = 0;
-            } else if (ry3 > gridSize.y) {
-                ry3 = gridSize.y;
+            } else if (ry3 > gridSize.iY) {
+                ry3 = gridSize.iY;
             }
 
             gridPointsX[p] = rx3;
@@ -473,8 +473,8 @@ public class CartogramNewman {
         int ix = (int) rx;
         if (ix < 0) {
             ix = 0;
-        } else if (ix >= gridSize.x) {
-            ix = gridSize.x - 1;
+        } else if (ix >= gridSize.iX) {
+            ix = gridSize.iX - 1;
         }
 
         int ixm1 = ix - 1;
@@ -482,15 +482,15 @@ public class CartogramNewman {
             ixm1 = 0;
         }
         int ixp1 = ix + 1;
-        if (ixp1 >= gridSize.x) {
-            ixp1 = gridSize.x - 1;
+        if (ixp1 >= gridSize.iX) {
+            ixp1 = gridSize.iX - 1;
         }
 
         int iy = (int) ry;
         if (iy < 0) {
             iy = 0;
-        } else if (iy >= gridSize.y) {
-            iy = gridSize.y - 1;
+        } else if (iy >= gridSize.iY) {
+            iy = gridSize.iY - 1;
         }
 
         int iym1 = iy - 1;
@@ -498,8 +498,8 @@ public class CartogramNewman {
             iym1 = 0;
         }
         int iyp1 = iy + 1;
-        if (iyp1 >= gridSize.y) {
-            iyp1 = gridSize.y - 1;
+        if (iyp1 >= gridSize.iY) {
+            iyp1 = gridSize.iY - 1;
         }
 
         // Calculate the densities at the nine surrounding grid points
@@ -563,8 +563,8 @@ public class CartogramNewman {
         int gridSizeX = x.length;
         int gridSizeY = x[0].length;
 
-        double cellSizeX = extent.getWidth() / gridSize.x;
-        double cellSizeY = extent.getHeight() / gridSize.y;
+        double cellSizeX = extent.getWidth() / gridSize.iX;
+        double cellSizeY = extent.getHeight() / gridSize.iY;
 
         double minX = extent.getMinX();
         double minY = extent.getMinY();

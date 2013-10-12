@@ -90,7 +90,7 @@ public class CartogramGrid {
      * value of 10 at least.
      */
     public double bias = 0.00001;
-    public double minValue = 10;
+    public double iMinValue = 10;
 
     /**
      * The constructor for the cartogram grid.
@@ -279,7 +279,7 @@ public class CartogramGrid {
 
         // Compute the scaling factor
         if (minval > 0) {
-            double factor = minValue / minval;
+            double factor = iMinValue / minval;
             if (factor > 1) {
                 for (int j = 0; j < mGridSizeY - 1; j++) {
                     for (int i = 0; i < mGridSizeX - 1; i++) {

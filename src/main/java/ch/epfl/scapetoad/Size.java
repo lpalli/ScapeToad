@@ -12,15 +12,15 @@ package ch.epfl.scapetoad;
  * Defines a two-dimensional size with an x and y integer component.
  */
 public class Size {
-    public int x = 0;
-    public int y = 0;
+    public int iX = 0;
+    public int iY = 0;
 
     /**
      * Initializes the size using the provided integer values.
      */
     public Size(int x, int y) {
-        this.x = x;
-        this.y = y;
+        iX = x;
+        iY = y;
     }
 
 }
