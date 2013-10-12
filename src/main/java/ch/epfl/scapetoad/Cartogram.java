@@ -829,9 +829,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
         // Compute the deformation grid size in x and y direction.
 
-        double resolution = Math.max(env.getWidth()
-                / (double) (mGridLayerSize + 1), env.getHeight()
-                / (double) (mGridLayerSize + 1));
+        double resolution = Math.max(env.getWidth() / (mGridLayerSize + 1),
+                env.getHeight() / (mGridLayerSize + 1));
 
         int sizeX = (int) Math.round(Math.floor(env.getWidth() / resolution)) - 1;
 
@@ -876,7 +875,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
                 feat.setGeometry(ls);
 
                 // Add the other attributes.
-                Integer idobj = new Integer((int) i);
+                Integer idobj = new Integer(i);
                 feat.setAttribute("ID", idobj);
                 i++;
 
@@ -908,7 +907,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
                 feat.setGeometry(ls);
 
                 // Add the other attributes.
-                Integer idobj = new Integer((int) i);
+                Integer idobj = new Integer(i);
                 feat.setAttribute("ID", idobj);
                 i++;
 
@@ -1154,7 +1153,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         }
 
         double percFeaturesInStdDev = (double) nFeaturesInStdDev
-                / (double) nFeatures * (double) 100;
+                / (double) nFeatures * 100;
 
         int pfint = (int) Math.round(percFeaturesInStdDev);
 
@@ -1213,7 +1212,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         }
 
         int nfeat = layer.getFeatureCollectionWrapper().getFeatures().size();
-        double featuresPerEdge = Math.sqrt((double) nfeat);
+        double featuresPerEdge = Math.sqrt(nfeat);
 
         // Compute the length per feature.
         // 1/10 of the length per feature is our estimate for the

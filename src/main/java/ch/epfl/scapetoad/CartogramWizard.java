@@ -23,7 +23,6 @@ package ch.epfl.scapetoad;
 
 import java.awt.FileDialog;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -1855,7 +1854,7 @@ class CartogramWizardPanelFour extends JPanel {
             // this.updateConstrainedLayerList();
         } else {
             // Update the amount of deformation.
-            mCartogramWizard.setAmountOfDeformation((int) mDeformationSlider
+            mCartogramWizard.setAmountOfDeformation(mDeformationSlider
                     .getValue());
 
         }
@@ -3356,7 +3355,7 @@ class CartogramWizardSaveReportAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
 
         // Create the File Save dialog.
-        FileDialog fd = new FileDialog((Frame) AppContext.cartogramWizard,
+        FileDialog fd = new FileDialog(AppContext.cartogramWizard,
                 "Save Computation Report As...", FileDialog.SAVE);
 
         fd.setModal(true);

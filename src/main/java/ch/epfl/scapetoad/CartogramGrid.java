@@ -660,8 +660,8 @@ public class CartogramGrid {
 
         // If the distance to move is too big, we compute a new, closer
         // location.
-        if (moveDistance > mCellSizeX / (double) 10) {
-            double newMoveDistance = mCellSizeX / (double) 10;
+        if (moveDistance > mCellSizeX / 10) {
+            double newMoveDistance = mCellSizeX / 10;
 
             double moveVectorX = x - mNodeX[i][j];
             double moveVectorY = y - mNodeY[i][j];

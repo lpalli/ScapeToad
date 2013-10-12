@@ -24,7 +24,6 @@ package ch.epfl.scapetoad;
 import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -68,7 +67,7 @@ public class IOManager {
         try {
 
             // Open dialog.
-            FileDialog fd = new FileDialog((Frame) AppContext.mainWindow,
+            FileDialog fd = new FileDialog(AppContext.mainWindow,
                     "Add Layer...", FileDialog.LOAD);
 
             fd.setFilenameFilter(new ShapeFilenameFilter());
@@ -166,7 +165,7 @@ public class IOManager {
      */
     public static void saveShapefile(FeatureCollection fc) {
         // Create the File Save dialog.
-        FileDialog fd = new FileDialog((Frame) AppContext.mainWindow,
+        FileDialog fd = new FileDialog(AppContext.mainWindow,
                 "Save Layer As...", FileDialog.SAVE);
 
         fd.setFilenameFilter(new ShapeFilenameFilter());
@@ -223,7 +222,7 @@ public class IOManager {
     public static void saveSvg(Layer[] lyrs) {
 
         // Create the File Save dialog.
-        FileDialog fd = new FileDialog((Frame) AppContext.mainWindow,
+        FileDialog fd = new FileDialog(AppContext.mainWindow,
                 "Save Layer As...", FileDialog.SAVE);
 
         fd.setFilenameFilter(new SVGFilenameFilter());

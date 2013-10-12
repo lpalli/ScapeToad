@@ -168,7 +168,7 @@ public class CartogramLayer {
             nobj++;
         }
 
-        meanValue = meanValue / (double) nobj;
+        meanValue = meanValue / nobj;
 
         return meanValue;
 
@@ -295,7 +295,7 @@ public class CartogramLayer {
         if (n > 100) {
             n = 100;
         }
-        double dblN = (double) n;
+        double dblN = n;
 
         // Create a new TreeSet and store the attribute values inside.
         TreeSet set = new TreeSet();
@@ -313,7 +313,7 @@ public class CartogramLayer {
         Vector attrVector = new Vector(set);
 
         // Get the indexes of the bounding features.
-        double dblIndex = (double) n / (double) 100 * (double) nfeat;
+        double dblIndex = (double) n / (double) 100 * nfeat;
         int lowerIndex = Math.round((float) Math.floor(dblIndex));
         int upperIndex = Math.round((float) Math.ceil(dblIndex));
 
@@ -322,10 +322,10 @@ public class CartogramLayer {
             return pval.doubleValue();
         }
 
-        double lowerPctl = (double) lowerIndex / (double) nfeat * (double) 100;
+        double lowerPctl = (double) lowerIndex / (double) nfeat * 100;
         Double lowerValueDbl = (Double) attrVector.get(lowerIndex);
         double lowerValue = lowerValueDbl.doubleValue();
-        double upperPctl = (double) upperIndex / (double) nfeat * (double) 100;
+        double upperPctl = (double) upperIndex / (double) nfeat * 100;
         Double upperValueDbl = (Double) attrVector.get(upperIndex);
         double upperValue = upperValueDbl.doubleValue();
 
