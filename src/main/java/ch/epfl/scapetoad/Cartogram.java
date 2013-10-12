@@ -867,9 +867,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
             }
 
             LineString ls = null;
-            if (coords != null) {
-                ls = gf.createLineString(coords);
-            }
+            ls = gf.createLineString(coords);
 
             if (ls != null) {
                 feat.setGeometry(ls);
@@ -899,9 +897,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
             }
 
             LineString ls = null;
-            if (coords != null) {
-                ls = gf.createLineString(coords);
-            }
+            ls = gf.createLineString(coords);
 
             if (ls != null) {
                 feat.setGeometry(ls);
