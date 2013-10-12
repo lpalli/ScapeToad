@@ -116,8 +116,8 @@ public class CartogramWizard extends JFrame {
     /**
      * Some parameters for the cartogram computation.
      */
-    Vector mSimultaneousLayers = null;
-    Vector mConstrainedDeformationLayers = null;
+    Vector<Layer> mSimultaneousLayers = null;
+    Vector<Layer> mConstrainedDeformationLayers = null;
     int mAmountOfDeformation = 50;
     int mCartogramGridSizeX = 1000;
     int mCartogramGridSizeY = 1000;
@@ -500,14 +500,14 @@ public class CartogramWizard extends JFrame {
     /**
      * Returns the list of simultaneous layers.
      */
-    public Vector getSimultaneousLayers() {
+    public Vector<Layer> getSimultaneousLayers() {
         return mSimultaneousLayers;
     }
 
     /**
      * Sets the list of simultaneous layers.
      */
-    public void setSimultaneousLayers(Vector layers) {
+    public void setSimultaneousLayers(Vector<Layer> layers) {
         mSimultaneousLayers = layers;
     }
 
@@ -515,7 +515,7 @@ public class CartogramWizard extends JFrame {
      * Returns the simultaneous layer at a given index.
      */
     public Layer getSimultaneousLayerAtIndex(int index) {
-        return (Layer) mSimultaneousLayers.get(index);
+        return mSimultaneousLayers.get(index);
     }
 
     /**
@@ -523,7 +523,7 @@ public class CartogramWizard extends JFrame {
      */
     public void setSimultaneousLayerAtIndex(Layer layer, int index) {
         if (mSimultaneousLayers == null) {
-            mSimultaneousLayers = new Vector();
+            mSimultaneousLayers = new Vector<Layer>();
         }
 
         mSimultaneousLayers.set(index, layer);
@@ -532,14 +532,14 @@ public class CartogramWizard extends JFrame {
     /**
      * Returns the list of constrained deformation layers.
      */
-    public Vector getConstrainedDeformationLayers() {
+    public Vector<Layer> getConstrainedDeformationLayers() {
         return mConstrainedDeformationLayers;
     }
 
     /**
      * Sets the list of constrained deformation layers.
      */
-    public void setConstrainedDeformationLayers(Vector layers) {
+    public void setConstrainedDeformationLayers(Vector<Layer> layers) {
         mConstrainedDeformationLayers = layers;
     }
 
@@ -547,7 +547,7 @@ public class CartogramWizard extends JFrame {
      * Returns the constrained deformation layer at the given index.
      */
     public Layer getConstrainedDeformationLayerAtIndex(int index) {
-        return (Layer) mConstrainedDeformationLayers.get(index);
+        return mConstrainedDeformationLayers.get(index);
     }
 
     /**
@@ -555,7 +555,7 @@ public class CartogramWizard extends JFrame {
      */
     public void setConstrainedDeformationLayerAtIndex(Layer layer, int index) {
         if (mConstrainedDeformationLayers == null) {
-            mConstrainedDeformationLayers = new Vector();
+            mConstrainedDeformationLayers = new Vector<Layer>();
         }
 
         mConstrainedDeformationLayers.set(index, layer);
@@ -1728,7 +1728,7 @@ class CartogramWizardPanelFour extends JPanel {
         mDeformationSlider.setSize(440, 40);
         mDeformationSlider.setLocation(0, 20);
 
-        Hashtable labelTable = new Hashtable();
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         JLabel sliderLabel = new JLabel("Low");
         sliderLabel.setFont(smallFont);
         labelTable.put(new Integer(0), sliderLabel);
@@ -2896,7 +2896,7 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
     /**
      * The list with all the check boxes for the simultaneous layers.
      */
-    Vector mCheckBoxList = null;
+    Vector<JCheckBox> mCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
@@ -2934,12 +2934,13 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector();
+        mCheckBoxList = new Vector<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
         // Create the check boxes.
-        Vector simLayers = AppContext.cartogramWizard.getSimultaneousLayers();
+        Vector<Layer> simLayers = AppContext.cartogramWizard
+                .getSimultaneousLayers();
         int nlayers = AppContext.layerManager.size();
         if (nlayers > 1) {
             int layersInList = 0;
@@ -3033,10 +3034,10 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
     public void saveChanges() {
 
         int nlayers = mCheckBoxList.size();
-        Vector layers = new Vector();
+        Vector<Layer> layers = new Vector<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
-            JCheckBox checkBox = (JCheckBox) mCheckBoxList.get(i);
+            JCheckBox checkBox = mCheckBoxList.get(i);
             if (checkBox.isSelected()) {
                 String layerName = checkBox.getText();
                 Layer lyr = AppContext.layerManager.getLayer(layerName);
@@ -3135,7 +3136,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
     /**
      * The list with all the check boxes for the constrained layers.
      */
-    Vector mCheckBoxList = null;
+    Vector<JCheckBox> mCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
@@ -3174,12 +3175,12 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector();
+        mCheckBoxList = new Vector<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
         // Create the check boxes.
-        Vector constrLayers = AppContext.cartogramWizard
+        Vector<Layer> constrLayers = AppContext.cartogramWizard
                 .getConstrainedDeformationLayers();
         int nlayers = AppContext.layerManager.size();
         if (nlayers > 1) {
@@ -3275,10 +3276,10 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
     public void saveChanges() {
 
         int nlayers = mCheckBoxList.size();
-        Vector layers = new Vector();
+        Vector<Layer> layers = new Vector<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
-            JCheckBox checkBox = (JCheckBox) mCheckBoxList.get(i);
+            JCheckBox checkBox = mCheckBoxList.get(i);
             if (checkBox.isSelected()) {
                 String layerName = checkBox.getText();
                 Layer lyr = AppContext.layerManager.getLayer(layerName);

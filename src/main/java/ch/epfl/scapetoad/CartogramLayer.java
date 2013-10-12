@@ -64,9 +64,10 @@ public class CartogramLayer {
         // After updating the FeatureSchema, we need to create a bigger
         // array for each Feature where the attribute values can be stored.
         int nattrs = fs.getAttributeCount();
-        Iterator featiter = fcw.iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featiter = fcw.iterator();
         while (featiter.hasNext()) {
-            Feature feat = (Feature) featiter.next();
+            Feature feat = featiter.next();
             feat.setSchema(fs);
             Object[] newAttributes = new Object[nattrs];
             Object[] oldAttributes = feat.getAttributes();
@@ -100,9 +101,11 @@ public class CartogramLayer {
 
         CartogramLayer.addAttribute(layer, densityAttr, AttributeType.DOUBLE);
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             double geomArea = geom.getArea();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
@@ -140,9 +143,11 @@ public class CartogramLayer {
     public static double meanDensityWithAttribute(Layer layer, String attrName) {
         double totalArea = CartogramLayer.totalArea(layer);
         double meanDensity = 0.0;
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             double geomArea = geom.getArea();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
@@ -160,9 +165,11 @@ public class CartogramLayer {
         int nobj = 0;
         double meanValue = 0.0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
             meanValue += val;
             nobj++;
@@ -181,16 +188,18 @@ public class CartogramLayer {
 
         double minValue = 0.0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         if (featIter.hasNext() == false) {
             return 0.0;
         }
 
-        Feature feat = (Feature) featIter.next();
+        Feature feat = featIter.next();
         minValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
 
         while (featIter.hasNext()) {
-            feat = (Feature) featIter.next();
+            feat = featIter.next();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
                     attrName);
 
@@ -210,16 +219,18 @@ public class CartogramLayer {
 
         double maxValue = 0.0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         if (featIter.hasNext() == false) {
             return 0.0;
         }
 
-        Feature feat = (Feature) featIter.next();
+        Feature feat = featIter.next();
         maxValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
 
         while (featIter.hasNext()) {
-            feat = (Feature) featIter.next();
+            feat = featIter.next();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
                     attrName);
 
@@ -238,9 +249,11 @@ public class CartogramLayer {
     public static double sumForAttribute(Layer layer, String attrName) {
         double sum = 0.0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             sum += CartogramFeature.getAttributeAsDouble(feat, attrName);
         }
 
@@ -256,9 +269,11 @@ public class CartogramLayer {
         double diffSum = 0.0;
         double nFeat = 0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
             diffSum += (val - mean) * (val - mean);
             nFeat += 1.0;
@@ -298,10 +313,12 @@ public class CartogramLayer {
         }
 
         // Create a new TreeSet and store the attribute values inside.
-        TreeSet set = new TreeSet();
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        TreeSet<Double> set = new TreeSet<Double>();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
             set.add(new Double(val));
         }
@@ -310,7 +327,7 @@ public class CartogramLayer {
         int nfeat = set.size();
 
         // Create a Vector from the TreeSet.
-        Vector attrVector = new Vector(set);
+        Vector<Double> attrVector = new Vector<Double>(set);
 
         // Get the indexes of the bounding features.
         double dblIndex = dblN / 100 * nfeat;
@@ -318,15 +335,15 @@ public class CartogramLayer {
         int upperIndex = Math.round((float) Math.ceil(dblIndex));
 
         if (lowerIndex == upperIndex) {
-            Double pval = (Double) attrVector.get(lowerIndex);
+            Double pval = attrVector.get(lowerIndex);
             return pval.doubleValue();
         }
 
         double lowerPctl = (double) lowerIndex / (double) nfeat * 100;
-        Double lowerValueDbl = (Double) attrVector.get(lowerIndex);
+        Double lowerValueDbl = attrVector.get(lowerIndex);
         double lowerValue = lowerValueDbl.doubleValue();
         double upperPctl = (double) upperIndex / (double) nfeat * 100;
-        Double upperValueDbl = (Double) attrVector.get(upperIndex);
+        Double upperValueDbl = attrVector.get(upperIndex);
         double upperValue = upperValueDbl.doubleValue();
 
         double scalingFactor = 1.0;
@@ -347,9 +364,11 @@ public class CartogramLayer {
     public static void replaceAttributeValue(Layer layer, String attrName,
             double oldValue, double newValue) {
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
             if (val == oldValue) {
                 CartogramFeature.setDoubleAttributeValue(feat, attrName,
@@ -366,9 +385,11 @@ public class CartogramLayer {
 
         double totalArea = 0.0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             totalArea += geom.getArea();
         }
@@ -387,9 +408,11 @@ public class CartogramLayer {
     public static Geometry contour(Layer layer) {
 
         Geometry contour = null;
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             if (contour == null) {
                 contour = geom;
@@ -414,9 +437,11 @@ public class CartogramLayer {
      */
     public static void regularizeLayer(Layer lyr, double maxlen) {
 
-        Iterator featIter = lyr.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = lyr.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             Geometry regGeom = CartogramFeature
                     .regularizeGeometry(geom, maxlen);
@@ -439,9 +464,11 @@ public class CartogramLayer {
         FeatureDataset fd = new FeatureDataset(fs2);
 
         // Project each Feature one by one.
-        Iterator featIter = lyr.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = lyr.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Feature projFeat = CartogramFeature.projectFeatureWithGrid(feat,
                     grid);
 
@@ -487,9 +514,10 @@ public class CartogramLayer {
         FeatureCollectionWrapper fcw = cartogramLayer
                 .getFeatureCollectionWrapper();
 
-        Iterator featIter = fcw.iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = fcw.iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Geometry geom = feat.getGeometry();
             double geomArea = geom.getArea();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
@@ -533,9 +561,10 @@ public class CartogramLayer {
             return;
         }
 
-        Iterator featIter = fcw.iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = fcw.iterator();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
             Double attrValue = (Double) feat.getAttribute(attrName);
             if (attrValue == null || attrValue.isNaN()) {
                 feat.setAttribute(attrName, new Double(0.0));

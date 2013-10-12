@@ -97,12 +97,12 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * The layers to deform simultaneously.
      */
-    Vector mSlaveLayers = null;
+    Vector<Layer> mSlaveLayers = null;
 
     /**
      * The layers used for the constrained deformation.
      */
-    Vector mConstrainedDeforamtionLayers = null;
+    Vector<Layer> mConstrainedDeforamtionLayers = null;
 
     /**
      * The initial envelope for all layers.
@@ -458,10 +458,11 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         }
 
         // *** HIDE ALL LAYERS ALREADY PRESENT ***
-        List layerList = mLayerManager.getLayers();
-        Iterator layerIter = layerList.iterator();
+        @SuppressWarnings("unchecked")
+        List<Layer> layerList = mLayerManager.getLayers();
+        Iterator<Layer> layerIter = layerList.iterator();
         while (layerIter.hasNext()) {
-            Layer l = (Layer) layerIter.next();
+            Layer l = layerIter.next();
             l.setVisible(false);
         }
 
@@ -566,14 +567,14 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * Defines the layers to deform during the cartogram process.
      */
-    public void setSlaveLayers(Vector slaveLayers) {
+    public void setSlaveLayers(Vector<Layer> slaveLayers) {
         mSlaveLayers = slaveLayers;
     }
 
     /**
      * Defines the layers which should not be deformed.
      */
-    public void setConstrainedDeformationLayers(Vector layers) {
+    public void setConstrainedDeformationLayers(Vector<Layer> layers) {
         mConstrainedDeforamtionLayers = layers;
     }
 
@@ -620,18 +621,19 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         // Expanding the initial envelope using the slave and
         // constrained deformation layers.
         if (mSlaveLayers != null) {
-            Iterator lyrIterator = mSlaveLayers.iterator();
+            Iterator<Layer> lyrIterator = mSlaveLayers.iterator();
             while (lyrIterator.hasNext()) {
-                lyr = (Layer) lyrIterator.next();
+                lyr = lyrIterator.next();
                 mEnvelope.expandToInclude(lyr.getFeatureCollectionWrapper()
                         .getEnvelope());
             }
         }
 
         if (mConstrainedDeforamtionLayers != null) {
-            Iterator lyrIterator = mConstrainedDeforamtionLayers.iterator();
+            Iterator<Layer> lyrIterator = mConstrainedDeforamtionLayers
+                    .iterator();
             while (lyrIterator.hasNext()) {
-                lyr = (Layer) lyrIterator.next();
+                lyr = lyrIterator.next();
                 mEnvelope.expandToInclude(lyr.getFeatureCollectionWrapper()
                         .getEnvelope());
             }
@@ -709,7 +711,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
                     / (nlyrs - 1) * 150, "Projecting the layers...", "Layer "
                     + (lyrcnt + 2) + " of " + nlyrs);
 
-            Layer slaveLayer = (Layer) mSlaveLayers.get(lyrcnt);
+            Layer slaveLayer = mSlaveLayers.get(lyrcnt);
             CartogramLayer.regularizeLayer(slaveLayer, mMaximumSegmentLength);
             layers[lyrcnt + 1] = CartogramLayer.projectLayerWithGrid(
                     slaveLayer, mGrid);
@@ -1078,26 +1080,27 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         rep.append("Attribute maximum value: " + max + "\n\n");
 
         rep.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
-        Vector simLayers = mCartogramWizard.getSimultaneousLayers();
+        Vector<Layer> simLayers = mCartogramWizard.getSimultaneousLayers();
         if (simLayers == null || simLayers.size() == 0) {
             rep.append("None\n\n");
         } else {
-            Iterator simLayerIter = simLayers.iterator();
+            Iterator<Layer> simLayerIter = simLayers.iterator();
             while (simLayerIter.hasNext()) {
-                Layer lyr = (Layer) simLayerIter.next();
+                Layer lyr = simLayerIter.next();
                 rep.append(lyr.getName() + "\n");
             }
             rep.append("\n");
         }
 
         rep.append("CONSTRAINED DEFORMATION LAYERS:\n");
-        Vector constLayers = mCartogramWizard.getConstrainedDeformationLayers();
+        Vector<Layer> constLayers = mCartogramWizard
+                .getConstrainedDeformationLayers();
         if (constLayers == null || constLayers.size() == 0) {
             rep.append("None\n\n");
         } else {
-            Iterator constLayerIter = constLayers.iterator();
+            Iterator<Layer> constLayerIter = constLayers.iterator();
             while (constLayerIter.hasNext()) {
-                Layer lyr = (Layer) constLayerIter.next();
+                Layer lyr = constLayerIter.next();
                 rep.append(lyr.getName() + "\n");
             }
             rep.append("\n");
@@ -1134,11 +1137,12 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         FeatureCollectionWrapper fcw = projectedMasterLayer
                 .getFeatureCollectionWrapper();
 
-        Iterator featIter = fcw.iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = fcw.iterator();
         int nFeaturesInStdDev = 0;
         int nFeatures = fcw.size();
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
 
             double value = CartogramFeature.getAttributeAsDouble(feat,
                     "SizeError");

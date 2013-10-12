@@ -44,15 +44,15 @@ public class SizeErrorStyle implements Style {
     boolean _enabled = false;
 
     String _attrName;
-    Vector _limits;
-    Vector _colors;
+    Vector<Double> _limits;
+    Vector<BasicStyle> _colors;
     BasicStyle _defaultStyle;
 
     private Stroke _fillStroke = new BasicStroke(1);
 
     public SizeErrorStyle() {
-        _limits = new Vector();
-        _colors = new Vector();
+        _limits = new Vector<Double>();
+        _colors = new Vector<BasicStyle>();
         _defaultStyle = new BasicStyle(Color.ORANGE);
     }
 
@@ -97,7 +97,7 @@ public class SizeErrorStyle implements Style {
     }
 
     public BasicStyle getColorAtIndex(int index) {
-        return (BasicStyle) _colors.get(index);
+        return _colors.get(index);
     }
 
     public void addColor(BasicStyle color) {
@@ -113,7 +113,7 @@ public class SizeErrorStyle implements Style {
     }
 
     public Double getLimitAtIndex(int index) {
-        return (Double) _limits.get(index);
+        return _limits.get(index);
     }
 
     public void addLimit(Double limit) {
@@ -136,7 +136,7 @@ public class SizeErrorStyle implements Style {
         boolean valueFound = false;
         int limitIndex = 0;
         while (valueFound == false && limitIndex < _limits.size()) {
-            Double limit = (Double) _limits.get(limitIndex);
+            Double limit = _limits.get(limitIndex);
             if (value.doubleValue() <= limit.doubleValue()) {
                 valueFound = true;
             }
@@ -144,7 +144,7 @@ public class SizeErrorStyle implements Style {
             limitIndex++;
         }
 
-        return (BasicStyle) _colors.get(limitIndex);
+        return _colors.get(limitIndex);
 
     }
 

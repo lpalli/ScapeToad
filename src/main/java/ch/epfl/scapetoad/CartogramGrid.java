@@ -231,7 +231,9 @@ public class CartogramGrid {
         int nFeat = layer.getFeatureCollectionWrapper().size();
         int featCnt = 0;
 
-        Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
+        @SuppressWarnings("unchecked")
+        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
+                .iterator();
         while (featIter.hasNext()) {
 
             int progress = 100 + featCnt * 100 / nFeat;
@@ -247,7 +249,7 @@ public class CartogramGrid {
                     "Computing the density for the cartogram grid...",
                     "Treating feature " + (featCnt + 1) + " of " + nFeat);
 
-            Feature feat = (Feature) featIter.next();
+            Feature feat = featIter.next();
 
             fillDensityValueWithFeature(feat, densityAttrName);
 
@@ -312,7 +314,7 @@ public class CartogramGrid {
      * @param layers
      *            a Vector containing the constrained layer names.
      */
-    public void prepareGridForConstrainedDeformation(Vector layers) {
+    public void prepareGridForConstrainedDeformation(Vector<Layer> layers) {
 
         if (layers == null) {
             return;
@@ -323,13 +325,15 @@ public class CartogramGrid {
         // The cell values of 0 are for deformation cells, and -1 for
         // empty cells.
 
-        Iterator layerIterator = layers.iterator();
+        Iterator<Layer> layerIterator = layers.iterator();
         while (layerIterator.hasNext()) {
-            Layer lyr = (Layer) layerIterator.next();
+            Layer lyr = layerIterator.next();
 
-            Iterator featIter = lyr.getFeatureCollectionWrapper().iterator();
+            @SuppressWarnings("unchecked")
+            Iterator<Feature> featIter = lyr.getFeatureCollectionWrapper()
+                    .iterator();
             while (featIter.hasNext()) {
-                Feature feat = (Feature) featIter.next();
+                Feature feat = featIter.next();
                 prepareGridForConstrainedDeformationWithFeature(feat);
             }
 
@@ -1302,7 +1306,7 @@ public class CartogramGrid {
      */
     public Coordinate[] projectCoordinates(Coordinate[] coords) {
         int ncoords = coords.length;
-        Vector projCoords = new Vector();
+        Vector<Coordinate> projCoords = new Vector<Coordinate>();
 
         // Project each line segment in the coordinate sequence.
         int i, j, nProjCoords = 0;
@@ -1333,7 +1337,7 @@ public class CartogramGrid {
         nProjCoords = projCoords.size();
         cs = new Coordinate[nProjCoords];
         for (i = 0; i < nProjCoords; i++) {
-            cs[i] = (Coordinate) projCoords.get(i);
+            cs[i] = projCoords.get(i);
         }
 
         return cs;

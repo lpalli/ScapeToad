@@ -57,11 +57,12 @@ public class ActionLayerRemove extends AbstractAction {
         }
 
         // Remove all empty categories (but we keep at least one).
-        List cats = AppContext.layerManager.getCategories();
+        @SuppressWarnings("unchecked")
+        List<Category> cats = AppContext.layerManager.getCategories();
         if (cats.size() > 1) {
-            Iterator catIter = cats.iterator();
+            Iterator<Category> catIter = cats.iterator();
             while (catIter.hasNext()) {
-                Category cat = (Category) catIter.next();
+                Category cat = catIter.next();
                 AppContext.layerManager.removeIfEmpty(cat);
             }
         }
@@ -69,7 +70,7 @@ public class ActionLayerRemove extends AbstractAction {
         // If there is only one empty category left, rename it to
         // "Original layers".
         if (cats.size() == 1) {
-            Category cat = (Category) cats.get(0);
+            Category cat = cats.get(0);
             if (cat.isEmpty()) {
                 cat.setName("Original layers");
             }

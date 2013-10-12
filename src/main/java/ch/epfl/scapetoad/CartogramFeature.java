@@ -295,7 +295,7 @@ public class CartogramFeature {
 
         // The vector where we will temporarily store the regularized
         // coordinates.
-        Vector newCoords = new Vector();
+        Vector<Coordinate> newCoords = new Vector<Coordinate>();
         newCoords.add(coords[0]);
 
         // Compute for each line segment the length. If the length is
@@ -344,7 +344,7 @@ public class CartogramFeature {
         ncoords = newCoords.size();
         Coordinate[] newCoordsArray = new Coordinate[ncoords];
         for (int coordcnt = 0; coordcnt < ncoords; coordcnt++) {
-            newCoordsArray[coordcnt] = (Coordinate) newCoords.get(coordcnt);
+            newCoordsArray[coordcnt] = newCoords.get(coordcnt);
         }
 
         return newCoordsArray;

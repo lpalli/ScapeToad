@@ -328,9 +328,10 @@ public class IOManager {
 
                 // Output every Feature.
                 FeatureCollection fc = layer.getFeatureCollectionWrapper();
-                Iterator featIter = fc.iterator();
+                @SuppressWarnings("unchecked")
+                Iterator<Feature> featIter = fc.iterator();
                 while (featIter.hasNext()) {
-                    Feature feat = (Feature) featIter.next();
+                    Feature feat = featIter.next();
 
                     // If it is a point, we output a small rectangle.
                     // Otherwise we output a path.
@@ -413,9 +414,10 @@ public class IOManager {
 
                     // Output every Feature label.
                     FeatureCollection fc = layer.getFeatureCollectionWrapper();
-                    Iterator featIter = fc.iterator();
+                    @SuppressWarnings("unchecked")
+                    Iterator<Feature> featIter = fc.iterator();
                     while (featIter.hasNext()) {
-                        Feature feat = (Feature) featIter.next();
+                        Feature feat = featIter.next();
                         Geometry geom = feat.getGeometry();
                         Point center = geom.getCentroid();
 

@@ -232,7 +232,7 @@ class LayerListPanel extends JPanel {
 
         AppContext.layerListPanel = new TreeLayerNamePanel(
                 AppContext.layerViewPanel, layerTreeModel, renderingManager,
-                new TreeMap());
+                new TreeMap<Object, Object>());
 
         // layerList.setBounds(20, 20, 160, 450);
         // layerList.setLayout(new BoxLayer(contentFrame, BoxLayout.Y_AXIS));
@@ -631,7 +631,7 @@ class ExportSvgFileDialog extends JDialog {
     JButton mCancelButton;
     JPanel mLayerListPanel;
     JScrollPane mLayerListScrollPane;
-    Vector mCheckBoxList;
+    Vector<JCheckBox> mCheckBoxList;
     JLabel mNoLayerLabel;
 
     /**
@@ -655,7 +655,7 @@ class ExportSvgFileDialog extends JDialog {
         mLayerListPanel = new JPanel(new GridLayout(0, 1));
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector();
+        mCheckBoxList = new Vector<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
@@ -749,10 +749,10 @@ class ExportSvgFileDialog extends JDialog {
         mCancelButton.setEnabled(false);
 
         if (mCheckBoxList.size() > 0) {
-            Vector layers = new Vector();
-            Iterator iter = mCheckBoxList.iterator();
+            Vector<Layer> layers = new Vector<Layer>();
+            Iterator<JCheckBox> iter = mCheckBoxList.iterator();
             while (iter.hasNext()) {
-                JCheckBox checkBox = (JCheckBox) iter.next();
+                JCheckBox checkBox = iter.next();
                 if (checkBox.isSelected()) {
                     String layerName = checkBox.getText();
                     Layer lyr = AppContext.layerManager.getLayer(layerName);
@@ -768,7 +768,7 @@ class ExportSvgFileDialog extends JDialog {
             int nlyrs = layers.size();
             Layer[] lyrs = new Layer[nlyrs];
             for (int lyrcnt = 0; lyrcnt < nlyrs; lyrcnt++) {
-                lyrs[lyrcnt] = (Layer) layers.get(lyrcnt);
+                lyrs[lyrcnt] = layers.get(lyrcnt);
             }
             IOManager.saveSvg(lyrs);
         }
