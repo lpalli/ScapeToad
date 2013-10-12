@@ -35,7 +35,7 @@ public abstract class SwingWorker {
         }
     }
 
-    private ThreadVar threadVar;
+    ThreadVar threadVar;
 
     /**
      * Get the value produced by the worker thread, or null if it hasn't been
@@ -48,7 +48,7 @@ public abstract class SwingWorker {
     /**
      * Set the value produced by worker thread
      */
-    private synchronized void setValue(Object x) {
+    synchronized void setValue(Object x) {
         value = x;
     }
 
