@@ -17,40 +17,32 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 
 import com.Ostermiller.util.Browser;
 
-
-
 /**
  * This class is an action performed on a quit event.
+ * 
  * @author christian@swisscarto.ch
  */
-public class ActionShowHelp extends AbstractAction
-{
-	
-	
-	/**
-	 * Opens the browser and points it to the ScapeToad help web site.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		try
-		{
-			Browser.init();
-			Browser.displayURL("http://scapetoad.choros.ch/help/");
-		}
-		catch (Exception exc)
-		{
-		}
-	}
-	
+public class ActionShowHelp extends AbstractAction {
+
+    /**
+     * Opens the browser and points it to the ScapeToad help web site.
+     */
+    public void actionPerformed(ActionEvent e) {
+        try {
+            Browser.init();
+            Browser.displayURL("http://scapetoad.choros.ch/help/");
+        } catch (Exception exc) {
+        }
+    }
+
 }

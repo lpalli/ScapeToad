@@ -17,108 +17,80 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
+ */
 
 package ch.epfl.scapetoad;
-
-
-import java.util.Vector;
 
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
 import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
 
-
-
 /**
  * This class contains some application wide attributes.
+ * 
  * @author christian@swisscarto.ch
  * @version v1.0.0, 2007-11-28
  */
-public class AppContext
-{
+public class AppContext {
 
-	/**
-	 * Setting the debug flag enables the output of console messages
-	 * for debugging purposes.
-	 */
-	public static boolean DEBUG = false;
-	
-	
-	/**
-	 * The short program name.
-	 */
-	public static String shortProgramName = 
-		"ScapeToad";
-	
-	/**
-	 * The program name including the version number.
-	 */
-	public static String longProgramName = 
-		"ScapeToad version 1.0.0";
-	
-	/**
-	 * The copyright notice.
-	 */
-	public static String copyrightNotice = 
-		"Copyright 2008 91NORD. All rights reserved.";
-	
-	
-	
-	/**
-	 * The application's main window.
-	 */
-	public static MainWindow mainWindow;
+    /**
+     * Setting the debug flag enables the output of console messages for
+     * debugging purposes.
+     */
+    public static boolean DEBUG = false;
 
+    /**
+     * The short program name.
+     */
+    public static String shortProgramName = "ScapeToad";
 
-	
-	/**
-	 * The layer manager from the JUMP project.
-	 */
-	public static LayerManager layerManager = null;
-	
-	
-	/**
-	 * The JUMP workbench.
-	 */
-	public static JUMPWorkbench workBench = null;
+    /**
+     * The program name including the version number.
+     */
+    public static String longProgramName = "ScapeToad version 1.0.0";
 
+    /**
+     * The copyright notice.
+     */
+    public static String copyrightNotice = "Copyright 2008 91NORD. All rights reserved.";
 
+    /**
+     * The application's main window.
+     */
+    public static MainWindow mainWindow;
 
-	/**
-	 * The cartogram wizard.
-	 */
-	public static CartogramWizard cartogramWizard = null;
+    /**
+     * The layer manager from the JUMP project.
+     */
+    public static LayerManager layerManager = null;
 
-	
-	/**
-	 * The LayerViewPanel (pane displaying the maps) from the JUMP project.
-	 */
-	public static LayerViewPanel layerViewPanel = null;
-	
-	/**
-	 * This panel is needed by the LayerViewPanel for displaying the layers
-	 * as a tree with the category names.
-	 */
-	public static TreeLayerNamePanel layerListPanel = null;
-	
-	/**
-	 * The map panels displays the maps.
-	 */
-	public static MapPanel mapPanel = null;
-	
-	
-	
-	public static SizeErrorLegend sizeErrorLegend = new SizeErrorLegend();
+    /**
+     * The JUMP workbench.
+     */
+    public static JUMPWorkbench workBench = null;
 
+    /**
+     * The cartogram wizard.
+     */
+    public static CartogramWizard cartogramWizard = null;
+
+    /**
+     * The LayerViewPanel (pane displaying the maps) from the JUMP project.
+     */
+    public static LayerViewPanel layerViewPanel = null;
+
+    /**
+     * This panel is needed by the LayerViewPanel for displaying the layers as a
+     * tree with the category names.
+     */
+    public static TreeLayerNamePanel layerListPanel = null;
+
+    /**
+     * The map panels displays the maps.
+     */
+    public static MapPanel mapPanel = null;
+
+    public static SizeErrorLegend sizeErrorLegend = new SizeErrorLegend();
 
 }
-
-
-
-
-
-
-

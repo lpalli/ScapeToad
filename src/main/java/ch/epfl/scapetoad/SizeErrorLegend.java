@@ -17,103 +17,74 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import java.net.URL;
+
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import com.Ostermiller.util.Browser;
 
-
-
-
 /**
  * The size error legend window.
+ * 
  * @author christian@swisscarto.ch
  * @version v1.0.0, 2008-04-30
  */
-public class SizeErrorLegend extends JFrame
-{
-	
-	
-	public SizeErrorLegend ()
-	{
-	
-		this.setTitle("Size Error");
-		this.setBounds(10, 30, 120, 220);
-		this.setVisible(false);
-		
-		
-		// Loading the size error legend image from the resources.
-		ClassLoader cldr = this.getClass().getClassLoader();
-		URL iconURL = cldr.getResource("SizeErrorLegend.png");
-		ImageIcon sizeErrorImage = new ImageIcon(iconURL);
+public class SizeErrorLegend extends JFrame {
 
+    public SizeErrorLegend() {
 
-		// Create a new label containing the icon.
-		JLabel iconLabel = new JLabel(sizeErrorImage);
-		
-		// Setting the label parameters.
-		iconLabel.setLayout(null);
-		iconLabel.setSize(98, 198);
-		iconLabel.setLocation(1, 1);
-		iconLabel.addMouseListener(new IconMouseListener());
-		
-		// Add the icon label to this panel.
-		this.add(iconLabel);
-	}
-	
+        setTitle("Size Error");
+        this.setBounds(10, 30, 120, 220);
+        setVisible(false);
+
+        // Loading the size error legend image from the resources.
+        ClassLoader cldr = this.getClass().getClassLoader();
+        URL iconURL = cldr.getResource("SizeErrorLegend.png");
+        ImageIcon sizeErrorImage = new ImageIcon(iconURL);
+
+        // Create a new label containing the icon.
+        JLabel iconLabel = new JLabel(sizeErrorImage);
+
+        // Setting the label parameters.
+        iconLabel.setLayout(null);
+        iconLabel.setSize(98, 198);
+        iconLabel.setLocation(1, 1);
+        iconLabel.addMouseListener(new IconMouseListener());
+
+        // Add the icon label to this panel.
+        this.add(iconLabel);
+    }
+
 }
 
+class IconMouseListener implements MouseListener {
 
+    public void mouseClicked(MouseEvent e) {
+        try {
+            Browser.init();
+            Browser.displayURL("http://scapetoad.choros.ch/help/d-computation-report.php#cartogram-error");
+        } catch (Exception exc) {
+        }
+    }
 
-class IconMouseListener implements MouseListener
-{
+    public void mouseEntered(MouseEvent e) {
+    }
 
-	public void mouseClicked (MouseEvent e)
-	{
-		try
-		{
-			Browser.init();
-			Browser.displayURL("http://scapetoad.choros.ch/help/d-computation-report.php#cartogram-error");
-		}
-		catch (Exception exc)
-		{
-		}
-	}
-	
-	
-	public void mouseEntered (MouseEvent e)
-	{
-	}
-	
-	
-	public void mouseExited (MouseEvent e)
-	{
-	}
-	
-	
-	public void mousePressed (MouseEvent e)
-	{
-	}
-	
-	
-	public void mouseReleased (MouseEvent e)
-	{
-	}
-	
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
 }
-
-
-
-
-

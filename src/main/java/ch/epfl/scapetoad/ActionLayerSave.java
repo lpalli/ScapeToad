@@ -17,50 +17,36 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
-
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import com.vividsolutions.jump.workbench.model.Layer;
-import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
-import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
 
+import javax.swing.AbstractAction;
 
 /**
  * This class is an action performed on a save layer event.
+ * 
  * @author christian@swisscarto.ch
  */
-public class ActionLayerSave extends AbstractAction
-{
+public class ActionLayerSave extends AbstractAction {
 
+    /**
+     * This method is automatically called after a save layer event.
+     */
+    public void actionPerformed(ActionEvent e) {
+        doAction();
 
-	/**
-	 * This method is automatically called after a save layer event.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		this.doAction();
-		
-	}	// ActionLayerSave.actionPerformed
-	
-	
-	
-	/**
-	 * Writes the currently selected layer into a Shape file. A Save file
-	 * dialog is presented to the user in order to choose the place on the
-	 * disc.
-	 */
-	public void doAction ()
-	{
-		AppContext.mainWindow.exportShapeFile();
-		
-	}	// ActionLayerSave.doAction
-	
-	
+    } // ActionLayerSave.actionPerformed
 
-}	// ActionLayerSave
+    /**
+     * Writes the currently selected layer into a Shape file. A Save file dialog
+     * is presented to the user in order to choose the place on the disc.
+     */
+    public void doAction() {
+        AppContext.mainWindow.exportShapeFile();
+
+    } // ActionLayerSave.doAction
+
+} // ActionLayerSave

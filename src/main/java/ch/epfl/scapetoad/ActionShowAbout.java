@@ -19,34 +19,25 @@
  
  */
 
-
-
 package ch.epfl.scapetoad;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
-
-
 
 /**
  * This class is an action performed on a show about box event.
+ * 
  * @author Christian Kaiser <christian@361degres.ch>
  */
-public class ActionShowAbout extends AbstractAction
-	{
-		
-		
+public class ActionShowAbout extends AbstractAction {
 
-		public void actionPerformed(ActionEvent e)
-		{
-			try
-			{
-				AboutBox abox = new AboutBox();
-				abox.setVisible(true);
-			}
-			catch (Exception exc)
-			{
-			}
-		}
-		
-	}
+    public void actionPerformed(ActionEvent e) {
+        try {
+            AboutBox abox = new AboutBox();
+            abox.setVisible(true);
+        } catch (Exception exc) {
+        }
+    }
+
+}

@@ -17,40 +17,34 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
-
-
-
 
 /**
  * This class is an action performed on a quit event.
+ * 
  * @author christian@swisscarto.ch
  */
-public class ActionQuit extends AbstractAction
-{
-	
-	
-	/**
-	 * Terminates ScapeToad.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		
-		if (AppContext.cartogramWizard != null)
-			AppContext.cartogramWizard.dispose();
-		
-		AppContext.mainWindow.dispose();
-		
-		System.exit(0);
-		
-	}
-	
+public class ActionQuit extends AbstractAction {
+
+    /**
+     * Terminates ScapeToad.
+     */
+    public void actionPerformed(ActionEvent e) {
+
+        if (AppContext.cartogramWizard != null) {
+            AppContext.cartogramWizard.dispose();
+        }
+
+        AppContext.mainWindow.dispose();
+
+        System.exit(0);
+
+    }
 
 }

@@ -17,54 +17,36 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
-
 import java.awt.event.ActionEvent;
-
-import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import com.vividsolutions.jump.workbench.model.Layer;
-import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
-import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
-
-
 /**
  * This class is an action performed on a Export as SVG event.
+ * 
  * @author christian@swisscarto.ch
  */
-public class ActionExportAsSvg extends AbstractAction
-{
+public class ActionExportAsSvg extends AbstractAction {
 
+    /**
+     * This method is automatically called after a export as SVG event.
+     */
+    public void actionPerformed(ActionEvent e) {
+        doAction();
 
-	/**
-	 * This method is automatically called after a export as SVG event.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		this.doAction();
-		
-	}	// ActionExportAsSvg.actionPerformed
-	
-	
-	
-	/**
-	 * Writes the currently selected layers into a SVG file. A Save file
-	 * dialog is presented to the user in order to choose the place on the
-	 * disc.
-	 */
-	public void doAction ()
-	{
-		AppContext.mainWindow.exportSvgFile();
-		
-	}	// ActionExportAsSvg.doAction
-	
-	
+    } // ActionExportAsSvg.actionPerformed
 
-}	// ActionExportAsSvg
+    /**
+     * Writes the currently selected layers into a SVG file. A Save file dialog
+     * is presented to the user in order to choose the place on the disc.
+     */
+    public void doAction() {
+        AppContext.mainWindow.exportSvgFile();
+
+    } // ActionExportAsSvg.doAction
+
+} // ActionExportAsSvg

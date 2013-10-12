@@ -17,45 +17,38 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 	02110-1301, USA.
 	
-*/
-
-
+ */
 
 package ch.epfl.scapetoad;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 
 import com.vividsolutions.jump.workbench.model.Layer;
 
-
-
-
 /**
  * This class is an action performed on an add layer event.
+ * 
  * @author christian@swisscarto.ch
  */
-public class ActionLayerAdd extends AbstractAction
-{
-	
-	/**
-	 * Shows an open dialog and adds the selected Shape file to
-	 * the layer manager.
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-		Layer lyr = IOManager.openShapefile();
-		if (lyr == null)
-		{
-			AppContext.mainWindow.setStatusMessage(
-				"[Add layer...] Action has been cancelled.");
-				
-			return;
-		}
-		
-		AppContext.mainWindow.update();
-	
-	}	// ActionLayerAdd.actionPerformed
-	
+public class ActionLayerAdd extends AbstractAction {
+
+    /**
+     * Shows an open dialog and adds the selected Shape file to the layer
+     * manager.
+     */
+    public void actionPerformed(ActionEvent e) {
+        Layer lyr = IOManager.openShapefile();
+        if (lyr == null) {
+            AppContext.mainWindow
+                    .setStatusMessage("[Add layer...] Action has been cancelled.");
+
+            return;
+        }
+
+        AppContext.mainWindow.update();
+
+    } // ActionLayerAdd.actionPerformed
 
 }
