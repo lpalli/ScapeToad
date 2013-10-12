@@ -184,13 +184,13 @@ public class CartogramLayer {
         Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
         if (featIter.hasNext() == false) {
             return 0.0;
-        } else {
-            Feature feat = (Feature) featIter.next();
-            minValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
         }
 
+        Feature feat = (Feature) featIter.next();
+        minValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
+
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            feat = (Feature) featIter.next();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
                     attrName);
 
@@ -213,13 +213,13 @@ public class CartogramLayer {
         Iterator featIter = layer.getFeatureCollectionWrapper().iterator();
         if (featIter.hasNext() == false) {
             return 0.0;
-        } else {
-            Feature feat = (Feature) featIter.next();
-            maxValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
         }
 
+        Feature feat = (Feature) featIter.next();
+        maxValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
+
         while (featIter.hasNext()) {
-            Feature feat = (Feature) featIter.next();
+            feat = (Feature) featIter.next();
             double attrValue = CartogramFeature.getAttributeAsDouble(feat,
                     attrName);
 

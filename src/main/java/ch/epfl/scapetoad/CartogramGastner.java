@@ -409,33 +409,31 @@ public class CartogramGastner {
 
             if (!stepsize_ok) {
                 continue;
-            } else {
-                t += h;
-                maxchange = 0.0;
-
-                for (j = 0; j <= lx; j++) {
-                    for (k = 0; k <= ly; k++) {
-                        if ((x[j][k] - xappr[j][k]) * (x[j][k] - xappr[j][k])
-                                + (y[j][k] - yappr[j][k])
-                                * (y[j][k] - yappr[j][k]) > maxchange) {
-                            maxchange = (x[j][k] - xappr[j][k])
-                                    * (x[j][k] - xappr[j][k])
-                                    + (y[j][k] - yappr[j][k])
-                                    * (y[j][k] - yappr[j][k]);
-                        }
-
-                        x[j][k] = xappr[j][k];
-                        y[j][k] = yappr[j][k];
-                        vx[j][k] = interpolateBilinear(gridvx, xappr[j][k],
-                                yappr[j][k]);
-                        vy[j][k] = interpolateBilinear(gridvy, xappr[j][k],
-                                yappr[j][k]);
-
-                    } // for (k=0; k<=ly; k++)
-
-                } // for (j = 0; j <= this.lx; j++)
-
             }
+
+            t += h;
+            maxchange = 0.0;
+
+            for (j = 0; j <= lx; j++) {
+                for (k = 0; k <= ly; k++) {
+                    if ((x[j][k] - xappr[j][k]) * (x[j][k] - xappr[j][k])
+                            + (y[j][k] - yappr[j][k]) * (y[j][k] - yappr[j][k]) > maxchange) {
+                        maxchange = (x[j][k] - xappr[j][k])
+                                * (x[j][k] - xappr[j][k])
+                                + (y[j][k] - yappr[j][k])
+                                * (y[j][k] - yappr[j][k]);
+                    }
+
+                    x[j][k] = xappr[j][k];
+                    y[j][k] = yappr[j][k];
+                    vx[j][k] = interpolateBilinear(gridvx, xappr[j][k],
+                            yappr[j][k]);
+                    vy[j][k] = interpolateBilinear(gridvy, xappr[j][k],
+                            yappr[j][k]);
+
+                } // for (k=0; k<=ly; k++)
+
+            } // for (j = 0; j <= this.lx; j++)
 
             h = 1.2 * h;
 
@@ -760,9 +758,8 @@ public class CartogramGastner {
         } catch (MathException mexc) {
             if (value < 0) {
                 return -1.0;
-            } else {
-                return 1.0;
             }
+            return 1.0;
         }
 
         return erf;

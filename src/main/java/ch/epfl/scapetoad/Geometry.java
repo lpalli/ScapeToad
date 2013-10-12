@@ -127,16 +127,15 @@ public class Geometry {
                 e[0] = ex;
                 e[1] = ey;
                 return e;
-            } else {
-                System.out
-                        .println("[intersectionOfSegments] The intersection point does not lie on one or both segments.");
-                return null;
             }
-        } else {
+
             System.out
-                    .println("[intersectionOfSegments] The lines are parallel; no intersection.");
+                    .println("[intersectionOfSegments] The intersection point does not lie on one or both segments.");
             return null;
         }
+        System.out
+                .println("[intersectionOfSegments] The lines are parallel; no intersection.");
+        return null;
 
     } // Geometry.intersectionOfSegments
 

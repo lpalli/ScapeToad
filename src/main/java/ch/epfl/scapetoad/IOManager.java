@@ -565,11 +565,7 @@ class ShapeFilenameFilter implements FilenameFilter {
     @Override
     public boolean accept(File dir, String name) {
 
-        if (name.endsWith(".shp") || name.endsWith(".SHP")) {
-            return true;
-        } else {
-            return false;
-        }
+        return name.endsWith(".shp") || name.endsWith(".SHP");
 
     }
 
@@ -586,11 +582,7 @@ class SVGFilenameFilter implements FilenameFilter {
     @Override
     public boolean accept(File dir, String name) {
 
-        if (name.endsWith(".svg") || name.endsWith(".SVG")) {
-            return true;
-        } else {
-            return false;
-        }
+        return name.endsWith(".svg") || name.endsWith(".SVG");
 
     }
 

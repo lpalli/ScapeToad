@@ -88,9 +88,8 @@ public abstract class SwingWorker {
 
         if (t.getState() == Thread.State.NEW) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**
