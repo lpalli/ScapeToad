@@ -43,6 +43,7 @@ public class ActionShowHelp extends AbstractAction {
             Browser.init();
             Browser.displayURL("http://scapetoad.choros.ch/help/");
         } catch (Exception exc) {
+            // Nothing to do
         }
     }
 

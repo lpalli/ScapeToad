@@ -525,6 +525,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         try {
             AppContext.layerViewPanel.getViewport().zoomToFullExtent();
         } catch (Exception exc) {
+            // Nothing to do
         }
 
         // *** SHOW THE FINISHED PANEL

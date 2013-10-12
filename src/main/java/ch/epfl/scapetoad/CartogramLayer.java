@@ -440,7 +440,7 @@ public class CartogramLayer {
      */
     public static void snapLayer(Layer lyr, double snappingDistance,
             Envelope snapRegion) {
-
+        // Nothing to do
     } // CartogramLayer.snapLayer
 
     /**

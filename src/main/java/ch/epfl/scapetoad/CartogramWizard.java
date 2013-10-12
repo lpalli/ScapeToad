@@ -2577,6 +2577,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
             AppContext.cartogramWizard.setDeformationGridSize(gridSizeInt
                     .intValue());
         } catch (NumberFormatException e1) {
+            // Nothing to do
         }
 
         try {
@@ -2587,6 +2588,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
             AppContext.cartogramWizard.setCartogramGridSizeInY(gridSizeInt
                     .intValue());
         } catch (NumberFormatException e2) {
+            // Nothing to do
         }
 
         try {
@@ -2594,6 +2596,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
             Double biasDbl = new Double(biasString);
             AppContext.cartogramWizard.bias = biasDbl.doubleValue();
         } catch (NumberFormatException e3) {
+            // Nothing to do
         }
 
     } // CartogramWizardOptionsWindow.saveChanges
@@ -2729,6 +2732,7 @@ class CartogramWizardWindowListener implements WindowListener {
 
     @Override
     public void windowActivated(WindowEvent e) {
+        // Nothing to do
     }
 
     /**
@@ -2736,6 +2740,7 @@ class CartogramWizardWindowListener implements WindowListener {
      */
     @Override
     public void windowClosed(WindowEvent e) {
+        // Nothing to do
     } // CartogramWizardWindowListener.windowClosed
 
     /**
@@ -2756,18 +2761,22 @@ class CartogramWizardWindowListener implements WindowListener {
 
     @Override
     public void windowDeactivated(WindowEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void windowDeiconified(WindowEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void windowIconified(WindowEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void windowOpened(WindowEvent e) {
+        // Nothing to do
     }
 
 } // CartogramWizardWindowListener
@@ -3272,6 +3281,7 @@ class CartogramWizardSaveReportAction extends AbstractAction {
                     .getComputationReport());
             out.close();
         } catch (IOException exc) {
+            // Nothing to do
         }
 
     } // CartogramWizardSaveReportAction.actionPerformed

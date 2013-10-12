@@ -38,6 +38,7 @@ public class ActionShowAbout extends AbstractAction {
             AboutBox abox = new AboutBox();
             abox.setVisible(true);
         } catch (Exception exc) {
+            // Nothing to do
         }
     }
 

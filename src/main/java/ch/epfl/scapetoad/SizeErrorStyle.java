@@ -63,6 +63,7 @@ public class SizeErrorStyle implements Style {
 
     @Override
     public void initialize(Layer layer) {
+        // Nothing to do
     }
 
     @Override

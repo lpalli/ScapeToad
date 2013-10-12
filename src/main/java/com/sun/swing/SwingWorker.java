@@ -63,6 +63,7 @@ public abstract class SwingWorker {
      * the <code>construct</code> method has returned.
      */
     public void finished() {
+        // Nothing to do
     }
 
     /**

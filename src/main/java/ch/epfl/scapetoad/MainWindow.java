@@ -99,6 +99,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext,
      */
     @Override
     public void setStatusMessage(String message) {
+        // Nothing to do
     }
 
     /**
@@ -109,6 +110,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext,
      */
     @Override
     public void warnUser(String warning) {
+        // Nothing to do
     }
 
     /**

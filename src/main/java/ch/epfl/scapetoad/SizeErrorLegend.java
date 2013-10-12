@@ -73,23 +73,28 @@ class IconMouseListener implements MouseListener {
             Browser.init();
             Browser.displayURL("http://scapetoad.choros.ch/help/d-computation-report.php#cartogram-error");
         } catch (Exception exc) {
+            // Nothing to do
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        // Nothing to do
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        // Nothing to do
     }
 
 }
