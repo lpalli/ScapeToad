@@ -1522,7 +1522,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     }
 
-    public String getMissingValue() {
+    public static String getMissingValue() {
         // return mMissingValueTextField.getText();
         return "";
     }
@@ -2290,7 +2290,8 @@ class CartogramWizardComputeAction extends AbstractAction {
         boolean isDensityValue = mCartogramWizard.getPanelTwo()
                 .attributeIsDensityValue();
 
-        mCartogramWizard.setMissingValue(mCartogramWizard.getPanelTwo()
+        mCartogramWizard.getPanelTwo();
+        mCartogramWizard.setMissingValue(CartogramWizardPanelTwo
                 .getMissingValue());
 
         // Create a new cartogram instance and set the parameters.

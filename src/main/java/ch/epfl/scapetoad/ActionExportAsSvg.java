@@ -50,8 +50,8 @@ public class ActionExportAsSvg extends AbstractAction {
      * Writes the currently selected layers into a SVG file. A Save file dialog
      * is presented to the user in order to choose the place on the disc.
      */
-    public void doAction() {
-        AppContext.mainWindow.exportSvgFile();
+    public static void doAction() {
+        MainWindow.exportSvgFile();
 
     } // ActionExportAsSvg.doAction
 

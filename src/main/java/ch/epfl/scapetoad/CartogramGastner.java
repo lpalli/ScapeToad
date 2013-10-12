@@ -279,7 +279,7 @@ public class CartogramGastner {
      *            the grid size in y
      * @return the cartogram extent as Envelope
      */
-    private Envelope cartogramExtent(Envelope env, int gridX, int gridY) {
+    private static Envelope cartogramExtent(Envelope env, int gridX, int gridY) {
 
         double margin = 1.5;
         double minx, maxx, miny, maxy;

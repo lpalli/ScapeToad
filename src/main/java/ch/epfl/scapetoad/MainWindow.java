@@ -142,7 +142,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
     /**
      * Displays a dialog for exporting a Shape file.
      */
-    public void exportShapeFile() {
+    public static void exportShapeFile() {
         ExportShapeFileDialog dialog = new ExportShapeFileDialog();
         dialog.setVisible(true);
 
@@ -151,7 +151,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
     /**
      * Displays a dialog for export the layers as a SVG file.
      */
-    public void exportSvgFile() {
+    public static void exportSvgFile() {
         ExportSvgFileDialog dialog = new ExportSvgFileDialog();
         dialog.setVisible(true);
 

@@ -50,8 +50,8 @@ public class ActionLayerSave extends AbstractAction {
      * Writes the currently selected layer into a Shape file. A Save file dialog
      * is presented to the user in order to choose the place on the disc.
      */
-    public void doAction() {
-        AppContext.mainWindow.exportShapeFile();
+    public static void doAction() {
+        MainWindow.exportShapeFile();
 
     } // ActionLayerSave.doAction
 
