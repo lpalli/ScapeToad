@@ -647,7 +647,9 @@ public class CartogramGrid {
      * move or not depends on the neighbourhood structure. The topology must be
      * respected in all cases.
      */
-    private void tryToMoveNode(int i, int j, double x, double y) {
+    private void tryToMoveNode(int i, int j, double aX, double aY) {
+        double x = aX;
+        double y = aY;
 
         // Create a polygon with the neighboring nodes.
         // If the new location is inside this polygon, we can potentially

@@ -289,13 +289,13 @@ public class CartogramLayer {
     public static double percentileForAttribute(Layer layer, String attrName,
             int n) {
 
+        double dblN = n;
         if (n < 0) {
-            n = 0;
+            dblN = 0;
         }
         if (n > 100) {
-            n = 100;
+            dblN = 100;
         }
-        double dblN = n;
 
         // Create a new TreeSet and store the attribute values inside.
         TreeSet set = new TreeSet();
@@ -313,7 +313,7 @@ public class CartogramLayer {
         Vector attrVector = new Vector(set);
 
         // Get the indexes of the bounding features.
-        double dblIndex = (double) n / (double) 100 * nfeat;
+        double dblIndex = dblN / 100 * nfeat;
         int lowerIndex = Math.round((float) Math.floor(dblIndex));
         int upperIndex = Math.round((float) Math.ceil(dblIndex));
 

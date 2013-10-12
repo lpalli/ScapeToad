@@ -1950,11 +1950,12 @@ class CartogramWizardRunningPanel extends JPanel {
      * Updates the progress bar using the nloops parameter. The parameter must
      * be between 0 and 1000.
      * 
-     * @param nloops
+     * @param aLoops
      *            the progress status (0-1000).
      */
-    public void updateProgressBar(int nloops) {
+    public void updateProgressBar(int aLoops) {
 
+        int nloops = aLoops;
         if (nloops < 0) {
             nloops = 0;
         }

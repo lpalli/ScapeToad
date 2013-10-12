@@ -618,18 +618,18 @@ class OpenLayerErrorDialog extends JDialog {
         setLayout(null);
         setModal(true);
 
-        JLabel mNoShapeFileLabel = new JLabel("Not a Shape file.");
-        mNoShapeFileLabel.setSize(260, 14);
-        mNoShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
-        mNoShapeFileLabel.setLocation(20, 20);
-        this.add(mNoShapeFileLabel);
+        JLabel noShapeFileLabel = new JLabel("Not a Shape file.");
+        noShapeFileLabel.setSize(260, 14);
+        noShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
+        noShapeFileLabel.setLocation(20, 20);
+        this.add(noShapeFileLabel);
 
-        JLabel mSelectShapeFileLabel = new JLabel(
+        JLabel selectShapeFileLabel = new JLabel(
                 "Please select a file with the extension .shp.");
-        mSelectShapeFileLabel.setSize(260, 14);
-        mSelectShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
-        mSelectShapeFileLabel.setLocation(20, 40);
-        this.add(mSelectShapeFileLabel);
+        selectShapeFileLabel.setSize(260, 14);
+        selectShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
+        selectShapeFileLabel.setLocation(20, 40);
+        this.add(selectShapeFileLabel);
 
         // Ok button
 
