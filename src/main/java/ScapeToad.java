@@ -42,14 +42,6 @@ import ch.epfl.scapetoad.MainWindow;
  * For launching ScapeToad with the GUI, just type the following command: java
  * -Xmx1024M -jar ScapeToad.jar
  * 
- * The command line version can be launched by adding some more arguments after
- * ScapeToad.jar Syntax: ScapeToad.jar polygrid layer=/path/to/layer.shp
- * attribute=shapeAttribute densityGrid=/path/to/grass/grid.asc ScapeToad.jar
- * diffusion densityGrid=/path/to/grass/grid.asc
- * deformationGrid=/path/to/output/grid.asc bias=0.5 ScapeToad.jar project
- * deformationGrid=/path/to/grid.asc layers=
- * 'layer1_original','layer1_deformed','layer2_original','layer2_deformed'
- * 
  * @author christian@361degres.ch
  * @version v1.2.0, 2010-03-03
  */
@@ -88,10 +80,10 @@ public class ScapeToad {
     /**
      * The main method for the ScapeToad application.
      * 
-     * @param args
+     * @param aArgs
      *            the arguments
      */
-    public static void main(String args[]) {
+    public static void main(String aArgs[]) {
         // Initialize the logging system
         try {
             initLog();
@@ -101,69 +93,6 @@ public class ScapeToad {
 
         Log logger = LogFactory.getLog(ScapeToad.class);
         logger.debug("Starting...");
-
-        // If we have no command line arguments, launch the GUI.
-        if (args.length == 0) {
-            ScapeToad.launchGUI(args);
-            return;
-        }
-
-        /*
-         * // Process the command line arguments.
-         * 
-         * // Get the first command line argument. This will be the name of the
-         * tool to launch. String tool = args[0];
-         * 
-         * 
-         * // Get all the other command line arguments and store them in a hash
-         * table. Hashtable argsDic = new Hashtable(); for (int i = 1; i <
-         * args.length; i++) { String[] kv = args[i].split("=", 2);
-         * argsDic.put(kv[0], kv[1]); }
-         * 
-         * 
-         * 
-         * 
-         * if (tool.equals("polygrid")) {
-         * System.out.println("Creating grid from polygon layer"); String layer
-         * = (String)argsDic.get("layer"); String attr =
-         * (String)argsDic.get("attribute"); String densityGrid =
-         * (String)argsDic.get("densityGrid");
-         * 
-         * if (densityGrid == null || layer == null || attr == null) {
-         * System.out.println(
-         * "ERROR. Polygrid algorithm needs layer, attribute and densityGrid arguments. Aborting..."
-         * ); return; }
-         * 
-         * ScapeToad.polygrid(layer, attribute, densityGrid); } else if
-         * (tool.equals("diffusion")) {
-         * System.out.println("Running diffusion algorithm"); String densityGrid
-         * = (String)argsDic.get("densityGrid"); String outGrid =
-         * (String)argsDic.get("deformationGrid");
-         * 
-         * if (densityGrid == null || outGrid == null) { System.out.println(
-         * "ERROR. Diffusion algorithm needs densityGrid and deformationGrid arguments. Aborting..."
-         * ); return; }
-         * 
-         * String strBias = (String)argsDic.get("bias"); double bias = 0.0; if
-         * (strBias != null) { Double dblBias = new Double(strBias); bias =
-         * dblBias.doubleValue(); }
-         * 
-         * ScapeToad.diffusion(densityGrid, outGrid, bias); } else if
-         * (tool.equals("project")) { System.out.println("Projecting layers");
-         * String deformationGrid = (String)argsDic.get("deformationGrid");
-         * String layers = (String)argsDic.get("layers"); String[] layerList =
-         * layers.split("','");
-         * 
-         * ScapeToad.project(deformationGrid, layerList); }
-         */
-
-    }
-
-    /**
-     * @param args
-     *            the arguments
-     */
-    public static void launchGUI(String[] args) {
 
         // Set the Look & Feel properties.
         // This is specific for MacOS X environments.
@@ -178,9 +107,9 @@ public class ScapeToad {
         // An exception might be thrown when creating a new workbench.
         try {
             AppContext.workBench = new JUMPWorkbench(
-                    AppContext.shortProgramName, args, icon, window, tm);
+                    AppContext.shortProgramName, aArgs, icon, window, tm);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception creating JUMP Workbench", e);
             System.exit(-1);
             return;
         }
@@ -192,7 +121,5 @@ public class ScapeToad {
         // Create the main window and display it.
         AppContext.mainWindow = new MainWindow();
         AppContext.mainWindow.setVisible(true);
-
     }
-
 }

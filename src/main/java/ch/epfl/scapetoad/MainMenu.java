@@ -41,24 +41,26 @@ public class MainMenu extends JMenuBar {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
-     * 
+     * The remove layer menu item
      */
-    JMenuItem mMenuFile_RemoveLayer;
+    private JMenuItem iRemoveLayer;
+
     /**
-     * 
+     * The save layer menu item
      */
-    JMenuItem mMenuFile_SaveLayer;
+    private JMenuItem iSaveLayer;
+
     /**
-     * 
+     * The export as SVG menu item
      */
-    JMenuItem mMenuFile_ExportAsSvg;
+    private JMenuItem iExportAsSvg;
 
     /**
      * The default constructor for the main menu. Creates the main menu.
      */
     public MainMenu() {
-
         // Create the FILE menu.
         JMenu fileMenu = new JMenu("File");
 
@@ -70,32 +72,30 @@ public class MainMenu extends JMenuBar {
         fileMenu.add(menuFile_AddLayer);
 
         // File > Remove layer
-        mMenuFile_RemoveLayer = new JMenuItem("Remove layer");
-        mMenuFile_RemoveLayer.addActionListener(new ActionLayerRemove());
-        mMenuFile_RemoveLayer.setAccelerator(KeyStroke.getKeyStroke(
+        iRemoveLayer = new JMenuItem("Remove layer");
+        iRemoveLayer.addActionListener(new ActionLayerRemove());
+        iRemoveLayer.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_BACK_SPACE, Toolkit.getDefaultToolkit()
                         .getMenuShortcutKeyMask()));
-        fileMenu.add(mMenuFile_RemoveLayer);
+        fileMenu.add(iRemoveLayer);
 
-        // Seperator
+        // Separator
         JMenuItem sepMenu = new JMenuItem("-");
         fileMenu.add(sepMenu);
 
         // File > Save layer...
-        mMenuFile_SaveLayer = new JMenuItem("Export layer as Shape file...");
-        mMenuFile_SaveLayer.addActionListener(new ActionLayerSave());
-        mMenuFile_SaveLayer.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_S, Toolkit.getDefaultToolkit()
-                        .getMenuShortcutKeyMask()));
-        fileMenu.add(mMenuFile_SaveLayer);
+        iSaveLayer = new JMenuItem("Export layer as Shape file...");
+        iSaveLayer.addActionListener(new ActionLayerSave());
+        iSaveLayer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit
+                .getDefaultToolkit().getMenuShortcutKeyMask()));
+        fileMenu.add(iSaveLayer);
 
         // File > Export as SVG...
-        mMenuFile_ExportAsSvg = new JMenuItem("Export to SVG...");
-        mMenuFile_ExportAsSvg.addActionListener(new ActionExportAsSvg());
-        mMenuFile_ExportAsSvg.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_E, Toolkit.getDefaultToolkit()
-                        .getMenuShortcutKeyMask()));
-        fileMenu.add(mMenuFile_ExportAsSvg);
+        iExportAsSvg = new JMenuItem("Export to SVG...");
+        iExportAsSvg.addActionListener(new ActionExportAsSvg());
+        iExportAsSvg.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        fileMenu.add(iExportAsSvg);
 
         // Add a quit menu if we are not on a Mac.
         // (on a Mac, there is a default quit menu under the program name's
@@ -113,46 +113,37 @@ public class MainMenu extends JMenuBar {
             fileMenu.add(menuFile_Quit);
         }
 
-        this.add(fileMenu);
+        add(fileMenu);
 
-        // Add the help menu
-
-        // Create the HELP menu.
+        // Add the Help menu.
         JMenu helpMenu = new JMenu("Help");
-
         JMenuItem menuHelp_Help = new JMenuItem("ScapeToad Help");
         menuHelp_Help.addActionListener(new ActionShowHelp());
         menuHelp_Help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         helpMenu.add(menuHelp_Help);
-
         JMenuItem sepMenu3 = new JMenuItem("-");
         helpMenu.add(sepMenu3);
 
         JMenuItem menuHelp_About = new JMenuItem("About...");
         menuHelp_About.addActionListener(new ActionShowAbout());
+
         helpMenu.add(menuHelp_About);
-
-        this.add(helpMenu);
-
-    } // MainMenu.<init>
+        add(helpMenu);
+    }
 
     /**
      * Enables/disables the menu items.
      */
     public void enableMenus() {
-
         if (AppContext.layerManager.getLayers().size() > 0) {
-            mMenuFile_RemoveLayer.setEnabled(true);
-            mMenuFile_SaveLayer.setEnabled(true);
-            mMenuFile_ExportAsSvg.setEnabled(true);
+            iRemoveLayer.setEnabled(true);
+            iSaveLayer.setEnabled(true);
+            iExportAsSvg.setEnabled(true);
         } else {
-            mMenuFile_RemoveLayer.setEnabled(false);
-            mMenuFile_SaveLayer.setEnabled(false);
-            mMenuFile_ExportAsSvg.setEnabled(false);
+            iRemoveLayer.setEnabled(false);
+            iSaveLayer.setEnabled(false);
+            iExportAsSvg.setEnabled(false);
         }
-
-    } // MainMenu.enableMenus
-
-} // MainMenu
-
+    }
+}

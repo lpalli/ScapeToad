@@ -21,6 +21,9 @@
 
 package ch.epfl.scapetoad;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains some static methods for geometrical computations.
  * 
@@ -30,131 +33,115 @@ package ch.epfl.scapetoad;
 public class Geometry {
 
     /**
-     * Computes the area of the triangle defined by the points A(ax, ay), B(bx,
-     * by) and C(cx, cy).
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(Geometry.class);
+
+    /**
+     * Computes the area of the triangle defined by the points A, B and C.
      * 
-     * @param ax
+     * @param aAx
      *            the x coordinate of point A
-     * @param ay
+     * @param aAy
      *            the y coordinate of point A
-     * @param bx
+     * @param aBx
      *            the x coordinate of point B
-     * @param by
+     * @param aBy
      *            the y coordinate of point B
-     * @param cx
+     * @param aCx
      *            the x coordinate of point C
-     * @param cy
+     * @param aCy
      *            the y coordinate of point C
      * @return the area of the triangle ABC
      */
-    public static double areaOfTriangle(double ax, double ay, double bx,
-            double by, double cx, double cy) {
-
-        double ux = ax - cx;
-        double uy = ay - cy;
-        double vx = bx - cx;
-        double vy = by - cy;
-
-        double A = 0.5 * (ux * vy - uy * vx);
-
-        return Math.abs(A);
-
-    } // Geometry.areaOfTriangle
+    private static double areaOfTriangle(double aAx, double aAy, double aBx,
+            double aBy, double aCx, double aCy) {
+        return Math.abs(0.5 * ((aAx - aCx) * (aBy - aCy) - (aAy - aCy)
+                * (aBx - aCx)));
+    }
 
     /**
-     * Computes the area of an irregular quadrangle defined by the points A(ax,
-     * ay), B(bx, by), C(cx, cy) and D(dx, dy). The four points must be
-     * following points in the quadrangle (clockwise or counter-clockwise).
-     * Therefore, point A can not be a neighbour of point C.
+     * Computes the area of an irregular quadrangle defined by the points A, B,
+     * C and D. The four points must be following points in the quadrangle
+     * (clockwise or counter-clockwise). Therefore, point A can not be a
+     * neighbor of point C.
      * 
-     * @param ax
+     * @param aAx
      *            the x coordinate of point A
-     * @param ay
+     * @param aAy
      *            the y coordinate of point A
-     * @param bx
+     * @param aBx
      *            the x coordinate of point B
-     * @param by
+     * @param aBy
      *            the y coordinate of point B
-     * @param cx
+     * @param aCx
      *            the x coordinate of point C
-     * @param cy
+     * @param aCy
      *            the y coordinate of point C
-     * @param dx
+     * @param aDx
      *            the x coordinate of point D
-     * @param dy
+     * @param aDy
      *            the y coordinate of point D
      * @return the area of the quadrangle ABCD
      */
-    public static double areaOfQuadrangle(double ax, double ay, double bx,
-            double by, double cx, double cy, double dx, double dy) {
-
-        double A1 = Geometry.areaOfTriangle(ax, ay, bx, by, cx, cy);
-        double A2 = Geometry.areaOfTriangle(ax, ay, cx, cy, dx, dy);
-        return A1 + A2;
-
-    } // Geometry.areaOfQuadrangle
+    public static double areaOfQuadrangle(double aAx, double aAy, double aBx,
+            double aBy, double aCx, double aCy, double aDx, double aDy) {
+        return Geometry.areaOfTriangle(aAx, aAy, aBx, aBy, aCx, aCy)
+                + Geometry.areaOfTriangle(aAx, aAy, aCx, aCy, aDx, aDy);
+    }
 
     /**
      * Computes the intersection of two segments AB and CD.
      * 
-     * @param ax
+     * @param aAx
      *            the x coordinate of point A
-     * @param ay
+     * @param aAy
      *            the y coordinate of point A
-     * @param bx
+     * @param aBx
      *            the x coordinate of point B
-     * @param by
+     * @param aBy
      *            the y coordinate of point B
-     * @param cx
+     * @param aCx
      *            the x coordinate of point C
-     * @param cy
+     * @param aCy
      *            the y coordinate of point C
-     * @param dx
+     * @param aDx
      *            the x coordinate of point D
-     * @param dy
+     * @param aDy
      *            the y coordinate of point D
      * @return the intersection
      */
-    public static double[] intersectionOfSegments(double ax, double ay,
-            double bx, double by, double cx, double cy, double dx, double dy) {
-
+    public static double[] intersectionOfSegments(double aAx, double aAy,
+            double aBx, double aBy, double aCx, double aCy, double aDx,
+            double aDy) {
         // This function has been adapted from the JUMP project,
         // the function GeoUtils.intersectSegments.
 
-        double vx = bx - ax;
-        double vy = by - ay;
-        double wx = dx - cx;
-        double wy = dy - cy;
+        double vx = aBx - aAx;
+        double vy = aBy - aAy;
+        double wx = aDx - aCx;
+        double wy = aDy - aCy;
 
-        double n1 = wy * (cx - ax) - wx * (cy - ay);
-        double n2 = vy * (cx - ax) - vx * (cy - ay);
         double d = wy * vx - wx * vy;
 
         if (d != 0.0) {
-            double t1 = n1 / d;
-            double t2 = n2 / d;
-            double ex = ax + vx * t1;
-            double ey = ay + vy * t1;
+            double t1 = (wy * (aCx - aAx) - wx * (aCy - aAy)) / d;
+            double t2 = (vy * (aCx - aAx) - vx * (aCy - aAy)) / d;
             double epsilon = 0.001;
             double lowbound = 0.0 - epsilon;
             double hibound = 1.0 + epsilon;
-            boolean onP1P2 = t1 >= lowbound && t1 <= hibound;
-            boolean onP3P4 = t2 >= lowbound && t2 <= hibound;
-            if (onP1P2 && onP3P4) {
+            if (t1 >= lowbound && t1 <= hibound && t2 >= lowbound
+                    && t2 <= hibound) {
                 double[] e = new double[2];
-                e[0] = ex;
-                e[1] = ey;
+                e[0] = aAx + vx * t1;
+                e[1] = aAy + vy * t1;
                 return e;
             }
 
-            System.out
-                    .println("[intersectionOfSegments] The intersection point does not lie on one or both segments.");
+            logger.info("The intersection point does not lie on one or both segments.");
             return null;
         }
-        System.out
-                .println("[intersectionOfSegments] The lines are parallel; no intersection.");
+        logger.info("The lines are parallel; no intersection.");
         return null;
-
-    } // Geometry.intersectionOfSegments
-
-} // Geometry
+    }
+}

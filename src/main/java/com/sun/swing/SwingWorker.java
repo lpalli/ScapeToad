@@ -13,48 +13,54 @@ import javax.swing.SwingUtilities;
  * start() on the SwingWorker after creating it.
  */
 public abstract class SwingWorker {
+
     /**
-     * 
+     * The value produced by worker thread.
      */
-    private Object value; // see getValue(), setValue()
+    private Object iValue;
 
     /**
      * Class to maintain reference to current worker thread under separate
      * synchronization control.
      */
     private static class ThreadVar {
-        /**
-         * 
-         */
-        private Thread thread;
 
         /**
-         * @param t
+         * The thread
+         */
+        private Thread iThread;
+
+        /**
+         * Constructor
+         * 
+         * @param aThread
          *            the thread
          */
-        ThreadVar(Thread t) {
-            thread = t;
+        protected ThreadVar(Thread aThread) {
+            iThread = aThread;
         }
 
         /**
+         * Get the thread.
+         * 
          * @return the thread
          */
-        synchronized Thread get() {
-            return thread;
+        protected synchronized Thread get() {
+            return iThread;
         }
 
         /**
-         * 
+         * Clear the thread.
          */
-        synchronized void clear() {
-            thread = null;
+        protected synchronized void clear() {
+            iThread = null;
         }
     }
 
     /**
-     * 
+     * The thread reference
      */
-    ThreadVar threadVar;
+    protected ThreadVar threadVar;
 
     /**
      * Get the value produced by the worker thread, or null if it hasn't been
@@ -63,17 +69,17 @@ public abstract class SwingWorker {
      * @return the value
      */
     protected synchronized Object getValue() {
-        return value;
+        return iValue;
     }
 
     /**
      * Set the value produced by worker thread
      * 
-     * @param x
+     * @param aValue
      *            the value
      */
-    synchronized void setValue(Object x) {
-        value = x;
+    protected synchronized void setValue(Object aValue) {
+        iValue = aValue;
     }
 
     /**
@@ -81,13 +87,13 @@ public abstract class SwingWorker {
      * 
      * @return an object
      */
-    public abstract Object construct();
+    protected abstract Object construct();
 
     /**
      * Called on the event dispatching thread (not on the worker thread) after
      * the <code>construct</code> method has returned.
      */
-    public void finished() {
+    protected void finished() {
         // Nothing to do
     }
 
@@ -96,9 +102,9 @@ public abstract class SwingWorker {
      * the worker to stop what it's doing.
      */
     public void interrupt() {
-        Thread t = threadVar.get();
-        if (t != null) {
-            t.interrupt();
+        Thread thread = threadVar.get();
+        if (thread != null) {
+            thread.interrupt();
         }
         threadVar.clear();
     }
@@ -109,12 +115,12 @@ public abstract class SwingWorker {
      * @return <code>true</code> if it is running
      */
     public boolean isRunning() {
-        Thread t = threadVar.get();
-        if (t == null) {
+        Thread thread = threadVar.get();
+        if (thread == null) {
             return false;
         }
 
-        if (t.getState() == Thread.State.NEW) {
+        if (thread.getState() == Thread.State.NEW) {
             return false;
         }
         return true;
@@ -129,12 +135,12 @@ public abstract class SwingWorker {
      */
     public Object get() {
         while (true) {
-            Thread t = threadVar.get();
-            if (t == null) {
+            Thread thread = threadVar.get();
+            if (thread == null) {
                 return getValue();
             }
             try {
-                t.join();
+                thread.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // propagate
                 return null;
@@ -169,17 +175,16 @@ public abstract class SwingWorker {
             }
         };
 
-        Thread t = new Thread(doConstruct);
-        threadVar = new ThreadVar(t);
+        threadVar = new ThreadVar(new Thread(doConstruct));
     }
 
     /**
      * Start the worker thread.
      */
     public void start() {
-        Thread t = threadVar.get();
-        if (t != null) {
-            t.start();
+        Thread thread = threadVar.get();
+        if (thread != null) {
+            thread.start();
         }
     }
 }

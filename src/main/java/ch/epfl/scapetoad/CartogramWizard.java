@@ -83,116 +83,122 @@ public class CartogramWizard extends JFrame {
      * 
      */
     private static final long serialVersionUID = 1L;
-    /**
-     * 
-     */
-    int mCurrentStep = -1;
-    /**
-     * 
-     */
-    CartogramWizardPanelZero mPanelZero = null;
-    /**
-     * 
-     */
-    CartogramWizardPanelOne mPanelOne = null;
-    /**
-     * 
-     */
-    CartogramWizardPanelTwo mPanelTwo = null;
-    /**
-     * 
-     */
-    CartogramWizardPanelThree mPanelThree = null;
-    /**
-     * 
-     */
-    CartogramWizardPanelFour mPanelFour = null;
 
     /**
      * 
      */
-    Cartogram mCartogram = null;
+    private int iCurrentStep = -1;
+
+    /**
+     * 
+     */
+    private CartogramWizardPanelZero iPanelZero = null;
+
+    /**
+     * 
+     */
+    private CartogramWizardPanelOne iPanelOne = null;
+
+    /**
+     * 
+     */
+    private CartogramWizardPanelTwo iPanelTwo = null;
+
+    /**
+     * 
+     */
+    private CartogramWizardPanelThree iPanelThree = null;
+
+    /**
+     * 
+     */
+    private CartogramWizardPanelFour iPanelFour = null;
+
+    /**
+     * 
+     */
+    private Cartogram iCartogram = null;
 
     /**
      * The panel shown during cartogram computation.
      */
-    final CartogramWizardRunningPanel mRunningPanel = new CartogramWizardRunningPanel(
-            this);
+    public final CartogramWizardRunningPanel iRunningPanel = new CartogramWizardRunningPanel();
 
     /**
      * The panel shown after cartogram computation.
      */
-    final CartogramWizardFinishedPanel mFinishedPanel = new CartogramWizardFinishedPanel();
+    private final CartogramWizardFinishedPanel iFinishedPanel = new CartogramWizardFinishedPanel();
 
     /**
      * The name of the selected cartogram layer (the master layer).
      */
-    String mCartogramLayerName = null;
+    private String iCartogramLayerName = null;
 
     /**
      * The name of the selected cartogram attribute.
      */
-    String mCartogramAttributeName = null;
+    private String iCartogramAttributeName = null;
 
     /**
      * Some parameters for the cartogram computation.
      */
-    Vector<Layer> mSimultaneousLayers = null;
-    /**
-     * 
-     */
-    Vector<Layer> mConstrainedDeformationLayers = null;
-    /**
-     * 
-     */
-    int mAmountOfDeformation = 50;
-    /**
-     * 
-     */
-    int mCartogramGridSizeX = 1000;
-    /**
-     * 
-     */
-    int mCartogramGridSizeY = 1000;
+    private Vector<Layer> iSimultaneousLayers = null;
 
     /**
      * 
      */
-    boolean mAdvancedOptionsEnabled = false;
+    private Vector<Layer> iConstrainedDeformationLayers = null;
 
-    // int mDiffusionGridSize = 128;
-    // int mDiffusionIterations = 3;
+    /**
+     * 
+     */
+    private int iAmountOfDeformation = 50;
+
+    /**
+     * 
+     */
+    private int iCartogramGridSizeX = 1000;
+
+    /**
+     * 
+     */
+    private int iCartogramGridSizeY = 1000;
+
+    /**
+     * 
+     */
+    private boolean iAdvancedOptionsEnabled = false;
 
     /**
      * Defines whether we should create a layer with the deformation grid.
      */
-    boolean mCreateGridLayer = true;
+    private boolean iCreateGridLayer = true;
 
     /**
      * Defines the size of the deformation grid which can be created as
      * additional layer.
      */
-    int mDeformationGridSize = 100;
+    private int iDeformationGridSize = 100;
 
     /**
      * The icon panel at the left side of each wizard window.
      */
-    ScapeToadIconPanel mScapeToadIconPanel = null;
+    private ScapeToadIconPanel iScapeToadIconPanel = null;
 
     /**
      * The step icon panel at the upper right side of the wizard.
      */
-    WizardStepIconPanel mWizardStepIconPanel = null;
+    private WizardStepIconPanel iWizardStepIconPanel = null;
 
     /**
      * 
      */
-    JButton mCancelButton = null;
+    private JButton iCancelButton = null;
 
     /**
      * 
      */
-    String mMissingValue = "";
+    private String iMissingValue = "";
 
     /**
      * Interface for bias value.
@@ -203,11 +209,10 @@ public class CartogramWizard extends JFrame {
      * The default constructor for the wizard.
      */
     public CartogramWizard() {
-
         // Set the window parameters.
         setTitle(AppContext.shortProgramName + " _ Cartogram Wizard");
-        this.setSize(640, 480);
-        this.setLocation(30, 40);
+        setSize(640, 480);
+        setLocation(30, 40);
         setResizable(false);
         setLayout(null);
         // this.setModal(true);
@@ -219,24 +224,24 @@ public class CartogramWizard extends JFrame {
 
         // Add icon panel at the left of the wizard window.
         // This panel contains the ScapeToad icon.
-        if (mScapeToadIconPanel == null) {
-            mScapeToadIconPanel = new ScapeToadIconPanel();
+        if (iScapeToadIconPanel == null) {
+            iScapeToadIconPanel = new ScapeToadIconPanel();
         }
 
-        mScapeToadIconPanel.setLocation(30, 90);
-        this.add(mScapeToadIconPanel);
+        iScapeToadIconPanel.setLocation(30, 90);
+        add(iScapeToadIconPanel);
 
         // Add title panel.
         CartogramWizardTitlePanel titlePanel = new CartogramWizardTitlePanel();
 
         titlePanel.setLocation(30, 20);
-        this.add(titlePanel);
+        add(titlePanel);
 
         // Add icon panel at the left of the wizard window.
         // This panel contains the ScapeToad icon.
-        mWizardStepIconPanel = new WizardStepIconPanel();
-        mWizardStepIconPanel.setLocation(380, 20);
-        this.add(mWizardStepIconPanel);
+        iWizardStepIconPanel = new WizardStepIconPanel();
+        iWizardStepIconPanel.setLocation(380, 20);
+        add(iWizardStepIconPanel);
 
         // Ajouter l'introduction au wizard.
         // Explication des étapes à suivre :
@@ -244,44 +249,26 @@ public class CartogramWizard extends JFrame {
         // 2. Sélectionner l'information statistique.
         // 3. Sélection des couches à transformer simultanément.
 
-        mPanelZero = new CartogramWizardPanelZero(this);
-        getContentPane().add(mPanelZero);
+        iPanelZero = new CartogramWizardPanelZero(this);
+        getContentPane().add(iPanelZero);
 
-        mCurrentStep = 0;
+        iCurrentStep = 0;
 
         // Add the running panel which is already created.
-        mRunningPanel.setVisible(false);
-        this.add(mRunningPanel);
+        iRunningPanel.setVisible(false);
+        add(iRunningPanel);
 
         // Add the finished panel which is already created.
-        mFinishedPanel.setVisible(false);
-        this.add(mFinishedPanel);
+        iFinishedPanel.setVisible(false);
+        add(iFinishedPanel);
 
         // Add the Cancel button.
-        mCancelButton = new JButton("Cancel");
-        mCancelButton.setLocation(30, 404);
-        mCancelButton.setSize(100, 26);
-        mCancelButton.addActionListener(new CartogramWizardCloseAction());
-        getContentPane().add(mCancelButton);
+        iCancelButton = new JButton("Cancel");
+        iCancelButton.setLocation(30, 404);
+        iCancelButton.setSize(100, 26);
+        iCancelButton.addActionListener(new CartogramWizardCloseAction());
+        getContentPane().add(iCancelButton);
 
-    } // CartogramWizard.<init>
-
-    /**
-     * Returns the wizard panel 0.
-     * 
-     * @return the panel
-     */
-    CartogramWizardPanelZero getPanelZero() {
-        return mPanelZero;
-    }
-
-    /**
-     * Returns the wizard panel 1.
-     * 
-     * @return the panel
-     */
-    CartogramWizardPanelOne getPanelOne() {
-        return mPanelOne;
     }
 
     /**
@@ -290,16 +277,7 @@ public class CartogramWizard extends JFrame {
      * @return the panel
      */
     CartogramWizardPanelTwo getPanelTwo() {
-        return mPanelTwo;
-    }
-
-    /**
-     * Returns the wizard panel 3.
-     * 
-     * @return the panel
-     */
-    CartogramWizardPanelThree getPanelThree() {
-        return mPanelThree;
+        return iPanelTwo;
     }
 
     /**
@@ -308,7 +286,7 @@ public class CartogramWizard extends JFrame {
      * @return the panel
      */
     CartogramWizardPanelFour getPanelFour() {
-        return mPanelFour;
+        return iPanelFour;
     }
 
     /**
@@ -317,7 +295,7 @@ public class CartogramWizard extends JFrame {
      * @return the panel
      */
     CartogramWizardRunningPanel getRunningPanel() {
-        return mRunningPanel;
+        return iRunningPanel;
     }
 
     /**
@@ -326,7 +304,7 @@ public class CartogramWizard extends JFrame {
      * @return the panel
      */
     public WizardStepIconPanel getWizardStepIconPanel() {
-        return mWizardStepIconPanel;
+        return iWizardStepIconPanel;
     }
 
     /**
@@ -341,103 +319,92 @@ public class CartogramWizard extends JFrame {
             return;
         }
 
-        if (mCurrentStep == step) {
+        if (iCurrentStep == step) {
             return;
         }
 
         // Hide the current step.
-        switch (mCurrentStep) {
+        switch (iCurrentStep) {
             case 0:
-                mPanelZero.setVisible(false);
+                iPanelZero.setVisible(false);
                 break;
-
             case 1:
-                mPanelOne.setVisible(false);
+                iPanelOne.setVisible(false);
                 break;
-
             case 2:
-                mPanelTwo.setVisible(false);
+                iPanelTwo.setVisible(false);
                 break;
-
             case 3:
-                mPanelThree.setVisible(false);
+                iPanelThree.setVisible(false);
                 break;
-
             case 4:
-                mPanelFour.setVisible(false);
+                iPanelFour.setVisible(false);
                 break;
-
             default:
                 throw new UnsupportedOperationException();
-
         }
 
         // Show the new step.
         switch (step) {
             case 0:
-                if (mPanelZero == null) {
-                    mPanelZero = new CartogramWizardPanelZero(this);
-                    getContentPane().add(mPanelZero);
+                if (iPanelZero == null) {
+                    iPanelZero = new CartogramWizardPanelZero(this);
+                    getContentPane().add(iPanelZero);
                 }
-                mPanelZero.setVisible(true);
-                mCurrentStep = 0;
-                mWizardStepIconPanel.setStepIcon(1);
+                iPanelZero.setVisible(true);
+                iCurrentStep = 0;
+                iWizardStepIconPanel.setStepIcon(1);
                 break;
-
             case 1:
-                if (mPanelOne == null) {
-                    mPanelOne = new CartogramWizardPanelOne(this);
-                    getContentPane().add(mPanelOne);
+                if (iPanelOne == null) {
+                    iPanelOne = new CartogramWizardPanelOne(this);
+                    getContentPane().add(iPanelOne);
                 }
-                mPanelOne.setVisible(true);
-                mCurrentStep = 1;
-                mWizardStepIconPanel.setStepIcon(2);
+                iPanelOne.setVisible(true);
+                iCurrentStep = 1;
+                iWizardStepIconPanel.setStepIcon(2);
                 break;
-
             case 2:
-                if (mPanelTwo == null) {
-                    mPanelTwo = new CartogramWizardPanelTwo(this);
-                    getContentPane().add(mPanelTwo);
+                if (iPanelTwo == null) {
+                    iPanelTwo = new CartogramWizardPanelTwo(this);
+                    getContentPane().add(iPanelTwo);
                 }
-                mPanelTwo.setVisible(true);
-                mCurrentStep = 2;
-                mWizardStepIconPanel.setStepIcon(3);
+                iPanelTwo.setVisible(true);
+                iCurrentStep = 2;
+                iWizardStepIconPanel.setStepIcon(3);
                 break;
-
             case 3:
-                if (mPanelThree == null) {
-                    mPanelThree = new CartogramWizardPanelThree(this);
-                    getContentPane().add(mPanelThree);
+                if (iPanelThree == null) {
+                    iPanelThree = new CartogramWizardPanelThree(this);
+                    getContentPane().add(iPanelThree);
                 }
-                mPanelThree.setVisible(true);
-                mCurrentStep = 3;
-                mWizardStepIconPanel.setStepIcon(4);
+                iPanelThree.setVisible(true);
+                iCurrentStep = 3;
+                iWizardStepIconPanel.setStepIcon(4);
                 break;
 
             case 4:
-                if (mPanelFour == null) {
-                    mPanelFour = new CartogramWizardPanelFour(this);
-                    getContentPane().add(mPanelFour);
+                if (iPanelFour == null) {
+                    iPanelFour = new CartogramWizardPanelFour(this);
+                    getContentPane().add(iPanelFour);
                 }
-                mPanelFour.setVisible(true);
-                mCurrentStep = 4;
-                mWizardStepIconPanel.setStepIcon(5);
+                iPanelFour.setVisible(true);
+                iCurrentStep = 4;
+                iWizardStepIconPanel.setStepIcon(5);
                 break;
 
             default:
                 throw new UnsupportedOperationException();
-
         }
-
     }
 
     /**
      * Shows the finished panel.
      */
     public void goToFinishedPanel() {
-        mRunningPanel.setVisible(false);
-        mFinishedPanel.setVisible(true);
-        mWizardStepIconPanel.setStepIcon(7);
+        iRunningPanel.setVisible(false);
+        iFinishedPanel.setVisible(true);
+        iWizardStepIconPanel.setStepIcon(7);
     }
 
     /**
@@ -446,9 +413,8 @@ public class CartogramWizard extends JFrame {
      * @return the cartogram
      */
     public Cartogram getCartogram() {
-        return mCartogram;
-
-    } // CartogramWizard.getCartogram
+        return iCartogram;
+    }
 
     /**
      * Sets the cartogram computation process.
@@ -457,9 +423,8 @@ public class CartogramWizard extends JFrame {
      *            the cartogram
      */
     public void setCartogram(Cartogram cg) {
-        mCartogram = cg;
-
-    } // CartogramWizard.setCartogram
+        iCartogram = cg;
+    }
 
     /**
      * Returns the name of the selected cartogram layer. This is the master
@@ -468,7 +433,7 @@ public class CartogramWizard extends JFrame {
      * @return the cartogram layer name
      */
     public String getCartogramLayerName() {
-        return mCartogramLayerName;
+        return iCartogramLayerName;
     }
 
     /**
@@ -478,7 +443,7 @@ public class CartogramWizard extends JFrame {
      *            the layer name
      */
     public void setCartogramLayerName(String layerName) {
-        mCartogramLayerName = layerName;
+        iCartogramLayerName = layerName;
     }
 
     /**
@@ -487,7 +452,7 @@ public class CartogramWizard extends JFrame {
      * @return the cartogram attribute name
      */
     public String getCartogramAttributeName() {
-        return mCartogramAttributeName;
+        return iCartogramAttributeName;
     }
 
     /**
@@ -497,7 +462,7 @@ public class CartogramWizard extends JFrame {
      *            the attribute name
      */
     public void setCartogramAttributeName(String attrName) {
-        mCartogramAttributeName = attrName;
+        iCartogramAttributeName = attrName;
     }
 
     /**
@@ -506,9 +471,8 @@ public class CartogramWizard extends JFrame {
      * @return whether we should create or not a deformation grid layer.
      */
     public boolean getCreateGridLayer() {
-        return mCreateGridLayer;
-
-    } // CartogramWizard.getCreateGridLayer
+        return iCreateGridLayer;
+    }
 
     /**
      * Sets the parameter for the creation of a deformation grid layer.
@@ -518,9 +482,8 @@ public class CartogramWizard extends JFrame {
      *            otherwise.
      */
     public void setCreateGridLayer(boolean createGridLayer) {
-        mCreateGridLayer = createGridLayer;
-
-    } // CartogramWizard.setCreateGridLayer
+        iCreateGridLayer = createGridLayer;
+    }
 
     /**
      * Returns the size of the deformation grid which can be created as an
@@ -529,9 +492,8 @@ public class CartogramWizard extends JFrame {
      * @return the size of the deformation grid.
      */
     public int getDeformationGridSize() {
-        return mDeformationGridSize;
-
-    } // CartogramWizard.getDeformationGridSize
+        return iDeformationGridSize;
+    }
 
     /**
      * Sets the size of the deformation grid which can be created as an
@@ -542,9 +504,8 @@ public class CartogramWizard extends JFrame {
      *            the size of the deformation grid.
      */
     public void setDeformationGridSize(int gridSize) {
-        mDeformationGridSize = gridSize;
-
-    } // CartogramWizard.setDeformationGridSize
+        iDeformationGridSize = gridSize;
+    }
 
     /**
      * Updates the progress bar and the progress labels during cartogram
@@ -559,19 +520,17 @@ public class CartogramWizard extends JFrame {
      */
     public void updateRunningStatus(final int progress, final String label1,
             final String label2) {
-
         Runnable doSetRunningStatus = new Runnable() {
             @Override
             public void run() {
-                mRunningPanel.updateProgressBar(progress);
-                mRunningPanel.updateProgressLabel1(label1);
-                mRunningPanel.updateProgressLabel2(label2);
+                iRunningPanel.updateProgressBar(progress);
+                iRunningPanel.updateProgressLabel1(label1);
+                iRunningPanel.updateProgressLabel2(label2);
             }
         };
 
         SwingUtilities.invokeLater(doSetRunningStatus);
-
-    } // CartogramWizard.updateRunningStatus
+    }
 
     /**
      * Returns the list of simultaneous layers.
@@ -579,7 +538,7 @@ public class CartogramWizard extends JFrame {
      * @return the layers
      */
     public Vector<Layer> getSimultaneousLayers() {
-        return mSimultaneousLayers;
+        return iSimultaneousLayers;
     }
 
     /**
@@ -589,34 +548,7 @@ public class CartogramWizard extends JFrame {
      *            the layer
      */
     public void setSimultaneousLayers(Vector<Layer> layers) {
-        mSimultaneousLayers = layers;
-    }
-
-    /**
-     * Returns the simultaneous layer at a given index.
-     * 
-     * @param index
-     *            the index
-     * @return the layer
-     */
-    public Layer getSimultaneousLayerAtIndex(int index) {
-        return mSimultaneousLayers.get(index);
-    }
-
-    /**
-     * Sets the simultaneous layer at a given index.
-     * 
-     * @param layer
-     *            the layer
-     * @param index
-     *            the index
-     */
-    public void setSimultaneousLayerAtIndex(Layer layer, int index) {
-        if (mSimultaneousLayers == null) {
-            mSimultaneousLayers = new Vector<Layer>();
-        }
-
-        mSimultaneousLayers.set(index, layer);
+        iSimultaneousLayers = layers;
     }
 
     /**
@@ -625,7 +557,7 @@ public class CartogramWizard extends JFrame {
      * @return the layers
      */
     public Vector<Layer> getConstrainedDeformationLayers() {
-        return mConstrainedDeformationLayers;
+        return iConstrainedDeformationLayers;
     }
 
     /**
@@ -635,34 +567,7 @@ public class CartogramWizard extends JFrame {
      *            the layers
      */
     public void setConstrainedDeformationLayers(Vector<Layer> layers) {
-        mConstrainedDeformationLayers = layers;
-    }
-
-    /**
-     * Returns the constrained deformation layer at the given index.
-     * 
-     * @param index
-     *            the index
-     * @return the deformation
-     */
-    public Layer getConstrainedDeformationLayerAtIndex(int index) {
-        return mConstrainedDeformationLayers.get(index);
-    }
-
-    /**
-     * Sets the constrained deformation layer at the given index.
-     * 
-     * @param layer
-     *            the layer
-     * @param index
-     *            the index
-     */
-    public void setConstrainedDeformationLayerAtIndex(Layer layer, int index) {
-        if (mConstrainedDeformationLayers == null) {
-            mConstrainedDeformationLayers = new Vector<Layer>();
-        }
-
-        mConstrainedDeformationLayers.set(index, layer);
+        iConstrainedDeformationLayers = layers;
     }
 
     /**
@@ -672,7 +577,7 @@ public class CartogramWizard extends JFrame {
      * @return the deformation
      */
     public int getAmountOfDeformation() {
-        return mAmountOfDeformation;
+        return iAmountOfDeformation;
     }
 
     /**
@@ -683,7 +588,7 @@ public class CartogramWizard extends JFrame {
      *            the deformation
      */
     public void setAmountOfDeformation(int deformation) {
-        mAmountOfDeformation = deformation;
+        iAmountOfDeformation = deformation;
     }
 
     /**
@@ -696,7 +601,7 @@ public class CartogramWizard extends JFrame {
      * @return the grid X size
      */
     public int getCartogramGridSizeInX() {
-        return mCartogramGridSizeX;
+        return iCartogramGridSizeX;
     }
 
     /**
@@ -706,7 +611,7 @@ public class CartogramWizard extends JFrame {
      *            the grid X size
      */
     public void setCartogramGridSizeInX(int gridSizeX) {
-        mCartogramGridSizeX = gridSizeX;
+        iCartogramGridSizeX = gridSizeX;
     }
 
     /**
@@ -715,7 +620,7 @@ public class CartogramWizard extends JFrame {
      * @return the grid Y size
      */
     public int getCartogramGridSizeInY() {
-        return mCartogramGridSizeY;
+        return iCartogramGridSizeY;
     }
 
     /**
@@ -725,7 +630,7 @@ public class CartogramWizard extends JFrame {
      *            the grid Y size
      */
     public void setCartogramGridSizeInY(int gridSizeY) {
-        mCartogramGridSizeY = gridSizeY;
+        iCartogramGridSizeY = gridSizeY;
     }
 
     /**
@@ -736,9 +641,8 @@ public class CartogramWizard extends JFrame {
      *         false otherwise.
      */
     public boolean getAdvancedOptionsEnabled() {
-        return mAdvancedOptionsEnabled;
-
-    } // CartogramWizard.getAdvancedOptionsEnabled
+        return iAdvancedOptionsEnabled;
+    }
 
     /**
      * Defines whether the advances options should be taken into account.
@@ -748,15 +652,14 @@ public class CartogramWizard extends JFrame {
      *            false if the advanced options should be ignored.
      */
     public void setAdvancedOptionsEnabled(boolean enabled) {
-        mAdvancedOptionsEnabled = enabled;
+        iAdvancedOptionsEnabled = enabled;
 
         if (enabled) {
-            mPanelFour.enableAmountOfDeformationSlider(false);
+            iPanelFour.enableAmountOfDeformationSlider(false);
         } else {
-            mPanelFour.enableAmountOfDeformationSlider(true);
+            iPanelFour.enableAmountOfDeformationSlider(true);
         }
-
-    } // CartogramWizard.setAdvancedOptionsEnabled
+    }
 
     /**
      * Sets a cartogram computation error message for the user.
@@ -770,11 +673,9 @@ public class CartogramWizard extends JFrame {
      */
     public void setComputationError(String title, String message,
             String stackTrace) {
-
-        mFinishedPanel.setErrorOccured(true);
-        mFinishedPanel.setErrorMessage(title, message, stackTrace);
-
-    } // CartogramWizard.setComputationError
+        iFinishedPanel.setErrorOccured(true);
+        iFinishedPanel.setErrorMessage(title, message, stackTrace);
+    }
 
     /**
      * Returns the cancel button of the cartogram wizard.
@@ -782,14 +683,14 @@ public class CartogramWizard extends JFrame {
      * @return the button
      */
     public JButton getCancelButton() {
-        return mCancelButton;
+        return iCancelButton;
     }
 
     /**
      * @return the missing value
      */
     public String getMissingValue() {
-        return mMissingValue;
+        return iMissingValue;
     }
 
     /**
@@ -797,10 +698,9 @@ public class CartogramWizard extends JFrame {
      *            the value
      */
     public void setMissingValue(String value) {
-        mMissingValue = value;
+        iMissingValue = value;
     }
-
-} // CartogramWizard
+}
 
 /**
  * This class represents a panel containing the ScapeToad icon with a size of 97
@@ -821,13 +721,12 @@ class ScapeToadIconPanel extends JPanel {
      * The default constructor for the ScapeToad icon panel.
      */
     ScapeToadIconPanel() {
-
         // Setting some panel parameters.
-        this.setSize(100, 155);
+        setSize(100, 155);
         setLayout(null);
 
         // Loading the ScapeToad icon from the resources.
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader cldr = getClass().getClassLoader();
         URL iconURL = cldr.getResource("resources/ScapeToad-25p.png");
         ImageIcon scapeToadIcon = new ImageIcon(iconURL);
 
@@ -840,10 +739,8 @@ class ScapeToadIconPanel extends JPanel {
         iconLabel.setLocation(1, 1);
 
         // Add the icon label to this panel.
-        this.add(iconLabel);
-
+        add(iconLabel);
     }
-
 }
 
 /**
@@ -864,9 +761,8 @@ class CartogramWizardTitlePanel extends JPanel {
      * The default constructor for the panel.
      */
     CartogramWizardTitlePanel() {
-
         // Setting panel parameters.
-        this.setSize(350, 45);
+        setSize(350, 45);
         setLayout(null);
 
         // Create the title text.
@@ -874,19 +770,8 @@ class CartogramWizardTitlePanel extends JPanel {
         title.setFont(new Font(null, Font.BOLD, 13));
         title.setLocation(0, 0);
         title.setSize(400, 20);
-        this.add(title);
-
-        // Create the sub-title text.
-        /*
-         * JLabel subtitle = new JLabel( "A leap into a different space." );
-         * 
-         * subtitle.setFont(new Font(null, Font.PLAIN, 11));
-         * subtitle.setLocation(0, 22); subtitle.setSize(400, 20);
-         * this.add(subtitle);
-         */
-
+        add(title);
     }
-
 }
 
 /**
@@ -902,67 +787,71 @@ class WizardStepIconPanel extends JPanel {
     /**
      * 
      */
-    JLabel mIconLabel;
+    private JLabel iIconLabel;
 
     /**
      * 
      */
-    ImageIcon mIcon1;
+    private ImageIcon iIcon1;
+
     /**
      * 
      */
-    ImageIcon mIcon2;
+    private ImageIcon iIcon2;
+
     /**
      * 
      */
-    ImageIcon mIcon3;
+    private ImageIcon iIcon3;
+
     /**
      * 
      */
-    ImageIcon mIcon4;
+    private ImageIcon iIcon4;
+
     /**
      * 
      */
-    ImageIcon mIcon5;
+    private ImageIcon iIcon5;
+
     /**
      * 
      */
-    ImageIcon mIcon6;
+    private ImageIcon iIcon6;
+
     /**
      * 
      */
-    ImageIcon mIcon7;
+    private ImageIcon iIcon7;
 
     /**
      * The default constructor for the ScapeToad icon panel.
      */
     WizardStepIconPanel() {
-
         // Setting some panel parameters.
-        this.setSize(220, 30);
+        setSize(220, 30);
         setLayout(null);
 
         // Loading the step icons from the resources.
         ClassLoader cldr = this.getClass().getClassLoader();
-        mIcon1 = new ImageIcon(cldr.getResource("resources/WizardStep1.png"));
-        mIcon2 = new ImageIcon(cldr.getResource("resources/WizardStep2.png"));
-        mIcon3 = new ImageIcon(cldr.getResource("resources/WizardStep3.png"));
-        mIcon4 = new ImageIcon(cldr.getResource("resources/WizardStep4.png"));
-        mIcon5 = new ImageIcon(cldr.getResource("resources/WizardStep5.png"));
-        mIcon6 = new ImageIcon(cldr.getResource("resources/WizardStep6.png"));
-        mIcon7 = new ImageIcon(cldr.getResource("resources/WizardStep7.png"));
+        iIcon1 = new ImageIcon(cldr.getResource("resources/WizardStep1.png"));
+        iIcon2 = new ImageIcon(cldr.getResource("resources/WizardStep2.png"));
+        iIcon3 = new ImageIcon(cldr.getResource("resources/WizardStep3.png"));
+        iIcon4 = new ImageIcon(cldr.getResource("resources/WizardStep4.png"));
+        iIcon5 = new ImageIcon(cldr.getResource("resources/WizardStep5.png"));
+        iIcon6 = new ImageIcon(cldr.getResource("resources/WizardStep6.png"));
+        iIcon7 = new ImageIcon(cldr.getResource("resources/WizardStep7.png"));
 
         // Create a new label containing the icon.
-        mIconLabel = new JLabel(mIcon1);
+        iIconLabel = new JLabel(iIcon1);
 
         // Setting the label parameters.
-        mIconLabel.setLayout(null);
-        mIconLabel.setSize(206, 27);
-        mIconLabel.setLocation(1, 1);
+        iIconLabel.setLayout(null);
+        iIconLabel.setSize(206, 27);
+        iIconLabel.setLocation(1, 1);
 
         // Add the icon label to this panel.
-        this.add(mIconLabel);
-
+        add(iIconLabel);
     }
 
     /**
@@ -972,33 +861,30 @@ class WizardStepIconPanel extends JPanel {
     public void setStepIcon(int step) {
         switch (step) {
             case 1:
-                mIconLabel.setIcon(mIcon1);
+                iIconLabel.setIcon(iIcon1);
                 break;
             case 2:
-                mIconLabel.setIcon(mIcon2);
+                iIconLabel.setIcon(iIcon2);
                 break;
             case 3:
-                mIconLabel.setIcon(mIcon3);
+                iIconLabel.setIcon(iIcon3);
                 break;
             case 4:
-                mIconLabel.setIcon(mIcon4);
+                iIconLabel.setIcon(iIcon4);
                 break;
             case 5:
-                mIconLabel.setIcon(mIcon5);
+                iIconLabel.setIcon(iIcon5);
                 break;
             case 6:
-                mIconLabel.setIcon(mIcon6);
+                iIconLabel.setIcon(iIcon6);
                 break;
             case 7:
-                mIconLabel.setIcon(mIcon7);
+                iIconLabel.setIcon(iIcon7);
                 break;
-
             default:
                 throw new UnsupportedOperationException();
         }
-
-    } // WizardStepIcon.setStepIcon
-
+    }
 }
 
 /**
@@ -1023,9 +909,8 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
      *            the content frame
      */
     CartogramWizardPanelZero(JFrame contentFrame) {
-
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
         // Add the Next button
@@ -1036,8 +921,7 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
 
         nextButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 1));
-
-        this.add(nextButton);
+        add(nextButton);
 
         // Create the text pane which displays the message.
         // The message itself is read from a RTF file.
@@ -1063,7 +947,6 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
             inStream.close();
 
             wizardStepZeroContent = inBuffer.toString();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1075,12 +958,9 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
         text.setBackground(null);
         text.setLocation(0, 0);
         text.setSize(440, 300);
-        this.add(text);
+        add(text);
 
         // Add the help button
-
-        // ClassLoader cldr = this.getClass().getClassLoader();
-
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
@@ -1097,8 +977,7 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
         helpButton.addActionListener(new CartogramWizardShowURL(
                 "http://scapetoad.choros.ch/help/a-cartogram-creation.php"));
 
-        this.add(helpButton);
-
+        add(helpButton);
     }
 
     @Override
@@ -1108,13 +987,10 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
                 Browser.init();
                 Browser.displayURL(e.getURL().toString());
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
-
 }
 
 /**
@@ -1130,19 +1006,21 @@ class CartogramWizardPanelOne extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    CartogramWizard mCartogramWizard = null;
+    CartogramWizard iCartogramWizard = null;
+
     /**
      * 
      */
-    JComboBox mLayerMenu = null;
+    JComboBox iLayerMenu = null;
 
     /**
      * The "Next" button.
      */
-    JButton mNextButton = null;
+    JButton iNextButton = null;
 
     /**
      * The default constructor for the panel.
@@ -1151,48 +1029,43 @@ class CartogramWizardPanelOne extends JPanel {
      *            the content frame
      */
     CartogramWizardPanelOne(JFrame contentFrame) {
-
-        mCartogramWizard = (CartogramWizard) contentFrame;
+        iCartogramWizard = (CartogramWizard) contentFrame;
 
         int width = 440;
         int height = 340;
 
-        this.setLocation(160, 90);
-        this.setSize(width, height);
+        setLocation(160, 90);
+        setSize(width, height);
         setLayout(null);
 
         // Add the Next button
-        mNextButton = new JButton("Next >");
-        mNextButton.setLocation(320, 314);
-        mNextButton.setSize(120, 26);
-        mNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
+        iNextButton = new JButton("Next >");
+        iNextButton.setLocation(320, 314);
+        iNextButton.setSize(120, 26);
+        iNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
 
-        mNextButton.addActionListener(new CartogramWizardGoToStepAction(
-                mCartogramWizard, 2));
-
-        this.add(mNextButton);
+        iNextButton.addActionListener(new CartogramWizardGoToStepAction(
+                iCartogramWizard, 2));
+        add(iNextButton);
 
         // Add the Back button
         JButton backButton = new JButton("< Back");
         backButton.setLocation(195, 314);
         backButton.setSize(120, 26);
-
         backButton.addActionListener(new CartogramWizardGoToStepAction(
-                mCartogramWizard, 0));
-
-        this.add(backButton);
+                iCartogramWizard, 0));
+        add(backButton);
 
         // Add a pop-up menu with the list of available layers.
-
         JLabel layerMenuLabel = new JLabel("Spatial coverage:");
         layerMenuLabel.setFont(new Font(null, Font.PLAIN, 11));
         layerMenuLabel.setBounds(0, 0, 190, 14);
-        this.add(layerMenuLabel);
+        add(layerMenuLabel);
 
-        mLayerMenu = new JComboBox();
-        mLayerMenu.setBounds(0, 20, 190, 26);
-        mLayerMenu.setFont(new Font(null, Font.PLAIN, 11));
-        mLayerMenu.setMaximumRowCount(20);
+        iLayerMenu = new JComboBox();
+        iLayerMenu.setBounds(0, 20, 190, 26);
+        iLayerMenu.setFont(new Font(null, Font.PLAIN, 11));
+        iLayerMenu.setMaximumRowCount(20);
 
         // Add all polygon layers to the list.
         int nlayers = AppContext.layerManager.size();
@@ -1206,7 +1079,7 @@ class CartogramWizardPanelOne extends JPanel {
                 Feature feat = (Feature) fcw.getFeatures().get(0);
                 Geometry geom = feat.getGeometry();
                 if (geom.getArea() != 0.0) {
-                    mLayerMenu.addItem(lyr.getName());
+                    iLayerMenu.addItem(lyr.getName());
                 }
             }
 
@@ -1214,14 +1087,14 @@ class CartogramWizardPanelOne extends JPanel {
 
         // If there is no layer for the cartogram deformation,
         // add a menu item "<none>" and disable the "Next" button.
-        if (mLayerMenu.getItemCount() == 0) {
-            mLayerMenu.addItem("<none>");
-            mNextButton.setEnabled(false);
+        if (iLayerMenu.getItemCount() == 0) {
+            iLayerMenu.addItem("<none>");
+            iNextButton.setEnabled(false);
         } else {
-            mNextButton.setEnabled(true);
+            iNextButton.setEnabled(true);
         }
 
-        this.add(mLayerMenu);
+        add(iLayerMenu);
 
         // Adding the polygon image
         ClassLoader cldr = this.getClass().getClassLoader();
@@ -1237,7 +1110,7 @@ class CartogramWizardPanelOne extends JPanel {
         iconLabel.setLocation(240, 30);
 
         // Add the icon label to this panel.
-        this.add(iconLabel);
+        add(iconLabel);
 
         // Adding the explanatory text.
         // The message itself is read from a RTF file.
@@ -1251,7 +1124,6 @@ class CartogramWizardPanelOne extends JPanel {
 
             StringBuffer inBuffer = new StringBuffer();
             int c;
-
             while ((c = inStream.read()) != -1) {
                 inBuffer.append((char) c);
             }
@@ -1269,17 +1141,12 @@ class CartogramWizardPanelOne extends JPanel {
         layerMenuTextPane.setBackground(null);
         layerMenuTextPane.setLocation(0, 60);
         layerMenuTextPane.setSize(220, 240);
-        this.add(layerMenuTextPane);
+        add(layerMenuTextPane);
 
-        // ADD THE HELP BUTTON
-
-        // ClassLoader cldr = this.getClass().getClassLoader();
-
+        // Add the Help button
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
-
         JButton helpButton = new JButton(helpIcon);
-
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
         helpButton.setSize(30, 30);
@@ -1287,14 +1154,11 @@ class CartogramWizardPanelOne extends JPanel {
         helpButton.setFocusable(false);
         helpButton.setContentAreaFilled(false);
         helpButton.setBorderPainted(false);
-
         helpButton
                 .addActionListener(new CartogramWizardShowURL(
                         "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-layer"));
-
-        this.add(helpButton);
-
-    } // CartogramWizardPanelOne.<init>
+        add(helpButton);
+    }
 
     /**
      * If this panel is hidden, set the selected layer name in the cartogram
@@ -1303,40 +1167,37 @@ class CartogramWizardPanelOne extends JPanel {
      */
     @Override
     public void setVisible(boolean visible) {
-
         if (visible) {
             updateLayerList();
 
             // If there is no layer for the cartogram deformation,
             // add a menu item "<none>" and disable the "Next" button.
-            if (mLayerMenu.getItemCount() == 0) {
-                mLayerMenu.addItem("<none>");
-                mNextButton.setEnabled(false);
+            if (iLayerMenu.getItemCount() == 0) {
+                iLayerMenu.addItem("<none>");
+                iNextButton.setEnabled(false);
             } else {
-                mNextButton.setEnabled(true);
+                iNextButton.setEnabled(true);
             }
         }
 
         if (!visible) {
-            mCartogramWizard.setCartogramLayerName((String) mLayerMenu
+            iCartogramWizard.setCartogramLayerName((String) iLayerMenu
                     .getSelectedItem());
         }
 
         super.setVisible(visible);
-
-    } // CartogramWizardPanelOne.setVisible
+    }
 
     /**
      * Updates the pop-up menu with the cartogram layers.
      */
     public void updateLayerList() {
-
         String selectedLayer = null;
-        if (mLayerMenu != null) {
-            selectedLayer = (String) mLayerMenu.getSelectedItem();
+        if (iLayerMenu != null) {
+            selectedLayer = (String) iLayerMenu.getSelectedItem();
         }
 
-        mLayerMenu.removeAllItems();
+        iLayerMenu.removeAllItems();
 
         // Add all polygon layers to the list.
         int nlayers = AppContext.layerManager.size();
@@ -1351,18 +1212,15 @@ class CartogramWizardPanelOne extends JPanel {
                 Geometry geom = feat.getGeometry();
                 if (geom.getArea() != 0.0) {
                     String layerName = lyr.getName();
-                    mLayerMenu.addItem(layerName);
+                    iLayerMenu.addItem(layerName);
                     if (layerName == selectedLayer) {
-                        mLayerMenu.setSelectedItem(layerName);
+                        iLayerMenu.setSelectedItem(layerName);
                     }
                 }
             }
-
         }
-
-    } // CartogramWizardPanelOne.updateLayerList
-
-} // CartogramWizardPanelOne
+    }
+}
 
 /**
  * This class represents the third screen in the cartogram wizard. It is used
@@ -1380,38 +1238,33 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
     /**
      * 
      */
-    CartogramWizard mCartogramWizard = null;
+    private CartogramWizard iCartogramWizard = null;
     /**
      * 
      */
-    JComboBox mAttributeMenu = null;
+    private JComboBox iAttributeMenu = null;
     /**
      * 
      */
-    String mCurrentCartogramLayer = null;
+    private String iCurrentCartogramLayer = null;
 
     /**
      * The "Next" button.
      */
-    JButton mNextButton = null;
+    private JButton iNextButton = null;
 
     /**
      * The attribute type radio button.
      */
-    ButtonGroup mAttributeTypeButtonGroup = null;
+    private ButtonGroup iAttributeTypeButtonGroup = null;
     /**
      * 
      */
-    JRadioButton mAttributeTypeDensityButton = null;
+    private JRadioButton iAttributeTypeDensityButton = null;
     /**
      * 
      */
-    JRadioButton mAttributeTypePopulationButton = null;
-
-    /**
-     * 
-     */
-    JTextField mMissingValueTextField = null;
+    private JRadioButton iAttributeTypePopulationButton = null;
 
     /**
      * The default constructor for the panel.
@@ -1420,55 +1273,49 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      *            the content frame
      */
     CartogramWizardPanelTwo(JFrame contentFrame) {
-
-        mCartogramWizard = (CartogramWizard) contentFrame;
+        iCartogramWizard = (CartogramWizard) contentFrame;
 
         this.setLocation(160, 90);
         this.setSize(440, 340);
         setLayout(null);
 
         // Add the Next button
-        mNextButton = new JButton("Next >");
-        mNextButton.setLocation(320, 314);
-        mNextButton.setSize(120, 26);
-        mNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
-
-        mNextButton.addActionListener(new CartogramWizardGoToStepAction(
+        iNextButton = new JButton("Next >");
+        iNextButton.setLocation(320, 314);
+        iNextButton.setSize(120, 26);
+        iNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
+        iNextButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 3));
-
-        this.add(mNextButton);
+        add(iNextButton);
 
         // Add the Back button
         JButton backButton = new JButton("< Back");
         backButton.setLocation(195, 314);
         backButton.setSize(120, 26);
-
         backButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 1));
-
-        this.add(backButton);
+        add(backButton);
 
         // Create the attribute label
         JLabel attributeLabel = new JLabel("Cartogram attribute:");
         attributeLabel.setFont(new Font(null, Font.PLAIN, 11));
         attributeLabel.setBounds(0, 0, 190, 14);
-        this.add(attributeLabel);
+        add(attributeLabel);
 
         // Create the attribute pop-up menu
-        mAttributeMenu = new JComboBox();
-        mAttributeMenu.setBounds(0, 20, 190, 26);
-        mAttributeMenu.setFont(new Font(null, Font.PLAIN, 11));
-        mAttributeMenu.setMaximumRowCount(20);
+        iAttributeMenu = new JComboBox();
+        iAttributeMenu.setBounds(0, 20, 190, 26);
+        iAttributeMenu.setFont(new Font(null, Font.PLAIN, 11));
+        iAttributeMenu.setMaximumRowCount(20);
 
         // Find out the current cartogram layer name.
-        mCurrentCartogramLayer = mCartogramWizard.getCartogramLayerName();
+        iCurrentCartogramLayer = iCartogramWizard.getCartogramLayerName();
 
         // Get the numerical attributes of the current cartogram layer.
-        if (mCurrentCartogramLayer != null && mCurrentCartogramLayer != ""
-                && mCurrentCartogramLayer != "<none>") {
-
+        if (iCurrentCartogramLayer != null && iCurrentCartogramLayer != ""
+                && iCurrentCartogramLayer != "<none>") {
             Layer lyr = AppContext.layerManager
-                    .getLayer(mCurrentCartogramLayer);
+                    .getLayer(iCurrentCartogramLayer);
 
             FeatureSchema fs = lyr.getFeatureCollectionWrapper()
                     .getFeatureSchema();
@@ -1480,45 +1327,43 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
                 AttributeType attrtype = fs.getAttributeType(attrcnt);
                 if (attrtype == AttributeType.DOUBLE
                         || attrtype == AttributeType.INTEGER) {
-                    mAttributeMenu.addItem(fs.getAttributeName(attrcnt));
+                    iAttributeMenu.addItem(fs.getAttributeName(attrcnt));
                 }
-
             }
-
         }
 
-        if (mAttributeMenu.getItemCount() == 0) {
-            mAttributeMenu.addItem("<none>");
-            mNextButton.setEnabled(false);
+        if (iAttributeMenu.getItemCount() == 0) {
+            iAttributeMenu.addItem("<none>");
+            iNextButton.setEnabled(false);
         } else {
-            mNextButton.setEnabled(true);
+            iNextButton.setEnabled(true);
         }
 
         // Create the attribute type label
         JLabel attributeTypeLabel = new JLabel("Attribute type:");
         attributeTypeLabel.setFont(new Font(null, Font.PLAIN, 11));
         attributeTypeLabel.setBounds(220, 0, 190, 14);
-        this.add(attributeTypeLabel);
+        add(attributeTypeLabel);
 
         // Create the attribute type radio buttons.
-        mAttributeTypePopulationButton = new JRadioButton("Mass");
-        mAttributeTypePopulationButton.setSelected(true);
-        mAttributeTypePopulationButton.setFont(new Font(null, Font.PLAIN, 11));
-        mAttributeTypePopulationButton.setBounds(220, 20, 190, 20);
+        iAttributeTypePopulationButton = new JRadioButton("Mass");
+        iAttributeTypePopulationButton.setSelected(true);
+        iAttributeTypePopulationButton.setFont(new Font(null, Font.PLAIN, 11));
+        iAttributeTypePopulationButton.setBounds(220, 20, 190, 20);
 
-        mAttributeTypeDensityButton = new JRadioButton("Density");
-        mAttributeTypeDensityButton.setSelected(false);
-        mAttributeTypeDensityButton.setFont(new Font(null, Font.PLAIN, 11));
-        mAttributeTypeDensityButton.setBounds(220, 45, 190, 20);
+        iAttributeTypeDensityButton = new JRadioButton("Density");
+        iAttributeTypeDensityButton.setSelected(false);
+        iAttributeTypeDensityButton.setFont(new Font(null, Font.PLAIN, 11));
+        iAttributeTypeDensityButton.setBounds(220, 45, 190, 20);
 
-        mAttributeTypeButtonGroup = new ButtonGroup();
-        mAttributeTypeButtonGroup.add(mAttributeTypePopulationButton);
-        mAttributeTypeButtonGroup.add(mAttributeTypeDensityButton);
+        iAttributeTypeButtonGroup = new ButtonGroup();
+        iAttributeTypeButtonGroup.add(iAttributeTypePopulationButton);
+        iAttributeTypeButtonGroup.add(iAttributeTypeDensityButton);
 
-        this.add(mAttributeTypePopulationButton);
-        this.add(mAttributeTypeDensityButton);
+        add(iAttributeTypePopulationButton);
+        add(iAttributeTypeDensityButton);
 
-        this.add(mAttributeMenu);
+        add(iAttributeMenu);
 
         // Create the text pane which displays the attribute message.
         // The message itself is read from a RTF file.
@@ -1587,39 +1432,12 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         attributeTypeTextPane.setBackground(null);
         attributeTypeTextPane.setLocation(220, 80);
         attributeTypeTextPane.setSize(190, 200);
-        this.add(attributeTypeTextPane);
+        add(attributeTypeTextPane);
 
-        // MISSING VALUE TEXT FIELD
-
-        /*
-         * JLabel missingValueLabel = new JLabel("Define a missing value:");
-         * missingValueLabel.setBounds(0, 200, 190, 16);
-         * missingValueLabel.setFont(new Font(null, Font.BOLD, 11));
-         * this.add(missingValueLabel);
-         * 
-         * JLabel missingValueLabel2 = new
-         * JLabel("(leave empty if you don't have any)");
-         * missingValueLabel2.setBounds(0, 216, 190, 16);
-         * missingValueLabel2.setFont(new Font(null, Font.PLAIN, 11));
-         * this.add(missingValueLabel2);
-         * 
-         * String missingValue = mCartogramWizard.getMissingValue();
-         * mMissingValueTextField = new JTextField(missingValue);
-         * mMissingValueTextField.setBounds(0, 232, 100, 26);
-         * mMissingValueTextField.setFont(new Font(null, Font.PLAIN, 11));
-         * mMissingValueTextField.setHorizontalAlignment(JTextField.RIGHT);
-         * this.add(mMissingValueTextField);
-         */
-
-        // ADD THE HELP BUTTON
-
-        // ClassLoader cldr = this.getClass().getClassLoader();
-
+        // Add the Help button
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
-
         JButton helpButton = new JButton(helpIcon);
-
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
         helpButton.setSize(30, 30);
@@ -1627,21 +1445,18 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         helpButton.setFocusable(false);
         helpButton.setContentAreaFilled(false);
         helpButton.setBorderPainted(false);
-
         helpButton
                 .addActionListener(new CartogramWizardShowURL(
                         "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-attribute"));
-
-        this.add(helpButton);
-
-    } // CartogramWizardPanelTwo.<init>
+        add(helpButton);
+    }
 
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
             updateAttributeName();
         } else {
-            mCartogramWizard.setCartogramAttributeName((String) mAttributeMenu
+            iCartogramWizard.setCartogramAttributeName((String) iAttributeMenu
                     .getSelectedItem());
         }
 
@@ -1652,24 +1467,21 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * 
      */
     public void updateAttributeName() {
-
         // Find out the current layer name.
-        String layerName = mCartogramWizard.getCartogramLayerName();
+        String layerName = iCartogramWizard.getCartogramLayerName();
 
-        if (mCurrentCartogramLayer != layerName) {
-
+        if (iCurrentCartogramLayer != layerName) {
             // Change the layer name attribute.
-            mCurrentCartogramLayer = layerName;
+            iCurrentCartogramLayer = layerName;
 
             // Remove all existing items.
-            mAttributeMenu.removeAllItems();
+            iAttributeMenu.removeAllItems();
 
             // Get the numerical attributes of the current cartogram layer.
-            if (mCurrentCartogramLayer != null && mCurrentCartogramLayer != ""
-                    && mCurrentCartogramLayer != "<none>") {
-
+            if (iCurrentCartogramLayer != null && iCurrentCartogramLayer != ""
+                    && iCurrentCartogramLayer != "<none>") {
                 Layer lyr = AppContext.layerManager
-                        .getLayer(mCurrentCartogramLayer);
+                        .getLayer(iCurrentCartogramLayer);
 
                 FeatureSchema fs = lyr.getFeatureCollectionWrapper()
                         .getFeatureSchema();
@@ -1681,25 +1493,21 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
                     AttributeType attrtype = fs.getAttributeType(attrcnt);
                     if (attrtype == AttributeType.DOUBLE
                             || attrtype == AttributeType.INTEGER) {
-                        mAttributeMenu.addItem(fs.getAttributeName(attrcnt));
+                        iAttributeMenu.addItem(fs.getAttributeName(attrcnt));
                     }
-
                 }
-
             }
 
             // If there is no attribute we can select,
             // add an item "<none>" and disable the "Next" button.
-            if (mAttributeMenu.getItemCount() == 0) {
-                mAttributeMenu.addItem("<none>");
-                mNextButton.setEnabled(false);
+            if (iAttributeMenu.getItemCount() == 0) {
+                iAttributeMenu.addItem("<none>");
+                iNextButton.setEnabled(false);
             } else {
-                mNextButton.setEnabled(true);
+                iNextButton.setEnabled(true);
             }
-
         }
-
-    } // CartogramWizardPanelTwo.updateAttributeName
+    }
 
     /**
      * Tells us whether the attribute type is a density or population value.
@@ -1707,10 +1515,8 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * @return <code>true</code> if the attribute is a density value
      */
     public boolean attributeIsDensityValue() {
-
-        return mAttributeTypeDensityButton.isSelected();
-
-    } // CartogramWizardPanelTwo.attributeIsDensityValue
+        return iAttributeTypeDensityButton.isSelected();
+    }
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -1719,18 +1525,15 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
                 Browser.init();
                 Browser.displayURL(e.getURL().toString());
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     /**
      * @return the missing value
      */
     public static String getMissingValue() {
-        // return mMissingValueTextField.getText();
         return "";
     }
 
@@ -1749,26 +1552,12 @@ class CartogramWizardPanelThree extends JPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
-     */
-    CartogramWizard mCartogramWizard = null;
-
-    /**
-     * Slider for the amount of deformation (high area error and low shape error
-     * or low area error and high shape error).
-     */
-    JSlider mDeformationSlider = null;
-
-    /**
      * The default constructor for the panel.
      * 
      * @param contentFrame
      *            the content frame
      */
     CartogramWizardPanelThree(JFrame contentFrame) {
-
-        mCartogramWizard = (CartogramWizard) contentFrame;
-
         this.setLocation(160, 90);
         this.setSize(440, 340);
         setLayout(null);
@@ -1780,7 +1569,7 @@ class CartogramWizardPanelThree extends JPanel {
         simLayerButton
                 .addActionListener(new CartogramWizardSimulaneousLayerAction(
                         "showDialog", null));
-        this.add(simLayerButton);
+        add(simLayerButton);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
@@ -1807,7 +1596,7 @@ class CartogramWizardPanelThree extends JPanel {
         simLayerTextPane.setBackground(null);
         simLayerTextPane.setLocation(40, 35);
         simLayerTextPane.setSize(400, 80);
-        this.add(simLayerTextPane);
+        add(simLayerTextPane);
 
         // Button for constrained layers.
         JButton constLayersButton = new JButton("Constrained transformation...");
@@ -1816,7 +1605,7 @@ class CartogramWizardPanelThree extends JPanel {
         constLayersButton
                 .addActionListener(new CartogramWizardConstrainedLayerAction(
                         "showDialog", null));
-        this.add(constLayersButton);
+        add(constLayersButton);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
@@ -1842,7 +1631,7 @@ class CartogramWizardPanelThree extends JPanel {
         constLayerTextPane.setBackground(null);
         constLayerTextPane.setLocation(40, 175);
         constLayerTextPane.setSize(400, 60);
-        this.add(constLayerTextPane);
+        add(constLayerTextPane);
 
         // Add the Next button
         JButton computeButton = new JButton("Next >");
@@ -1851,7 +1640,7 @@ class CartogramWizardPanelThree extends JPanel {
         computeButton.setMnemonic(KeyEvent.VK_ENTER);
         computeButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 4));
-        this.add(computeButton);
+        add(computeButton);
 
         // Add the Back button
         JButton backButton = new JButton("< Back");
@@ -1859,29 +1648,12 @@ class CartogramWizardPanelThree extends JPanel {
         backButton.setSize(120, 26);
         backButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 2));
-        this.add(backButton);
+        add(backButton);
 
-        // Create the slave layer list.
-        // By default, we add all layers but the master layer.
-        /*
-         * int nlayers = AppContext.layerManager.size(); int lyrcnt = 0; Vector
-         * layerList = new Vector(); String masterLayerName =
-         * mCartogramWizard.getCartogramLayerName(); for (lyrcnt = 0; lyrcnt <
-         * nlayers; lyrcnt++) { Layer lyr =
-         * AppContext.layerManager.getLayer(lyrcnt); if (lyr.getName() !=
-         * masterLayerName) { layerList.add(lyr); } }
-         * mCartogramWizard.setSimultaneousLayers(layerList);
-         */
-
-        // ADD THE HELP BUTTON
-
-        // ClassLoader cldr = this.getClass().getClassLoader();
-
+        // Add the Help button
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
-
         JButton helpButton = new JButton(helpIcon);
-
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
         helpButton.setSize(30, 30);
@@ -1889,15 +1661,11 @@ class CartogramWizardPanelThree extends JPanel {
         helpButton.setFocusable(false);
         helpButton.setContentAreaFilled(false);
         helpButton.setBorderPainted(false);
-
         helpButton.addActionListener(new CartogramWizardShowURL(
                 "http://scapetoad.choros.ch/help/b-other-layers.php"));
-
-        this.add(helpButton);
-
-    } // CartogramWizardPanelThree.<init>
-
-} // CartogramWizardPanelThree
+        add(helpButton);
+    }
+}
 
 /**
  * This class represents the panel for the slider for the amount of deformation
@@ -1913,13 +1681,13 @@ class CartogramWizardPanelFour extends JPanel {
     /**
      * 
      */
-    CartogramWizard mCartogramWizard = null;
+    private CartogramWizard iCartogramWizard = null;
 
     /**
      * Slider for the amount of deformation (high area error and low shape error
      * or low area error and high shape error).
      */
-    JSlider mDeformationSlider = null;
+    private JSlider iDeformationSlider = null;
 
     /**
      * The default constructor for the panel.
@@ -1928,24 +1696,23 @@ class CartogramWizardPanelFour extends JPanel {
      *            the content frame
      */
     CartogramWizardPanelFour(JFrame contentFrame) {
+        iCartogramWizard = (CartogramWizard) contentFrame;
 
-        mCartogramWizard = (CartogramWizard) contentFrame;
-
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
         ClassLoader cldr = this.getClass().getClassLoader();
 
         // Add the slider for the amount of deformation.
         Font smallFont = new Font(null, Font.PLAIN, 11);
-        mDeformationSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
-        mDeformationSlider.setMajorTickSpacing(25);
-        mDeformationSlider.setMinorTickSpacing(5);
-        mDeformationSlider.setPaintTicks(true);
-        mDeformationSlider.setFont(smallFont);
-        mDeformationSlider.setSize(440, 40);
-        mDeformationSlider.setLocation(0, 20);
+        iDeformationSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
+        iDeformationSlider.setMajorTickSpacing(25);
+        iDeformationSlider.setMinorTickSpacing(5);
+        iDeformationSlider.setPaintTicks(true);
+        iDeformationSlider.setFont(smallFont);
+        iDeformationSlider.setSize(440, 40);
+        iDeformationSlider.setLocation(0, 20);
 
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         JLabel sliderLabel = new JLabel("Low");
@@ -1958,16 +1725,16 @@ class CartogramWizardPanelFour extends JPanel {
         sliderLabel.setFont(smallFont);
         labelTable.put(new Integer(100), sliderLabel);
 
-        mDeformationSlider.setLabelTable(labelTable);
-        mDeformationSlider.setPaintLabels(true);
-        this.add(mDeformationSlider);
+        iDeformationSlider.setLabelTable(labelTable);
+        iDeformationSlider.setPaintLabels(true);
+        add(iDeformationSlider);
 
         // Add the label for the amount of deformation.
         JLabel deformationLabel = new JLabel("Transformation quality:");
         deformationLabel.setSize(440, 14);
         deformationLabel.setFont(new Font(null, Font.BOLD, 11));
         deformationLabel.setLocation(0, 0);
-        this.add(deformationLabel);
+        add(deformationLabel);
 
         // Create the text pane which displays the help text for the
         // amount of deformation.
@@ -1993,7 +1760,7 @@ class CartogramWizardPanelFour extends JPanel {
         deformationTextPane.setBackground(null);
         deformationTextPane.setLocation(40, 70);
         deformationTextPane.setSize(400, 70);
-        this.add(deformationTextPane);
+        add(deformationTextPane);
 
         // ADVANCED OPTIONS
 
@@ -2004,7 +1771,7 @@ class CartogramWizardPanelFour extends JPanel {
         advancedButton
                 .addActionListener(new CartogramWizardAdvancedOptionsAction(
                         "showDialog", null));
-        this.add(advancedButton);
+        add(advancedButton);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
@@ -2030,7 +1797,7 @@ class CartogramWizardPanelFour extends JPanel {
         advancedTextPane.setBackground(null);
         advancedTextPane.setLocation(40, 205);
         advancedTextPane.setSize(400, 60);
-        this.add(advancedTextPane);
+        add(advancedTextPane);
 
         // Add the Compute button
         JButton computeButton = new JButton("Compute");
@@ -2039,7 +1806,7 @@ class CartogramWizardPanelFour extends JPanel {
         computeButton.setMnemonic(KeyEvent.VK_ENTER);
         computeButton.addActionListener(new CartogramWizardComputeAction(
                 (CartogramWizard) contentFrame));
-        this.add(computeButton);
+        add(computeButton);
 
         // Add the Back button
         JButton backButton = new JButton("< Back");
@@ -2047,17 +1814,12 @@ class CartogramWizardPanelFour extends JPanel {
         backButton.setSize(120, 26);
         backButton.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 3));
-        this.add(backButton);
+        add(backButton);
 
-        // ADD THE HELP BUTTON
-
-        // ClassLoader cldr = this.getClass().getClassLoader();
-
+        // Add the Help button
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
-
         JButton helpButton = new JButton(helpIcon);
-
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
         helpButton.setSize(30, 30);
@@ -2065,14 +1827,11 @@ class CartogramWizardPanelFour extends JPanel {
         helpButton.setFocusable(false);
         helpButton.setContentAreaFilled(false);
         helpButton.setBorderPainted(false);
-
         helpButton
                 .addActionListener(new CartogramWizardShowURL(
                         "http://scapetoad.choros.ch/help/c-transformation-parameters.php"));
-
-        this.add(helpButton);
-
-    } // CartogramWizardPanelFour.<init>
+        add(helpButton);
+    }
 
     /**
      * If the panel is shown, update the layer list before displaying the panel.
@@ -2084,9 +1843,8 @@ class CartogramWizardPanelFour extends JPanel {
             // this.updateConstrainedLayerList();
         } else {
             // Update the amount of deformation.
-            mCartogramWizard.setAmountOfDeformation(mDeformationSlider
+            iCartogramWizard.setAmountOfDeformation(iDeformationSlider
                     .getValue());
-
         }
 
         super.setVisible(visible);
@@ -2097,10 +1855,9 @@ class CartogramWizardPanelFour extends JPanel {
      *            <code>true</code> to enable the deformation
      */
     public void enableAmountOfDeformationSlider(boolean enable) {
-        mDeformationSlider.setEnabled(enable);
+        iDeformationSlider.setEnabled(enable);
     }
-
-} // CartogramWizardPanelFour
+}
 
 /**
  * This class represents the panel shown during the cartogram computation. It
@@ -2117,62 +1874,50 @@ class CartogramWizardRunningPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The cartogram wizard.
-     */
-    CartogramWizard mCartogramWizard = null;
-
-    /**
      * The progress bar.
      */
-    JProgressBar mProgressBar = null;
+    private JProgressBar iProgressBar = null;
 
     /**
      * The progress labels. The label 1 is for the current task name. In a
      * lengthy task, the label 2 may be used for more detailed user information.
      */
-    JLabel mProgressLabel1 = null;
+    private JLabel iProgressLabel1 = null;
     /**
      * 
      */
-    JLabel mProgressLabel2 = null;
+    private JLabel iProgressLabel2 = null;
 
     /**
      * The default constructor.
-     * 
-     * @param contentFrame
-     *            the content frame
      */
-    CartogramWizardRunningPanel(JFrame contentFrame) {
-
-        mCartogramWizard = (CartogramWizard) contentFrame;
-
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+    CartogramWizardRunningPanel() {
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
         // Creating the progress bar.
-        mProgressBar = new JProgressBar();
-        mProgressBar.setMaximum(1000);
-        mProgressBar.setValue(0);
-        mProgressBar.setStringPainted(false);
-        mProgressBar.setSize(300, 26);
-        mProgressBar.setLocation(0, 0);
-        this.add(mProgressBar);
+        iProgressBar = new JProgressBar();
+        iProgressBar.setMaximum(1000);
+        iProgressBar.setValue(0);
+        iProgressBar.setStringPainted(false);
+        iProgressBar.setSize(300, 26);
+        iProgressBar.setLocation(0, 0);
+        add(iProgressBar);
 
         // Creating the progess label 1.
-        mProgressLabel1 = new JLabel("Starting cartogram computation...");
-        mProgressLabel1.setFont(new Font(null, Font.BOLD, 11));
-        mProgressLabel1.setSize(400, 14);
-        mProgressLabel1.setLocation(0, 30);
-        this.add(mProgressLabel1);
+        iProgressLabel1 = new JLabel("Starting cartogram computation...");
+        iProgressLabel1.setFont(new Font(null, Font.BOLD, 11));
+        iProgressLabel1.setSize(400, 14);
+        iProgressLabel1.setLocation(0, 30);
+        add(iProgressLabel1);
 
         // Creating the progress label 2.
-        mProgressLabel2 = new JLabel("");
-        mProgressLabel2.setFont(new Font(null, Font.PLAIN, 11));
-        mProgressLabel2.setSize(400, 14);
-        mProgressLabel2.setLocation(0, 50);
-        this.add(mProgressLabel2);
-
+        iProgressLabel2 = new JLabel("");
+        iProgressLabel2.setFont(new Font(null, Font.PLAIN, 11));
+        iProgressLabel2.setSize(400, 14);
+        iProgressLabel2.setLocation(0, 50);
+        add(iProgressLabel2);
     }
 
     /**
@@ -2183,7 +1928,6 @@ class CartogramWizardRunningPanel extends JPanel {
      *            the progress status (0-1000).
      */
     public void updateProgressBar(int aLoops) {
-
         int nloops = aLoops;
         if (nloops < 0) {
             nloops = 0;
@@ -2191,9 +1935,8 @@ class CartogramWizardRunningPanel extends JPanel {
         if (nloops > 1000) {
             nloops = 1000;
         }
-        mProgressBar.setValue(nloops);
-
-    } // CartogramWizardRunningPanel.updateProgressBar
+        iProgressBar.setValue(nloops);
+    }
 
     /**
      * Updates the progress label 1.
@@ -2202,11 +1945,9 @@ class CartogramWizardRunningPanel extends JPanel {
      *            the label 1
      */
     public void updateProgressLabel1(String label1) {
-
-        mProgressLabel1.setText(label1);
-        mProgressLabel1.repaint();
-
-    } // CartogramWizardRunningPanel.updateProgressLabel1
+        iProgressLabel1.setText(label1);
+        iProgressLabel1.repaint();
+    }
 
     /**
      * Updates the progress label 2.
@@ -2215,12 +1956,10 @@ class CartogramWizardRunningPanel extends JPanel {
      *            the label 2
      */
     public void updateProgressLabel2(String label2) {
+        iProgressLabel2.setText(label2);
 
-        mProgressLabel2.setText(label2);
-
-    } // CartogramWizardRunningPanel.updateProgressLabel2
-
-} // CartogramWizardRunningPanel
+    }
+}
 
 /**
  * This class shows the finished panel in the cartogram wizard.
@@ -2235,73 +1974,70 @@ class CartogramWizardFinishedPanel extends JPanel {
     /**
      * Attributes for the text to display and for the report.
      */
-    String mShortMessage = null;
+    private String iShortMessage = null;
 
     /**
-     * Says whether an error has occured during the cartogram computation
+     * Says whether an error has occurred during the cartogram computation
      * process.
      */
-    boolean mErrorOccured = false;
+    private boolean iErrorOccured = false;
 
     /**
      * The title of the error message, if there is one.
      */
-    String mErrorTitle = null;
+    private String iErrorTitle = null;
 
     /**
      * The error message itself, if there is one.
      */
-    String mErrorMessage = null;
+    private String iErrorMessage = null;
 
     /**
      * The technical details of the error, if there is one.
      */
-    String mStackTrace = null;
+    private String iStackTrace = null;
 
     /**
      * The help button.
      */
-    JButton mHelpButton = null;
+    private JButton iHelpButton = null;
 
     /**
      * The save report button.
      */
-    JButton mSaveReportButton = null;
+    private JButton iSaveReportButton = null;
 
     /**
      * Initializes the new panel.
      */
     CartogramWizardFinishedPanel() {
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
-        // ADD THE HELP BUTTON
-
+        // Add the Help button
         ClassLoader cldr = this.getClass().getClassLoader();
 
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
-        mHelpButton = new JButton(helpIcon);
-        mHelpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        mHelpButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        mHelpButton.setSize(30, 30);
-        mHelpButton.setLocation(0, 312);
-        mHelpButton.setFocusable(false);
-        mHelpButton.setContentAreaFilled(false);
-        mHelpButton.setBorderPainted(false);
-
-        mHelpButton.addActionListener(new CartogramWizardShowURL(
+        iHelpButton = new JButton(helpIcon);
+        iHelpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        iHelpButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        iHelpButton.setSize(30, 30);
+        iHelpButton.setLocation(0, 312);
+        iHelpButton.setFocusable(false);
+        iHelpButton.setContentAreaFilled(false);
+        iHelpButton.setBorderPainted(false);
+        iHelpButton.addActionListener(new CartogramWizardShowURL(
                 "http://scapetoad.choros.ch/help/d-computation-report.php"));
 
-        mSaveReportButton = new JButton("Save report...");
-        mSaveReportButton.setBounds(300, 312, 130, 26);
-        mSaveReportButton.setVisible(false);
-        mSaveReportButton
+        iSaveReportButton = new JButton("Save report...");
+        iSaveReportButton.setBounds(300, 312, 130, 26);
+        iSaveReportButton.setVisible(false);
+        iSaveReportButton
                 .addActionListener(new CartogramWizardSaveReportAction());
-
-    } // CartogramWizardFinishedPanel.<init>
+    }
 
     /**
      * Adapts the finished panels according to the current cartogram wizard
@@ -2309,45 +2045,42 @@ class CartogramWizardFinishedPanel extends JPanel {
      */
     @Override
     public void setVisible(boolean visible) {
-
         if (visible) {
-
             JButton cancelButton = AppContext.cartogramWizard.getCancelButton();
             cancelButton.setText("End");
 
             // Remove all elements in this pane.
             removeAll();
 
-            if (mErrorOccured) {
-                JLabel errorTitle = new JLabel(mErrorTitle);
+            if (iErrorOccured) {
+                JLabel errorTitle = new JLabel(iErrorTitle);
                 errorTitle.setFont(new Font(null, Font.BOLD, 11));
                 errorTitle.setBounds(0, 0, 400, 14);
-                this.add(errorTitle);
+                add(errorTitle);
 
-                JLabel finishedMessage = new JLabel(mErrorMessage);
+                JLabel finishedMessage = new JLabel(iErrorMessage);
                 finishedMessage.setFont(new Font(null, Font.PLAIN, 11));
                 finishedMessage.setBounds(0, 22, 400, 14);
-                this.add(finishedMessage);
+                add(finishedMessage);
 
-                JTextArea finishedReport = new JTextArea(mStackTrace);
+                JTextArea finishedReport = new JTextArea(iStackTrace);
                 finishedReport.setFont(new Font(null, Font.PLAIN, 11));
                 finishedReport.setEditable(false);
 
                 JScrollPane scrollPane = new JScrollPane(finishedReport);
                 scrollPane.setBounds(0, 45, 430, 250);
-                this.add(scrollPane);
-
+                add(scrollPane);
             } else {
                 JLabel finishedTitle = new JLabel(
                         "Cartogram computation successfully terminated");
                 finishedTitle.setFont(new Font(null, Font.BOLD, 11));
                 finishedTitle.setBounds(0, 0, 400, 14);
-                this.add(finishedTitle);
+                add(finishedTitle);
 
-                JLabel finishedMessage = new JLabel(mShortMessage);
+                JLabel finishedMessage = new JLabel(iShortMessage);
                 finishedMessage.setFont(new Font(null, Font.PLAIN, 11));
                 finishedMessage.setBounds(0, 22, 400, 14);
-                this.add(finishedMessage);
+                add(finishedMessage);
 
                 JTextArea finishedReport = new JTextArea(
                         AppContext.cartogramWizard.getCartogram()
@@ -2358,20 +2091,17 @@ class CartogramWizardFinishedPanel extends JPanel {
 
                 JScrollPane scrollPane = new JScrollPane(finishedReport);
                 scrollPane.setBounds(0, 45, 430, 250);
-                this.add(scrollPane);
+                add(scrollPane);
 
-                this.add(mSaveReportButton);
-                mSaveReportButton.setVisible(true);
-
+                add(iSaveReportButton);
+                iSaveReportButton.setVisible(true);
             }
 
-            this.add(mHelpButton);
-
+            add(iHelpButton);
         }
 
         super.setVisible(visible);
-
-    } // CartogramWizardFinishedPanel.setVisible
+    }
 
     /**
      * Defines whether an error has occured or not. This parameter will define
@@ -2381,9 +2111,8 @@ class CartogramWizardFinishedPanel extends JPanel {
      *            true if an error has occured.
      */
     public void setErrorOccured(boolean errorOccured) {
-        mErrorOccured = errorOccured;
-
-    } // CartogramWizardFinishedPanel.setErrorOccured
+        iErrorOccured = errorOccured;
+    }
 
     /**
      * Defines the error message.
@@ -2396,11 +2125,10 @@ class CartogramWizardFinishedPanel extends JPanel {
      *            the complete stack trace in the case of an exception.
      */
     public void setErrorMessage(String title, String message, String stackTrace) {
-        mErrorTitle = title;
-        mErrorMessage = message;
-        mStackTrace = stackTrace;
-
-    } // CartogramWizardFinishedPanel.setErrorMessage
+        iErrorTitle = title;
+        iErrorMessage = message;
+        iStackTrace = stackTrace;
+    }
 
     /**
      * Defines the short message.
@@ -2409,11 +2137,9 @@ class CartogramWizardFinishedPanel extends JPanel {
      *            the message
      */
     public void setShortMessage(String message) {
-        mShortMessage = message;
-
-    } // CartogramWizardFinishedPanel.setShortMessage
-
-} // CartogramWizardFinishedPanel
+        iShortMessage = message;
+    }
+}
 
 /**
  * This class moves the wizard from the given step.
@@ -2427,14 +2153,16 @@ class CartogramWizardGoToStepAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    CartogramWizard mWizard = null;
+    private CartogramWizard iWizard = null;
+
     /**
      * 
      */
-    int mStep = -1;
+    private int iStep = -1;
 
     /**
      * The constructor needs a reference to the CartogramWizard object.
@@ -2445,15 +2173,14 @@ class CartogramWizardGoToStepAction extends AbstractAction {
      *            the number of steps
      */
     CartogramWizardGoToStepAction(CartogramWizard wizard, int step) {
-        mWizard = wizard;
-        mStep = step;
+        iWizard = wizard;
+        iStep = step;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mWizard.goToStep(mStep);
+        iWizard.goToStep(iStep);
     }
-
 }
 
 /**
@@ -2471,7 +2198,6 @@ class CartogramWizardCloseAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         Cartogram cg = AppContext.cartogramWizard.getCartogram();
         if (cg != null) {
             boolean cgRunning = cg.isRunning();
@@ -2483,10 +2209,8 @@ class CartogramWizardCloseAction extends AbstractAction {
         AppContext.cartogramWizard.setVisible(false);
         AppContext.cartogramWizard.dispose();
         AppContext.cartogramWizard = null;
-
     }
-
-} // CartogramWizardCloseAction
+}
 
 /**
  * This class launches the cartogram computation process.
@@ -2500,11 +2224,12 @@ class CartogramWizardComputeAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * A reference to the cartogram wizard. This is needed in order to extract
      * the selected options.
      */
-    CartogramWizard mCartogramWizard = null;
+    private CartogramWizard iCartogramWizard = null;
 
     /**
      * The default constructor.
@@ -2513,67 +2238,64 @@ class CartogramWizardComputeAction extends AbstractAction {
      *            the cartogram wizard
      */
     CartogramWizardComputeAction(CartogramWizard cartogramWizard) {
-
-        mCartogramWizard = cartogramWizard;
-
-    } // CartogramWizardComputeAction.<init>
+        iCartogramWizard = cartogramWizard;
+    }
 
     /**
      * This method launches the cartogram computation process.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
         // Hide the 3rd wizard panel.
-        mCartogramWizard.getPanelFour().setVisible(false);
+        iCartogramWizard.getPanelFour().setVisible(false);
 
         // Show the running panel.
-        mCartogramWizard.getRunningPanel().setVisible(true);
+        iCartogramWizard.getRunningPanel().setVisible(true);
 
-        mCartogramWizard.getWizardStepIconPanel().setStepIcon(6);
+        iCartogramWizard.getWizardStepIconPanel().setStepIcon(6);
 
         // Get the name of the selected layer.
-        String selectedLayer = mCartogramWizard.getCartogramLayerName();
+        String selectedLayer = iCartogramWizard.getCartogramLayerName();
 
         // Get the name of the selected attribute.
-        String selectedAttribute = mCartogramWizard.getCartogramAttributeName();
+        String selectedAttribute = iCartogramWizard.getCartogramAttributeName();
 
         // Get the attribute type (population or density value).
-        boolean isDensityValue = mCartogramWizard.getPanelTwo()
+        boolean isDensityValue = iCartogramWizard.getPanelTwo()
                 .attributeIsDensityValue();
 
-        mCartogramWizard.getPanelTwo();
-        mCartogramWizard.setMissingValue(CartogramWizardPanelTwo
+        iCartogramWizard.getPanelTwo();
+        iCartogramWizard.setMissingValue(CartogramWizardPanelTwo
                 .getMissingValue());
 
         // Create a new cartogram instance and set the parameters.
-        Cartogram cg = new Cartogram(mCartogramWizard);
+        Cartogram cg = new Cartogram(iCartogramWizard);
         cg.setLayerManager(AppContext.layerManager);
         cg.setMasterLayer(selectedLayer);
         cg.setMasterAttribute(selectedAttribute);
         cg.setMasterAttributeIsDensityValue(isDensityValue);
-        cg.setMissingValue(mCartogramWizard.getMissingValue());
-        cg.setSlaveLayers(mCartogramWizard.getSimultaneousLayers());
-        cg.setConstrainedDeformationLayers(mCartogramWizard
+        cg.setMissingValue(iCartogramWizard.getMissingValue());
+        cg.setSlaveLayers(iCartogramWizard.getSimultaneousLayers());
+        cg.setConstrainedDeformationLayers(iCartogramWizard
                 .getConstrainedDeformationLayers());
 
-        cg.setAmountOfDeformation(mCartogramWizard.getAmountOfDeformation());
+        cg.setAmountOfDeformation(iCartogramWizard.getAmountOfDeformation());
 
-        cg.setAdvancedOptionsEnabled(mCartogramWizard
+        cg.setAdvancedOptionsEnabled(iCartogramWizard
                 .getAdvancedOptionsEnabled());
 
-        cg.setGridSize(mCartogramWizard.getCartogramGridSizeInX(),
-                mCartogramWizard.getCartogramGridSizeInY());
+        cg.setGridSize(iCartogramWizard.getCartogramGridSizeInX(),
+                iCartogramWizard.getCartogramGridSizeInY());
 
-        if (mCartogramWizard.getAdvancedOptionsEnabled()) {
-            cg.bias = mCartogramWizard.bias;
+        if (iCartogramWizard.getAdvancedOptionsEnabled()) {
+            cg.bias = iCartogramWizard.bias;
         } else {
             cg.bias = 0.000001;
         }
 
         // Set the parameters for the deformation grid layer.
-        cg.setCreateGridLayer(mCartogramWizard.getCreateGridLayer());
-        cg.setGridLayerSize(mCartogramWizard.getDeformationGridSize());
+        cg.setCreateGridLayer(iCartogramWizard.getCreateGridLayer());
+        cg.setGridLayerSize(iCartogramWizard.getDeformationGridSize());
 
         // Set the parameters for the legend layer.
         // We have to estimate the legend values.
@@ -2583,14 +2305,12 @@ class CartogramWizardComputeAction extends AbstractAction {
             cg.setCreateLegendLayer(true);
         }
 
-        mCartogramWizard.setCartogram(cg);
+        iCartogramWizard.setCartogram(cg);
 
         // Start the cartogram computation.
         cg.start();
-
-    } // CartogramWizardComputeAction.actionPerformed
-
-} // CartogramWizardComputeAction
+    }
+}
 
 /**
  * Dialog window for specifying some advanced parameters for the cartogram
@@ -2613,102 +2333,78 @@ class CartogramWizardOptionsWindow extends JDialog implements
     /**
      * 
      */
-    JCheckBox mAdvancedOptionsCheckBox = null;
+    private JCheckBox iAdvancedOptionsCheckBox = null;
 
     /**
      * The check box for creating a deformation grid layer.
      */
-    JCheckBox mGridLayerCheckBox = null;
+    private JCheckBox iGridLayerCheckBox = null;
 
     /**
      * The text field for the deformation grid size.
      */
-    JTextField mGridSizeTextField = null;
+    private JTextField iGridSizeTextField = null;
 
     /**
      * 
      */
-    JTextField mCartogramGridSizeTextField = null;
+    private JTextField iCartogramGridSizeTextField = null;
 
     /**
      * 
      */
-    JComboBox mDiffusionGridMenu = null;
-    /**
-     * 
-     */
-    JTextField mDiffusionIterationsTextField = null;
+    private JTextPane iManualParametersPane = null;
 
     /**
      * 
      */
-    JTextPane mManualParametersPane = null;
-    /**
-     * 
-     */
-    JTextPane mGrid1Pane = null;
-    /**
-     * 
-     */
-    JLabel mCartogramGridSizeLabel = null;
-    /**
-     * 
-     */
-    JTextPane mGrid2Pane = null;
-    /**
-     * 
-     */
-    JLabel mDiffusionGridSizeLabel = null;
-    /**
-     * 
-     */
-    JTextPane mIterPane = null;
-    /**
-     * 
-     */
-    JLabel mIterationsLabel = null;
+    private JTextPane iGrid1Pane = null;
 
     /**
      * 
      */
-    JTextPane mBiasPane = null;
+    private JLabel iCartogramGridSizeLabel = null;
+
     /**
      * 
      */
-    JLabel mBiasLabel = null;
+    private JTextPane iBiasPane = null;
+
     /**
      * 
      */
-    JTextField mBiasTextField = null;
+    private JLabel iBiasLabel = null;
+
+    /**
+     * 
+     */
+    private JTextField iBiasTextField = null;
 
     /**
      * Constructor for the options window.
      */
     CartogramWizardOptionsWindow() {
-
         // Set the window parameters.
         setTitle("Advanced options");
 
-        this.setSize(500, 530);
-        this.setLocation(40, 50);
+        setSize(500, 530);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
 
         // GRID LAYER CHECK BOX
-        mGridLayerCheckBox = new JCheckBox("Create a transformation grid layer");
-
-        mGridLayerCheckBox.setSelected(AppContext.cartogramWizard
+        iGridLayerCheckBox = new JCheckBox("Create a transformation grid layer");
+        iGridLayerCheckBox.setSelected(AppContext.cartogramWizard
                 .getCreateGridLayer());
-
-        mGridLayerCheckBox.setFont(new Font(null, Font.BOLD, 11));
-        mGridLayerCheckBox.setLocation(20, 20);
-        mGridLayerCheckBox.setSize(300, 26);
-        this.add(mGridLayerCheckBox);
+        iGridLayerCheckBox.setFont(new Font(null, Font.BOLD, 11));
+        iGridLayerCheckBox.setLocation(20, 20);
+        iGridLayerCheckBox.setSize(300, 26);
+        add(iGridLayerCheckBox);
 
         // DEFORMATION GRID LAYER HELP TEXT
 
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader cldr = getClass().getClassLoader();
 
         JTextPane deformationGridPane = new JTextPane();
         String deformationText = null;
@@ -2732,45 +2428,45 @@ class CartogramWizardOptionsWindow extends JDialog implements
         deformationGridPane.setBackground(null);
         deformationGridPane.setLocation(45, 45);
         deformationGridPane.setSize(400, 30);
-        this.add(deformationGridPane);
+        add(deformationGridPane);
 
         // GRID SIZE TEXT FIELD
         JLabel gridSizeLabel = new JLabel("Enter the number of rows:");
         gridSizeLabel.setLocation(45, 85);
         gridSizeLabel.setSize(140, 26);
         gridSizeLabel.setFont(new Font(null, Font.PLAIN, 11));
-        this.add(gridSizeLabel);
+        add(gridSizeLabel);
 
         int gridSize = AppContext.cartogramWizard.getDeformationGridSize();
         String gridSizeString = "" + gridSize;
-        mGridSizeTextField = new JTextField(gridSizeString);
-        mGridSizeTextField.setLocation(240, 85);
-        mGridSizeTextField.setSize(50, 26);
-        mGridSizeTextField.setFont(new Font(null, Font.PLAIN, 11));
-        mGridSizeTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        this.add(mGridSizeTextField);
+        iGridSizeTextField = new JTextField(gridSizeString);
+        iGridSizeTextField.setLocation(240, 85);
+        iGridSizeTextField.setSize(50, 26);
+        iGridSizeTextField.setFont(new Font(null, Font.PLAIN, 11));
+        iGridSizeTextField.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(iGridSizeTextField);
 
         // Separator
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
         separator.setLocation(20, 120);
         separator.setSize(460, 10);
-        this.add(separator);
+        add(separator);
 
         // ADVANCED OPTIONS CHECK BOX
-        mAdvancedOptionsCheckBox = new JCheckBox(
+        iAdvancedOptionsCheckBox = new JCheckBox(
                 "Define cartogram parameters manually");
 
-        mAdvancedOptionsCheckBox.setSelected(AppContext.cartogramWizard
+        iAdvancedOptionsCheckBox.setSelected(AppContext.cartogramWizard
                 .getAdvancedOptionsEnabled());
 
-        mAdvancedOptionsCheckBox.setFont(new Font(null, Font.BOLD, 11));
-        mAdvancedOptionsCheckBox.setLocation(20, 140);
-        mAdvancedOptionsCheckBox.setSize(360, 26);
-        mAdvancedOptionsCheckBox.addChangeListener(this);
-        this.add(mAdvancedOptionsCheckBox);
+        iAdvancedOptionsCheckBox.setFont(new Font(null, Font.BOLD, 11));
+        iAdvancedOptionsCheckBox.setLocation(20, 140);
+        iAdvancedOptionsCheckBox.setSize(360, 26);
+        iAdvancedOptionsCheckBox.addChangeListener(this);
+        add(iAdvancedOptionsCheckBox);
 
         // Manual parameters text
-        mManualParametersPane = new JTextPane();
+        iManualParametersPane = new JTextPane();
         String manualParametersText = null;
         try {
             InputStream inStream = cldr.getResource(
@@ -2785,18 +2481,18 @@ class CartogramWizardOptionsWindow extends JDialog implements
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mManualParametersPane.setContentType("text/html");
-        mManualParametersPane.setText(manualParametersText);
-        mManualParametersPane.setEditable(false);
-        mManualParametersPane.addHyperlinkListener(this);
-        mManualParametersPane.setBackground(null);
-        mManualParametersPane.setLocation(45, 170);
-        mManualParametersPane.setSize(400, 60);
-        mManualParametersPane.setEnabled(mAdvancedOptionsCheckBox.isSelected());
-        this.add(mManualParametersPane);
+        iManualParametersPane.setContentType("text/html");
+        iManualParametersPane.setText(manualParametersText);
+        iManualParametersPane.setEditable(false);
+        iManualParametersPane.addHyperlinkListener(this);
+        iManualParametersPane.setBackground(null);
+        iManualParametersPane.setLocation(45, 170);
+        iManualParametersPane.setSize(400, 60);
+        iManualParametersPane.setEnabled(iAdvancedOptionsCheckBox.isSelected());
+        add(iManualParametersPane);
 
         // Grid 1 text
-        mGrid1Pane = new JTextPane();
+        iGrid1Pane = new JTextPane();
         String grid1Text = null;
         try {
             InputStream inStream = cldr.getResource("resources/Grid1Text.html")
@@ -2811,42 +2507,42 @@ class CartogramWizardOptionsWindow extends JDialog implements
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mGrid1Pane.setContentType("text/html");
-        mGrid1Pane.setText(grid1Text);
-        mGrid1Pane.setEditable(false);
-        mGrid1Pane.addHyperlinkListener(this);
-        mGrid1Pane.setBackground(null);
-        mGrid1Pane.setLocation(45, 240);
-        mGrid1Pane.setSize(400, 60);
-        mGrid1Pane.setEnabled(mAdvancedOptionsCheckBox.isSelected());
-        this.add(mGrid1Pane);
+        iGrid1Pane.setContentType("text/html");
+        iGrid1Pane.setText(grid1Text);
+        iGrid1Pane.setEditable(false);
+        iGrid1Pane.addHyperlinkListener(this);
+        iGrid1Pane.setBackground(null);
+        iGrid1Pane.setLocation(45, 240);
+        iGrid1Pane.setSize(400, 60);
+        iGrid1Pane.setEnabled(iAdvancedOptionsCheckBox.isSelected());
+        add(iGrid1Pane);
 
         // Cartogram grid size
-        mCartogramGridSizeLabel = new JLabel("Enter the number of grid rows:");
+        iCartogramGridSizeLabel = new JLabel("Enter the number of grid rows:");
 
-        mCartogramGridSizeLabel.setLocation(45, 300);
-        mCartogramGridSizeLabel.setSize(170, 26);
-        mCartogramGridSizeLabel.setFont(new Font(null, Font.PLAIN, 11));
-        mCartogramGridSizeLabel.setEnabled(mAdvancedOptionsCheckBox
+        iCartogramGridSizeLabel.setLocation(45, 300);
+        iCartogramGridSizeLabel.setSize(170, 26);
+        iCartogramGridSizeLabel.setFont(new Font(null, Font.PLAIN, 11));
+        iCartogramGridSizeLabel.setEnabled(iAdvancedOptionsCheckBox
                 .isSelected());
-        this.add(mCartogramGridSizeLabel);
+        add(iCartogramGridSizeLabel);
 
         int cgGridSizeX = AppContext.cartogramWizard.getCartogramGridSizeInX();
         int cgGridSizeY = AppContext.cartogramWizard.getCartogramGridSizeInY();
         int cgGridSize = Math.max(cgGridSizeX, cgGridSizeY);
         String cgGridSizeString = "" + cgGridSize;
-        mCartogramGridSizeTextField = new JTextField(cgGridSizeString);
-        mCartogramGridSizeTextField.setLocation(240, 300);
-        mCartogramGridSizeTextField.setSize(50, 26);
-        mCartogramGridSizeTextField.setFont(new Font(null, Font.PLAIN, 11));
-        mCartogramGridSizeTextField
+        iCartogramGridSizeTextField = new JTextField(cgGridSizeString);
+        iCartogramGridSizeTextField.setLocation(240, 300);
+        iCartogramGridSizeTextField.setSize(50, 26);
+        iCartogramGridSizeTextField.setFont(new Font(null, Font.PLAIN, 11));
+        iCartogramGridSizeTextField
                 .setHorizontalAlignment(SwingConstants.RIGHT);
-        mCartogramGridSizeTextField.setEnabled(mAdvancedOptionsCheckBox
+        iCartogramGridSizeTextField.setEnabled(iAdvancedOptionsCheckBox
                 .isSelected());
-        this.add(mCartogramGridSizeTextField);
+        add(iCartogramGridSizeTextField);
 
         // Bias text
-        mBiasPane = new JTextPane();
+        iBiasPane = new JTextPane();
         String biasText = null;
         try {
             InputStream inStream = cldr.getResource("resources/BiasText.html")
@@ -2861,62 +2557,55 @@ class CartogramWizardOptionsWindow extends JDialog implements
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mBiasPane.setContentType("text/html");
-        mBiasPane.setText(biasText);
-        mBiasPane.setEditable(false);
-        mBiasPane.addHyperlinkListener(this);
-        mBiasPane.setBackground(null);
-        mBiasPane.setLocation(45, 360);
-        mBiasPane.setSize(400, 40);
-        mBiasPane.setEnabled(mAdvancedOptionsCheckBox.isSelected());
-        this.add(mBiasPane);
+        iBiasPane.setContentType("text/html");
+        iBiasPane.setText(biasText);
+        iBiasPane.setEditable(false);
+        iBiasPane.addHyperlinkListener(this);
+        iBiasPane.setBackground(null);
+        iBiasPane.setLocation(45, 360);
+        iBiasPane.setSize(400, 40);
+        iBiasPane.setEnabled(iAdvancedOptionsCheckBox.isSelected());
+        add(iBiasPane);
 
         // Bias label
-        mBiasLabel = new JLabel("Bias value:");
-        mBiasLabel.setLocation(45, 400);
-        mBiasLabel.setSize(170, 26);
-        mBiasLabel.setFont(new Font(null, Font.PLAIN, 11));
-        mBiasLabel.setEnabled(mAdvancedOptionsCheckBox.isSelected());
-        this.add(mBiasLabel);
+        iBiasLabel = new JLabel("Bias value:");
+        iBiasLabel.setLocation(45, 400);
+        iBiasLabel.setSize(170, 26);
+        iBiasLabel.setFont(new Font(null, Font.PLAIN, 11));
+        iBiasLabel.setEnabled(iAdvancedOptionsCheckBox.isSelected());
+        add(iBiasLabel);
 
         // Bias text field
-        mBiasTextField = new JTextField(new Double(
+        iBiasTextField = new JTextField(new Double(
                 AppContext.cartogramWizard.bias).toString());
-        mBiasTextField.setLocation(190, 400);
-        mBiasTextField.setSize(100, 26);
-        mBiasTextField.setFont(new Font(null, Font.PLAIN, 11));
-        mBiasTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        mBiasTextField.setEnabled(mAdvancedOptionsCheckBox.isSelected());
-        this.add(mBiasTextField);
+        iBiasTextField.setLocation(190, 400);
+        iBiasTextField.setSize(100, 26);
+        iBiasTextField.setFont(new Font(null, Font.PLAIN, 11));
+        iBiasTextField.setHorizontalAlignment(SwingConstants.RIGHT);
+        iBiasTextField.setEnabled(iAdvancedOptionsCheckBox.isSelected());
+        add(iBiasTextField);
 
         // Cancel button
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setLocation(270, 460);
         cancelButton.setSize(100, 26);
-
         cancelButton
                 .addActionListener(new CartogramWizardAdvancedOptionsAction(
                         "closeDialogWithoutSaving", this));
-
-        this.add(cancelButton);
+        add(cancelButton);
 
         // Ok button
         JButton okButton = new JButton("OK");
         okButton.setLocation(380, 460);
         okButton.setSize(100, 26);
-
         okButton.addActionListener(new CartogramWizardAdvancedOptionsAction(
                 "closeDialogWithSaving", this));
+        add(okButton);
 
-        this.add(okButton);
-
-        // ADD THE HELP BUTTON
-
+        // Add the Help button
         java.net.URL imageURL = cldr.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
-
         JButton helpButton = new JButton(helpIcon);
-
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
         helpButton.setSize(30, 30);
@@ -2924,29 +2613,25 @@ class CartogramWizardOptionsWindow extends JDialog implements
         helpButton.setFocusable(false);
         helpButton.setContentAreaFilled(false);
         helpButton.setBorderPainted(false);
-
         helpButton
                 .addActionListener(new CartogramWizardShowURL(
                         "http://scapetoad.choros.ch/help/c-transformation-parameters.php#advanced-options"));
-
-        this.add(helpButton);
-
-    } // CartogramWizardOptionsWindow.<init>
+        add(helpButton);
+    }
 
     /**
      * Saves the changes done by the user.
      */
     public void saveChanges() {
-
         AppContext.cartogramWizard
-                .setAdvancedOptionsEnabled(mAdvancedOptionsCheckBox
+                .setAdvancedOptionsEnabled(iAdvancedOptionsCheckBox
                         .isSelected());
 
-        AppContext.cartogramWizard.setCreateGridLayer(mGridLayerCheckBox
+        AppContext.cartogramWizard.setCreateGridLayer(iGridLayerCheckBox
                 .isSelected());
 
         try {
-            String gridSizeString = mGridSizeTextField.getText();
+            String gridSizeString = iGridSizeTextField.getText();
             Integer gridSizeInt = new Integer(gridSizeString);
             AppContext.cartogramWizard.setDeformationGridSize(gridSizeInt
                     .intValue());
@@ -2955,7 +2640,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         }
 
         try {
-            String gridSizeString = mCartogramGridSizeTextField.getText();
+            String gridSizeString = iCartogramGridSizeTextField.getText();
             Integer gridSizeInt = new Integer(gridSizeString);
             AppContext.cartogramWizard.setCartogramGridSizeInX(gridSizeInt
                     .intValue());
@@ -2966,14 +2651,13 @@ class CartogramWizardOptionsWindow extends JDialog implements
         }
 
         try {
-            String biasString = mBiasTextField.getText();
+            String biasString = iBiasTextField.getText();
             Double biasDbl = new Double(biasString);
             AppContext.cartogramWizard.bias = biasDbl.doubleValue();
         } catch (NumberFormatException e3) {
             // Nothing to do
         }
-
-    } // CartogramWizardOptionsWindow.saveChanges
+    }
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -2982,12 +2666,10 @@ class CartogramWizardOptionsWindow extends JDialog implements
                 Browser.init();
                 Browser.displayURL(e.getURL().toString());
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-    } // CartogramWizardOptionsWindow.hyperlinkUpdate
+    }
 
     /**
      * This method gets called on a state change of the advanced options check
@@ -2995,18 +2677,16 @@ class CartogramWizardOptionsWindow extends JDialog implements
      */
     @Override
     public void stateChanged(ChangeEvent e) {
-        boolean enabled = mAdvancedOptionsCheckBox.isSelected();
-        mManualParametersPane.setEnabled(enabled);
-        mGrid1Pane.setEnabled(enabled);
-        mCartogramGridSizeLabel.setEnabled(enabled);
-        mCartogramGridSizeTextField.setEnabled(enabled);
-        mBiasPane.setEnabled(enabled);
-        mBiasLabel.setEnabled(enabled);
-        mBiasTextField.setEnabled(enabled);
-
-    } // CartogramWizardOptionsWindow
-
-} // CartogramWizardOptionsWindow
+        boolean enabled = iAdvancedOptionsCheckBox.isSelected();
+        iManualParametersPane.setEnabled(enabled);
+        iGrid1Pane.setEnabled(enabled);
+        iCartogramGridSizeLabel.setEnabled(enabled);
+        iCartogramGridSizeTextField.setEnabled(enabled);
+        iBiasPane.setEnabled(enabled);
+        iBiasLabel.setEnabled(enabled);
+        iBiasTextField.setEnabled(enabled);
+    }
+}
 
 /**
  * Creates the dialog for the advanced options.
@@ -3020,11 +2700,11 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
     /**
      * 
      */
-    String mActionToPerform = "showDialog";
+    private String iActionToPerform = "showDialog";
     /**
      * 
      */
-    CartogramWizardOptionsWindow mDialog = null;
+    private CartogramWizardOptionsWindow iDialog = null;
 
     /**
      * The default creator for the action.
@@ -3041,10 +2721,9 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
      */
     CartogramWizardAdvancedOptionsAction(String actionToPerform,
             CartogramWizardOptionsWindow dialog) {
-        mActionToPerform = actionToPerform;
-        mDialog = dialog;
-
-    } // CartogramWizardShowAdvancedOptionsAction.<init>
+        iActionToPerform = actionToPerform;
+        iDialog = dialog;
+    }
 
     /**
      * Method which performs this action; it creates and opens the Advanced
@@ -3052,26 +2731,19 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        if (mActionToPerform == "showDialog") {
-            mDialog = new CartogramWizardOptionsWindow();
-            mDialog.setVisible(true);
+        if (iActionToPerform == "showDialog") {
+            iDialog = new CartogramWizardOptionsWindow();
+            iDialog.setVisible(true);
+        } else if (iActionToPerform == "closeDialogWithoutSaving") {
+            iDialog.setVisible(false);
+            iDialog.dispose();
+        } else if (iActionToPerform == "closeDialogWithSaving") {
+            iDialog.saveChanges();
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
-
-        else if (mActionToPerform == "closeDialogWithoutSaving") {
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-        else if (mActionToPerform == "closeDialogWithSaving") {
-            mDialog.saveChanges();
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-    } // CartogramWizardShowAdvancedOptionsAction.actionPerformed
-
-} // CartogramWizardShowAdvancedOptionsAction
+    }
+}
 
 /**
  * Opens the provided URL.
@@ -3082,10 +2754,11 @@ class CartogramWizardShowURL extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    String mUrl = null;
+    private String iUrl = null;
 
     /**
      * The default creator for the action.
@@ -3094,26 +2767,22 @@ class CartogramWizardShowURL extends AbstractAction {
      *            the URL to show.
      */
     CartogramWizardShowURL(String url) {
-        mUrl = url;
-
-    } // CartogramWizardShowURL.<init>
+        iUrl = url;
+    }
 
     /**
      * Method which performs this action.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
         try {
             Browser.init();
-            Browser.displayURL(mUrl);
+            Browser.displayURL(iUrl);
         } catch (IOException exc) {
             exc.printStackTrace();
         }
-
-    } // CartogramWizardShowURL.actionPerformed
-
-} // CartogramWizardShowURL
+    }
+}
 
 /**
  * Handles the window events of the wizard window. It handles the
@@ -3132,7 +2801,7 @@ class CartogramWizardWindowListener implements WindowListener {
     @Override
     public void windowClosed(WindowEvent e) {
         // Nothing to do
-    } // CartogramWizardWindowListener.windowClosed
+    }
 
     /**
      * Method invoked in response to a window closing event. It creates a
@@ -3140,15 +2809,13 @@ class CartogramWizardWindowListener implements WindowListener {
      */
     @Override
     public void windowClosing(WindowEvent e) {
-
         ActionEvent closeEvent = new ActionEvent(e.getSource(), e.getID(),
                 "windowClosed");
 
         CartogramWizardCloseAction closeAction = new CartogramWizardCloseAction();
 
         closeAction.actionPerformed(closeEvent);
-
-    } // CartogramWizardWindowListener.windowClosed
+    }
 
     @Override
     public void windowDeactivated(WindowEvent e) {
@@ -3169,8 +2836,7 @@ class CartogramWizardWindowListener implements WindowListener {
     public void windowOpened(WindowEvent e) {
         // Nothing to do
     }
-
-} // CartogramWizardWindowListener
+}
 
 /**
  * Dialog window for specifying the simultaneous deformation layers.
@@ -3189,38 +2855,37 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
      * An inline panel contained in the scroll view, containing the layer check
      * boxes.
      */
-    JPanel mLayerListPanel = null;
+    private JPanel iLayerListPanel = null;
 
     /**
      * The scroll pane containing the layer list panel.
      */
-    JScrollPane mLayerListScrollPane = null;
+    private JScrollPane iLayerListScrollPane = null;
 
     /**
      * The list with all the check boxes for the simultaneous layers.
      */
-    Vector<JCheckBox> mCheckBoxList = null;
+    private Vector<JCheckBox> iCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
      */
-    String mCurrentCartogramLayer = null;
+    private String iCurrentCartogramLayer = null;
 
     /**
      * Label displayed if no layer is present to be selected.
      */
-    JLabel mNoLayerLabel = null;
+    private JLabel iNoLayerLabel = null;
 
     /**
      * Constructor for the simultaneous layer window.
      */
     CartogramWizardSimulaneousLayerWindow() {
-
         // Set the window parameters.
         setTitle("Simultaneous transformation layers");
 
-        this.setSize(300, 400);
-        this.setLocation(40, 50);
+        setSize(300, 400);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
@@ -3229,15 +2894,15 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
 
         // Create a new pane containing the check boxes with
         // the layers.
-        mLayerListPanel = new JPanel(new GridLayout(0, 1));
+        iLayerListPanel = new JPanel(new GridLayout(0, 1));
 
         // Create the check boxes for all layers except the selected
         // cartogram layer.
-        mCurrentCartogramLayer = AppContext.cartogramWizard
+        iCurrentCartogramLayer = AppContext.cartogramWizard
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector<JCheckBox>();
+        iCheckBoxList = new Vector<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
@@ -3250,7 +2915,7 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
             int lyrcnt = 0;
             for (lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
                 Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
-                if (lyr.getName() != mCurrentCartogramLayer) {
+                if (lyr.getName() != iCurrentCartogramLayer) {
                     JCheckBox checkbox = new JCheckBox(lyr.getName());
                     checkbox.setFont(smallFont);
 
@@ -3262,8 +2927,8 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
                         checkbox.setSelected(false);
                     }
 
-                    mCheckBoxList.add(checkbox);
-                    mLayerListPanel.add(checkbox);
+                    iCheckBoxList.add(checkbox);
+                    iLayerListPanel.add(checkbox);
                     layersInList++;
                 }
             }
@@ -3280,15 +2945,12 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
 
             // Create a new scroll pane where we will display the
             // list of layers.
-            mLayerListScrollPane = new JScrollPane(mLayerListPanel);
-            mLayerListScrollPane.setSize(260, scrollPaneHeight);
-            mLayerListScrollPane.setLocation(20, 50);
-
-            mLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0,
+            iLayerListScrollPane = new JScrollPane(iLayerListPanel);
+            iLayerListScrollPane.setSize(260, scrollPaneHeight);
+            iLayerListScrollPane.setLocation(20, 50);
+            iLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0,
                     0, 0, 0));
-
-            this.add(mLayerListScrollPane);
-
+            add(iLayerListScrollPane);
         }
 
         // Label for the layers to deform.
@@ -3297,50 +2959,44 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
         layerListLabel.setSize(260, 14);
         layerListLabel.setFont(smallFont);
         layerListLabel.setLocation(20, 20);
-        this.add(layerListLabel);
+        add(layerListLabel);
 
         // Label for no present layers.
         if (nlayers <= 1) {
-            mNoLayerLabel = new JLabel("No other layer to be deformed.");
-            mNoLayerLabel.setSize(260, 14);
-            mNoLayerLabel.setFont(smallFont);
-            mNoLayerLabel.setLocation(20, 50);
-            this.add(mNoLayerLabel);
+            iNoLayerLabel = new JLabel("No other layer to be deformed.");
+            iNoLayerLabel.setSize(260, 14);
+            iNoLayerLabel.setFont(smallFont);
+            iNoLayerLabel.setLocation(20, 50);
+            add(iNoLayerLabel);
         }
 
         // Cancel button
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setLocation(70, 330);
         cancelButton.setSize(100, 26);
-
         cancelButton
                 .addActionListener(new CartogramWizardSimulaneousLayerAction(
                         "closeDialogWithoutSaving", this));
-
-        this.add(cancelButton);
+        add(cancelButton);
 
         // Ok button
         JButton okButton = new JButton("OK");
         okButton.setLocation(180, 330);
         okButton.setSize(100, 26);
-
         okButton.addActionListener(new CartogramWizardSimulaneousLayerAction(
                 "closeDialogWithSaving", this));
-
-        this.add(okButton);
-
-    } // CartogramWizardSimulaneousLayerWindow.<init>
+        add(okButton);
+    }
 
     /**
      * Saves the changes done by the user.
      */
     public void saveChanges() {
-
-        int nlayers = mCheckBoxList.size();
+        int nlayers = iCheckBoxList.size();
         Vector<Layer> layers = new Vector<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
-            JCheckBox checkBox = mCheckBoxList.get(i);
+            JCheckBox checkBox = iCheckBoxList.get(i);
             if (checkBox.isSelected()) {
                 String layerName = checkBox.getText();
                 Layer lyr = AppContext.layerManager.getLayer(layerName);
@@ -3349,10 +3005,8 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
         }
 
         AppContext.cartogramWizard.setSimultaneousLayers(layers);
-
-    } // CartogramWizardSimulaneousLayerWindow.saveChanges
-
-} // CartogramWizardSimulaneousLayerWindow
+    }
+}
 
 /**
  * The actions for the simultaneous layer dialog.
@@ -3363,14 +3017,16 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    String mActionToPerform = "showDialog";
+    private String iActionToPerform = "showDialog";
+
     /**
      * 
      */
-    CartogramWizardSimulaneousLayerWindow mDialog = null;
+    private CartogramWizardSimulaneousLayerWindow iDialog = null;
 
     /**
      * The default creator for the action.
@@ -3387,36 +3043,28 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
      */
     CartogramWizardSimulaneousLayerAction(String actionToPerform,
             CartogramWizardSimulaneousLayerWindow dialog) {
-        mActionToPerform = actionToPerform;
-        mDialog = dialog;
-
-    } // CartogramWizardSimulaneousLayerAction.<init>
+        iActionToPerform = actionToPerform;
+        iDialog = dialog;
+    }
 
     /**
      * Method which performs the previously specified action.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        if (mActionToPerform == "showDialog") {
-            mDialog = new CartogramWizardSimulaneousLayerWindow();
-            mDialog.setVisible(true);
+        if (iActionToPerform == "showDialog") {
+            iDialog = new CartogramWizardSimulaneousLayerWindow();
+            iDialog.setVisible(true);
+        } else if (iActionToPerform == "closeDialogWithoutSaving") {
+            iDialog.setVisible(false);
+            iDialog.dispose();
+        } else if (iActionToPerform == "closeDialogWithSaving") {
+            iDialog.saveChanges();
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
-
-        else if (mActionToPerform == "closeDialogWithoutSaving") {
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-        else if (mActionToPerform == "closeDialogWithSaving") {
-            mDialog.saveChanges();
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-    } // CartogramWizardSimulaneousLayerAction.actionPerformed
-
-} // CartogramWizardSimulaneousLayerAction
+    }
+}
 
 /**
  * Dialog window for specifying the constrained transformation layers.
@@ -3435,39 +3083,37 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
      * An inline panel contained in the scroll view, containing the layer check
      * boxes.
      */
-    JPanel mLayerListPanel = null;
+    private JPanel iLayerListPanel = null;
 
     /**
      * The scroll pane containing the layer list panel.
      */
-    JScrollPane mLayerListScrollPane = null;
+    private JScrollPane iLayerListScrollPane = null;
 
     /**
      * The list with all the check boxes for the constrained layers.
      */
-    Vector<JCheckBox> mCheckBoxList = null;
+    private Vector<JCheckBox> iCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
      */
-    String mCurrentCartogramLayer = null;
+    private String iCurrentCartogramLayer = null;
 
     /**
      * Label displayed if no layer is present to be selected.
      */
-    JLabel mNoLayerLabel = null;
+    private JLabel iNoLayerLabel = null;
 
     /**
      * Constructor for the constrained layer window.
      */
     CartogramWizardConstrainedLayerWindow() {
-
         // Set the window parameters.
         setTitle(AppContext.shortProgramName
                 + " _ Cartogram Wizard _ Constrained transformation layers");
-
-        this.setSize(300, 400);
-        this.setLocation(40, 50);
+        setSize(300, 400);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
@@ -3476,15 +3122,15 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
 
         // Create a new pane containing the check boxes with
         // the layers.
-        mLayerListPanel = new JPanel(new GridLayout(0, 1));
+        iLayerListPanel = new JPanel(new GridLayout(0, 1));
 
         // Create the check boxes for all layers except the selected
         // cartogram layer.
-        mCurrentCartogramLayer = AppContext.cartogramWizard
+        iCurrentCartogramLayer = AppContext.cartogramWizard
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector<JCheckBox>();
+        iCheckBoxList = new Vector<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
@@ -3497,7 +3143,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
             int lyrcnt = 0;
             for (lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
                 Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
-                if (lyr.getName() != mCurrentCartogramLayer) {
+                if (lyr.getName() != iCurrentCartogramLayer) {
                     JCheckBox checkbox = new JCheckBox(lyr.getName());
                     checkbox.setFont(smallFont);
 
@@ -3509,8 +3155,8 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
                         checkbox.setSelected(false);
                     }
 
-                    mCheckBoxList.add(checkbox);
-                    mLayerListPanel.add(checkbox);
+                    iCheckBoxList.add(checkbox);
+                    iLayerListPanel.add(checkbox);
                     layersInList++;
                 }
             }
@@ -3527,15 +3173,12 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
 
             // Create a new scroll pane where we will display the
             // list of layers.
-            mLayerListScrollPane = new JScrollPane(mLayerListPanel);
-            mLayerListScrollPane.setSize(260, scrollPaneHeight);
-            mLayerListScrollPane.setLocation(20, 50);
-
-            mLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0,
+            iLayerListScrollPane = new JScrollPane(iLayerListPanel);
+            iLayerListScrollPane.setSize(260, scrollPaneHeight);
+            iLayerListScrollPane.setLocation(20, 50);
+            iLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0,
                     0, 0, 0));
-
-            this.add(mLayerListScrollPane);
-
+            add(iLayerListScrollPane);
         }
 
         // Label for the layers to deform.
@@ -3544,51 +3187,45 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
         layerListLabel.setSize(260, 14);
         layerListLabel.setFont(smallFont);
         layerListLabel.setLocation(20, 20);
-        this.add(layerListLabel);
+        add(layerListLabel);
 
         // Label for no present layers.
         if (nlayers <= 1) {
-            mNoLayerLabel = new JLabel(
+            iNoLayerLabel = new JLabel(
                     "No layer available for limited deformation.");
-            mNoLayerLabel.setSize(260, 14);
-            mNoLayerLabel.setFont(smallFont);
-            mNoLayerLabel.setLocation(20, 50);
-            this.add(mNoLayerLabel);
+            iNoLayerLabel.setSize(260, 14);
+            iNoLayerLabel.setFont(smallFont);
+            iNoLayerLabel.setLocation(20, 50);
+            add(iNoLayerLabel);
         }
 
         // Cancel button
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setLocation(70, 330);
         cancelButton.setSize(100, 26);
-
         cancelButton
                 .addActionListener(new CartogramWizardConstrainedLayerAction(
                         "closeDialogWithoutSaving", this));
-
-        this.add(cancelButton);
+        add(cancelButton);
 
         // Ok button
         JButton okButton = new JButton("OK");
         okButton.setLocation(180, 330);
         okButton.setSize(100, 26);
-
         okButton.addActionListener(new CartogramWizardConstrainedLayerAction(
                 "closeDialogWithSaving", this));
-
-        this.add(okButton);
-
-    } // CartogramWizardConstrainedLayerWindow.<init>
+        add(okButton);
+    }
 
     /**
      * Saves the changes done by the user.
      */
     public void saveChanges() {
-
-        int nlayers = mCheckBoxList.size();
+        int nlayers = iCheckBoxList.size();
         Vector<Layer> layers = new Vector<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
-            JCheckBox checkBox = mCheckBoxList.get(i);
+            JCheckBox checkBox = iCheckBoxList.get(i);
             if (checkBox.isSelected()) {
                 String layerName = checkBox.getText();
                 Layer lyr = AppContext.layerManager.getLayer(layerName);
@@ -3597,10 +3234,8 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
         }
 
         AppContext.cartogramWizard.setConstrainedDeformationLayers(layers);
-
-    } // CartogramWizardConstrainedLayerWindow.saveChanges
-
-} // CartogramWizardConstrainedLayerWindow
+    }
+}
 
 /**
  * The actions for the constrained layer dialog.
@@ -3614,11 +3249,11 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
     /**
      * 
      */
-    String mActionToPerform = "showDialog";
+    private String iActionToPerform = "showDialog";
     /**
      * 
      */
-    CartogramWizardConstrainedLayerWindow mDialog = null;
+    private CartogramWizardConstrainedLayerWindow iDialog = null;
 
     /**
      * The default creator for the action.
@@ -3635,36 +3270,28 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
      */
     CartogramWizardConstrainedLayerAction(String actionToPerform,
             CartogramWizardConstrainedLayerWindow dialog) {
-        mActionToPerform = actionToPerform;
-        mDialog = dialog;
-
-    } // CartogramWizardConstrainedLayerAction.<init>
+        iActionToPerform = actionToPerform;
+        iDialog = dialog;
+    }
 
     /**
      * Method which performs the previously specified action.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        if (mActionToPerform == "showDialog") {
-            mDialog = new CartogramWizardConstrainedLayerWindow();
-            mDialog.setVisible(true);
+        if (iActionToPerform == "showDialog") {
+            iDialog = new CartogramWizardConstrainedLayerWindow();
+            iDialog.setVisible(true);
+        } else if (iActionToPerform == "closeDialogWithoutSaving") {
+            iDialog.setVisible(false);
+            iDialog.dispose();
+        } else if (iActionToPerform == "closeDialogWithSaving") {
+            iDialog.saveChanges();
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
-
-        else if (mActionToPerform == "closeDialogWithoutSaving") {
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-        else if (mActionToPerform == "closeDialogWithSaving") {
-            mDialog.saveChanges();
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-    } // CartogramWizardConstrainedLayerAction.actionPerformed
-
-} // CartogramWizardConstrainedLayerAction
+    }
+}
 
 /**
  * This actions saves the computation report.
@@ -3682,11 +3309,9 @@ class CartogramWizardSaveReportAction extends AbstractAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-
         // Create the File Save dialog.
         FileDialog fd = new FileDialog(AppContext.cartogramWizard,
                 "Save Computation Report As...", FileDialog.SAVE);
-
         fd.setModal(true);
         fd.setBounds(20, 30, 150, 200);
         fd.setVisible(true);
@@ -3710,7 +3335,5 @@ class CartogramWizardSaveReportAction extends AbstractAction {
         } catch (IOException exc) {
             // Nothing to do
         }
-
-    } // CartogramWizardSaveReportAction.actionPerformed
-
-} // CartogramWizardSaveReportAction
+    }
+}
