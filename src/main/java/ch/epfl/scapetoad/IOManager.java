@@ -62,6 +62,8 @@ public class IOManager {
 
     /**
      * Displays an open dialog and reads the shape file in.
+     * 
+     * @return the layer
      */
     public static Layer openShapefile() {
         try {
@@ -101,6 +103,10 @@ public class IOManager {
 
     /**
      * Reads the provided shape file and returns a Layer.
+     * 
+     * @param shapefile
+     *            the shape file name
+     * @return the layer
      */
     public static Layer readShapefile(String shapefile) {
         try {
@@ -145,6 +151,10 @@ public class IOManager {
 
     /**
      * Returns the file name from a given complete file path.
+     * 
+     * @param path
+     *            the file path
+     * @return the file name
      */
     private static String fileNameFromPath(String path) {
 
@@ -162,6 +172,9 @@ public class IOManager {
 
     /**
      * Shows a save dialog and writes the Shapefile out.
+     * 
+     * @param fc
+     *            the features
      */
     public static void saveShapefile(FeatureCollection fc) {
         // Create the File Save dialog.
@@ -459,10 +472,18 @@ public class IOManager {
      * @param geom
      *            the Geometry to convert.
      * @param env
-     *            the Envelope we use for the coordinate conversion.
+     *            the envelope we use for the coordinate conversion.
+     * @param scaleFactor
+     *            the scale factor
      * @param minX
-     *            , maxX, minY, maxY the maximum coordinates for the SVG
-     *            coordinates and corresponding to the Envelope env.
+     *            min X coordinates for the SVG coordinates and corresponding to
+     *            the envelope
+     * @param maxX
+     *            max X
+     * @param minY
+     *            min Y
+     * @param maxY
+     *            max
      * @return a string for use in a SVG path element.
      */
     public static String geometryToSvgPath(Geometry geom, Envelope env,
@@ -522,10 +543,14 @@ public class IOManager {
      * @param coords
      *            the coordinates to convert (a Coordinate[]).
      * @param env
-     *            the Envelope we use for the coordinate conversion.
+     *            the envelope we use for the coordinate conversion.
+     * @param scaleFactor
+     *            the scale factor
      * @param minX
-     *            , minY, the minimum coordinates for the SVG coordinates and
-     *            corresponding to the Envelope env.
+     *            min X coordinates for the SVG coordinates and corresponding to
+     *            the envelope
+     * @param minY
+     *            min Y
      * @return a string for use in a SVG path element.
      */
     public static String coordinatesToSvgPath(Coordinate[] coords,
@@ -602,8 +627,17 @@ class OpenLayerErrorDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     JButton mOkButton;
+    /**
+     * 
+     */
     JLabel mNoShapeFileLabel;
+    /**
+     * 
+     */
     JLabel mSelectShapeFileLabel;
 
     /**
@@ -655,8 +689,15 @@ class OpenLayerErrorDialogAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     OpenLayerErrorDialog mDialog;
 
+    /**
+     * @param dialog
+     *            the open layer dialog
+     */
     OpenLayerErrorDialogAction(OpenLayerErrorDialog dialog) {
         mDialog = dialog;
 

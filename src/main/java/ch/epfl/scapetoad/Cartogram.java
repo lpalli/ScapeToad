@@ -86,6 +86,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      */
     boolean mMasterAttributeIsDensityValue = true;
 
+    /**
+     * 
+     */
     String mMissingValue = "";
 
     /**
@@ -110,9 +113,13 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     Envelope mEnvelope = new Envelope(0.0, 1.0, 0.0, 1.0);
 
     /**
-     * The size of the cartogram grid.
+     * The X size of the cartogram grid.
      */
     int mGridSizeX = 1000;
+
+    /**
+     * The X size of the cartogram grid.
+     */
     int mGridSizeY = 1000;
 
     /**
@@ -209,10 +216,16 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      */
     public double bias = 0.000001;
 
+    /**
+     * 
+     */
     boolean errorOccured = false;
 
     /**
      * The constructor for the cartogram class.
+     * 
+     * @param cartogramWizard
+     *            the cartogram wizard
      */
     Cartogram(CartogramWizard cartogramWizard) {
 
@@ -222,7 +235,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     } // Cartogram.<init>
 
     /**
-     * The construct method is an overriden method from SwingWorker which does
+     * The construct method is an overridden method from SwingWorker which does
      * initiate the computation process.
      */
     @Override
@@ -414,7 +427,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
                * sw.flush();
                * 
                * mCartogramWizard.setComputationError(
-               * "An error occured during cartogram computation!",
+               * "An error occurred during cartogram computation!",
                * e.getLocalizedMessage(), sw.toString()); }
                */
 
@@ -537,6 +550,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Sets the layer manager.
+     * 
+     * @param lm
+     *            the layer manager
      */
     public void setLayerManager(LayerManager lm) {
         mLayerManager = lm;
@@ -544,6 +560,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Sets the name of the cartogram master layer.
+     * 
+     * @param layerName
+     *            the master layer name
      */
     public void setMasterLayer(String layerName) {
         mMasterLayer = layerName;
@@ -551,6 +570,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Sets the name of the cartogram master attribute.
+     * 
+     * @param attributeName
+     *            the master cartogram name
      */
     public void setMasterAttribute(String attributeName) {
         mMasterAttribute = attributeName;
@@ -559,6 +581,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * Lets define us whether the master attribute is a density value or a
      * population value.
+     * 
+     * @param isDensityValue
+     *            <code>true</code> for a density population
      */
     public void setMasterAttributeIsDensityValue(boolean isDensityValue) {
         mMasterAttributeIsDensityValue = isDensityValue;
@@ -566,6 +591,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Defines the layers to deform during the cartogram process.
+     * 
+     * @param slaveLayers
+     *            the slave layers
      */
     public void setSlaveLayers(Vector<Layer> slaveLayers) {
         mSlaveLayers = slaveLayers;
@@ -573,6 +601,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Defines the layers which should not be deformed.
+     * 
+     * @param layers
+     *            the layers not deformed
      */
     public void setConstrainedDeformationLayers(Vector<Layer> layers) {
         mConstrainedDeforamtionLayers = layers;
@@ -580,6 +611,11 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Defines the grid size in x and y dimensions.
+     * 
+     * @param x
+     *            the X grid size
+     * @param y
+     *            the Y grid size
      */
     public void setGridSize(int x, int y) {
         mGridSizeX = x;
@@ -589,6 +625,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * Defines the amount of deformation. This is an integer value between 0 and
      * 100. The default value is 50.
+     * 
+     * @param deformation
+     *            the deformation
      */
     public void setAmountOfDeformation(int deformation) {
         mAmountOfDeformation = deformation;
@@ -597,6 +636,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * Defines the maximum running time in seconds. The default value is 259200
      * seconds (3 days).
+     * 
+     * @param seconds
+     *            the maximum time to run
      */
     public void setMaximumRunningTime(int seconds) {
         mMaximumRunningTime = seconds;
@@ -671,8 +713,12 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Projects all layers. Creates a new layer for each projected layer.
+     * 
+     * @return the project layers
+     * @throws InterruptedException
+     *             when the computation was interrupted
      */
-    private Layer[] projectLayers() throws Exception {
+    private Layer[] projectLayers() throws InterruptedException {
 
         // Get the number of layers to project
         // (one master layer and all slave layers).
@@ -723,6 +769,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Says whether we should create a grid layer or not.
+     * 
+     * @return <code>true</code> if the grid layer must be created
      */
     public boolean getCreateGridLayer() {
         return mCreateGridLayer;
@@ -730,6 +778,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Sets the flag for creating or not a grid layer.
+     * 
+     * @param createGridLayer
+     *            <code>true</code> to create a grid layer
      */
     public void setCreateGridLayer(boolean createGridLayer) {
         mCreateGridLayer = createGridLayer;
@@ -738,6 +789,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * Returns the grid layer size. This is the grid which is produced for
      * visual effect only.
+     * 
+     * @return the grid layer size
      */
     public int getGridLayerSize() {
         return mGridLayerSize;
@@ -745,6 +798,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Changes the size of the grid layer to produce.
+     * 
+     * @param gridLayerSize
+     *            the size of the grid layer
      */
     public void setGridLayerSize(int gridLayerSize) {
         mGridLayerSize = gridLayerSize;
@@ -752,6 +808,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Says whether we should create a legend layer or not.
+     * 
+     * @return <code>true</code> if the legend layer must be created
      */
     public boolean getCreateLegendLayer() {
         return mCreateLegendLayer;
@@ -759,23 +817,40 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Sets the flag which says whether to create a legend layer or not.
+     * 
+     * @param createLegendLayer
+     *            <code>true</code> to create the legend layer
      */
     public void setCreateLegendLayer(boolean createLegendLayer) {
         mCreateLegendLayer = createLegendLayer;
     }
 
+    /**
+     * @return the legend values
+     */
     public double[] getLegendValues() {
         return mLegendValues;
     }
 
+    /**
+     * @param legendValues
+     *            the legend values
+     */
     public void setLegendValues(double[] legendValues) {
         mLegendValues = legendValues;
     }
 
+    /**
+     * @return <code>true</code> if the advanced options are enabled
+     */
     public boolean getAdvancedOptionsEnabled() {
         return mAdvancedOptionsEnabled;
     }
 
+    /**
+     * @param enabled
+     *            <code>true</code> to enable the advanced options
+     */
     public void setAdvancedOptionsEnabled(boolean enabled) {
         mAdvancedOptionsEnabled = enabled;
     }
@@ -798,6 +873,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Returns the category name for our cartogram layers.
+     * 
+     * @return the category name
      */
     public String getCategoryName() {
 
@@ -1029,6 +1106,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     /**
      * Creates the computation report and stores it in the object attribute.
+     * 
+     * @param projectedMasterLayer
+     *            the projected master layer
      */
     public void produceComputationReport(Layer projectedMasterLayer) {
 
@@ -1169,6 +1249,9 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     }
 
+    /**
+     * @return the computation report
+     */
     public String getComputationReport() {
         return mComputationReport;
     }
@@ -1182,6 +1265,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      * number of features along the square's edge. It is further considered that
      * there should be about 10 vertices for one feature along the square's
      * edge.
+     * 
+     * @return the estimated maximum segment length
      */
     public double estimateMaximumSegmentLength() {
 
@@ -1224,6 +1309,10 @@ public class Cartogram extends com.sun.swing.SwingWorker {
 
     } // estimateMaximumSegmentLength
 
+    /**
+     * @param value
+     *            the missing value
+     */
     public void setMissingValue(String value) {
         mMissingValue = value;
     }

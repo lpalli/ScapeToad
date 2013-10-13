@@ -97,14 +97,30 @@ public class CartogramGastner {
      */
     private double[][] iY;
 
-    // Arrays for the velocity field at position (x[j][k], y[j][k]).
+    /**
+     * Arrays for the velocity field at position (x[j][k], y[j][k]).
+     */
     private double[][] vx;
+    /**
+     * 
+     */
     private double[][] vy;
 
-    // Definition of some other class wide variables.
+    /**
+     * Definition of some other class wide variables.
+     */
     private double minpop = 0.0;
+    /**
+     * 
+     */
     private int nblurs = 0;
+    /**
+     * 
+     */
     private double[][] xappr;
+    /**
+     * 
+     */
     private double[][] yappr;
 
     /**
@@ -112,29 +128,74 @@ public class CartogramGastner {
      */
 
     private double CONVERGENCE = 1e-100;
+    /**
+     * 
+     */
     private double INFTY = 1e100;
+    /**
+     * 
+     */
     private double HINITIAL = 1e-4;
+    /**
+     * 
+     */
     private int IMAX = 50;
+    /**
+     * 
+     */
     private double MINH = 1e-5;
+    /**
+     * 
+     */
     private int MAXINTSTEPS = 3000;
+    /**
+     * 
+     */
     private double SIGMA = 0.1;
+    /**
+     * 
+     */
     private double SIGMAFAC = 1.2;
+    /**
+     * 
+     */
     private double TIMELIMIT = 1e8;
+    /**
+     * 
+     */
     private double TOLF = 1e-3;
+    /**
+     * 
+     */
     private double TOLINT = 1e-3;
+    /**
+     * 
+     */
     private double TOLX = 1e-3;
 
     /**
      * Attributes for the computation progress bar.
      */
     public int mProgressStart;
+    /**
+     * 
+     */
     public int mProgressEnd;
+    /**
+     * 
+     */
     public String mProgressText;
+    /**
+     * 
+     */
     public CartogramWizard mCartogramWizard;
 
     /**
      * The constructor takes the cartogram grid which contains the density
      * values.
+     * 
+     * @param grid
+     *            the grid
      */
     public CartogramGastner(CartogramGrid grid) {
 
@@ -148,6 +209,8 @@ public class CartogramGastner {
      * @param gridSize
      *            the size of the grid used for computation. The grid size must
      *            be a power of 2.
+     * @throws InterruptedException
+     *             when was interrupted
      */
     public void compute(int gridSize) throws InterruptedException {
 
@@ -313,6 +376,8 @@ public class CartogramGastner {
      * Integrates the non-linear Volterra equation.
      * 
      * @return true if the displacement field has converged, false otherwise.
+     * @throws InterruptedException
+     *             when was interrupted
      */
     private boolean integrateNonlinearVolterraEquation()
             throws InterruptedException {
@@ -454,6 +519,9 @@ public class CartogramGastner {
 
     } // CartogramGastner.integrateNonlinearVolterraEquation
 
+    /**
+     * 
+     */
     private void initcond() {
         double maxpop;
         int i, j;
@@ -607,6 +675,14 @@ public class CartogramGastner {
 
     /**
      * Bilinear interpolation in 2D.
+     * 
+     * @param arr
+     *            the table
+     * @param x
+     *            ???
+     * @param y
+     *            ???
+     * @return ???
      */
     private double interpolateBilinear(double[][] arr, double x, double y) {
 
@@ -651,6 +727,21 @@ public class CartogramGastner {
 
     } // CartogramGastner.interpolateBilinear
 
+    /**
+     * @param h
+     *            ???
+     * @param ptappr
+     *            ???
+     * @param xguess
+     *            ???
+     * @param yguess
+     *            ???
+     * @param j
+     *            ???
+     * @param k
+     *            ???
+     * @return ???
+     */
     public boolean newt2(double h, double[] ptappr, double xguess,
             double yguess, int j, int k) {
 
@@ -743,6 +834,10 @@ public class CartogramGastner {
      * Our wrapper function for the Jakarta Commons Math Erf.erf function. For
      * values <= -4 or >= 4, we return -1 or 1 directly, without computation.
      * Erf.erf raises too often an exception for failing convergence.
+     * 
+     * @param value
+     *            the value
+     * @return the result
      */
     public static double erf(double value) {
         if (value <= -4.0) {
@@ -935,8 +1030,19 @@ public class CartogramGastner {
 
 } // CartogramGastner
 
+/**
+ *
+ */
 class FFT {
 
+    /**
+     * @param y
+     *            the y table
+     * @param isign1
+     *            ???
+     * @param isign2
+     *            ???S
+     */
     public static void coscosft(double[][] y, int isign1, int isign2) {
         int lx = y.length - 1;
         int ly = y[0].length - 1;
@@ -957,6 +1063,14 @@ class FFT {
 
     }
 
+    /**
+     * @param z
+     *            the z array
+     * @param n
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void cosft(double z[], int n, int isign) {
         double theta, wi = 0.0, wpi, wpr, wr = 1.0, wtemp;
         double[] a;
@@ -1006,6 +1120,14 @@ class FFT {
 
     } // FFT.cosft
 
+    /**
+     * @param y
+     *            the y table
+     * @param isign1
+     *            ???
+     * @param isign2
+     *            ???
+     */
     public static void cossinft(double[][] y, int isign1, int isign2) {
         int lx = y.length - 1;
         int ly = y[0].length - 1;
@@ -1029,6 +1151,14 @@ class FFT {
 
     }
 
+    /**
+     * @param data
+     *            the data array
+     * @param nn
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void four1(double[] data, int nn, int isign) {
         double theta, wi, wpi, wpr, wr, wtemp;
         double tempi, tempr;
@@ -1084,6 +1214,16 @@ class FFT {
 
     }
 
+    /**
+     * @param data
+     *            the data array
+     * @param nn
+     *            ???
+     * @param ndim
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void fourn(double[] data, int[] nn, int ndim, int isign) {
         int idim;
         int i1, i2, i3, i2rev, i3rev, ip1, ip2, ip3, ifp1, ifp2;
@@ -1169,6 +1309,14 @@ class FFT {
 
     }
 
+    /**
+     * @param data
+     *            the data array
+     * @param n
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void realft(double[] data, int n, int isign) {
         double theta, wi, wpi, wpr, wr, wtemp;
         double c1 = 0.5, c2, h1i, h1r, h2i, h2r;
@@ -1220,6 +1368,20 @@ class FFT {
 
     }
 
+    /**
+     * @param data
+     *            the data table
+     * @param speq
+     *            ???
+     * @param nn1
+     *            ???
+     * @param nn2
+     *            ???
+     * @param nn3
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void rlft3(double[][][] data, double[][] speq, int nn1,
             int nn2, int nn3, int isign) {
         double theta, wi, wpi, wpr, wr, wtemp;
@@ -1361,6 +1523,14 @@ class FFT {
 
     }
 
+    /**
+     * @param y
+     *            the y table
+     * @param isign1
+     *            ???
+     * @param isign2
+     *            ???
+     */
     public static void sincosft(double[][] y, int isign1, int isign2) {
         int lx = y.length - 1;
         int ly = y[0].length - 1;
@@ -1383,6 +1553,14 @@ class FFT {
 
     }
 
+    /**
+     * @param z
+     *            the z array
+     * @param n
+     *            ???
+     * @param isign
+     *            ???
+     */
     public static void sinft(double[] z, int n, int isign) {
         double theta, wi = 0.0, wpi, wpr, wr = 1.0, wtemp;
         double[] a;

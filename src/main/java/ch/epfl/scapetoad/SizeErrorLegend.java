@@ -44,6 +44,9 @@ public class SizeErrorLegend extends JFrame {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 
+     */
     public SizeErrorLegend() {
 
         setTitle("Size Error");
@@ -70,6 +73,9 @@ public class SizeErrorLegend extends JFrame {
 
 }
 
+/**
+ *
+ */
 class IconMouseListener implements MouseListener {
 
     @Override

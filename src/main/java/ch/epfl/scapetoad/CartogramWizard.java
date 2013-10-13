@@ -83,13 +83,34 @@ public class CartogramWizard extends JFrame {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     int mCurrentStep = -1;
+    /**
+     * 
+     */
     CartogramWizardPanelZero mPanelZero = null;
+    /**
+     * 
+     */
     CartogramWizardPanelOne mPanelOne = null;
+    /**
+     * 
+     */
     CartogramWizardPanelTwo mPanelTwo = null;
+    /**
+     * 
+     */
     CartogramWizardPanelThree mPanelThree = null;
+    /**
+     * 
+     */
     CartogramWizardPanelFour mPanelFour = null;
 
+    /**
+     * 
+     */
     Cartogram mCartogram = null;
 
     /**
@@ -117,11 +138,26 @@ public class CartogramWizard extends JFrame {
      * Some parameters for the cartogram computation.
      */
     Vector<Layer> mSimultaneousLayers = null;
+    /**
+     * 
+     */
     Vector<Layer> mConstrainedDeformationLayers = null;
+    /**
+     * 
+     */
     int mAmountOfDeformation = 50;
+    /**
+     * 
+     */
     int mCartogramGridSizeX = 1000;
+    /**
+     * 
+     */
     int mCartogramGridSizeY = 1000;
 
+    /**
+     * 
+     */
     boolean mAdvancedOptionsEnabled = false;
 
     // int mDiffusionGridSize = 128;
@@ -148,11 +184,19 @@ public class CartogramWizard extends JFrame {
      */
     WizardStepIconPanel mWizardStepIconPanel = null;
 
+    /**
+     * 
+     */
     JButton mCancelButton = null;
 
+    /**
+     * 
+     */
     String mMissingValue = "";
 
-    // Interface for bias value.
+    /**
+     * Interface for bias value.
+     */
     public double bias = 0.000001;
 
     /**
@@ -224,6 +268,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard panel 0.
+     * 
+     * @return the panel
      */
     CartogramWizardPanelZero getPanelZero() {
         return mPanelZero;
@@ -231,6 +277,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard panel 1.
+     * 
+     * @return the panel
      */
     CartogramWizardPanelOne getPanelOne() {
         return mPanelOne;
@@ -238,6 +286,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard panel 2.
+     * 
+     * @return the panel
      */
     CartogramWizardPanelTwo getPanelTwo() {
         return mPanelTwo;
@@ -245,6 +295,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard panel 3.
+     * 
+     * @return the panel
      */
     CartogramWizardPanelThree getPanelThree() {
         return mPanelThree;
@@ -252,6 +304,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard panel 4.
+     * 
+     * @return the panel
      */
     CartogramWizardPanelFour getPanelFour() {
         return mPanelFour;
@@ -259,6 +313,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard's running panel.
+     * 
+     * @return the panel
      */
     CartogramWizardRunningPanel getRunningPanel() {
         return mRunningPanel;
@@ -266,6 +322,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the wizard step icon panel.
+     * 
+     * @return the panel
      */
     public WizardStepIconPanel getWizardStepIconPanel() {
         return mWizardStepIconPanel;
@@ -274,6 +332,9 @@ public class CartogramWizard extends JFrame {
     /**
      * Switches the wizard to the given step. The step number must be between 0
      * (introduction) and 3.
+     * 
+     * @param step
+     *            the step
      */
     public void goToStep(int step) {
         if (step < 0 || step > 4) {
@@ -381,6 +442,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the cartogram computation process.
+     * 
+     * @return the cartogram
      */
     public Cartogram getCartogram() {
         return mCartogram;
@@ -389,6 +452,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the cartogram computation process.
+     * 
+     * @param cg
+     *            the cartogram
      */
     public void setCartogram(Cartogram cg) {
         mCartogram = cg;
@@ -398,6 +464,8 @@ public class CartogramWizard extends JFrame {
     /**
      * Returns the name of the selected cartogram layer. This is the master
      * layer for the cartogram transformation.
+     * 
+     * @return the cartogram layer name
      */
     public String getCartogramLayerName() {
         return mCartogramLayerName;
@@ -405,6 +473,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the cartogram layer name.
+     * 
+     * @param layerName
+     *            the layer name
      */
     public void setCartogramLayerName(String layerName) {
         mCartogramLayerName = layerName;
@@ -412,6 +483,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the cartogram attribute name.
+     * 
+     * @return the cartogram attribute name
      */
     public String getCartogramAttributeName() {
         return mCartogramAttributeName;
@@ -419,6 +492,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the cartogram attribute name.
+     * 
+     * @param attrName
+     *            the attribute name
      */
     public void setCartogramAttributeName(String attrName) {
         mCartogramAttributeName = attrName;
@@ -499,6 +575,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the list of simultaneous layers.
+     * 
+     * @return the layers
      */
     public Vector<Layer> getSimultaneousLayers() {
         return mSimultaneousLayers;
@@ -506,6 +584,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the list of simultaneous layers.
+     * 
+     * @param layers
+     *            the layer
      */
     public void setSimultaneousLayers(Vector<Layer> layers) {
         mSimultaneousLayers = layers;
@@ -513,6 +594,10 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the simultaneous layer at a given index.
+     * 
+     * @param index
+     *            the index
+     * @return the layer
      */
     public Layer getSimultaneousLayerAtIndex(int index) {
         return mSimultaneousLayers.get(index);
@@ -520,6 +605,11 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the simultaneous layer at a given index.
+     * 
+     * @param layer
+     *            the layer
+     * @param index
+     *            the index
      */
     public void setSimultaneousLayerAtIndex(Layer layer, int index) {
         if (mSimultaneousLayers == null) {
@@ -531,6 +621,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the list of constrained deformation layers.
+     * 
+     * @return the layers
      */
     public Vector<Layer> getConstrainedDeformationLayers() {
         return mConstrainedDeformationLayers;
@@ -538,6 +630,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the list of constrained deformation layers.
+     * 
+     * @param layers
+     *            the layers
      */
     public void setConstrainedDeformationLayers(Vector<Layer> layers) {
         mConstrainedDeformationLayers = layers;
@@ -545,6 +640,10 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the constrained deformation layer at the given index.
+     * 
+     * @param index
+     *            the index
+     * @return the deformation
      */
     public Layer getConstrainedDeformationLayerAtIndex(int index) {
         return mConstrainedDeformationLayers.get(index);
@@ -552,6 +651,11 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets the constrained deformation layer at the given index.
+     * 
+     * @param layer
+     *            the layer
+     * @param index
+     *            the index
      */
     public void setConstrainedDeformationLayerAtIndex(Layer layer, int index) {
         if (mConstrainedDeformationLayers == null) {
@@ -564,6 +668,8 @@ public class CartogramWizard extends JFrame {
     /**
      * Returns the amount of deformation, an integer value between 0 (low
      * deformation) and 100 (high deformation).
+     * 
+     * @return the deformation
      */
     public int getAmountOfDeformation() {
         return mAmountOfDeformation;
@@ -572,6 +678,9 @@ public class CartogramWizard extends JFrame {
     /**
      * Changes the amount of deformation. This must be an integer value between
      * 0 and 100.
+     * 
+     * @param deformation
+     *            the deformation
      */
     public void setAmountOfDeformation(int deformation) {
         mAmountOfDeformation = deformation;
@@ -583,6 +692,8 @@ public class CartogramWizard extends JFrame {
      * same grid as the one used by Gastner's algorithm. The cartogram grid can
      * have an arbitrary size; it is only limited by the available amount of
      * memory and disk space.
+     * 
+     * @return the grid X size
      */
     public int getCartogramGridSizeInX() {
         return mCartogramGridSizeX;
@@ -590,6 +701,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Changes the cartogram grid size in x direction.
+     * 
+     * @param gridSizeX
+     *            the grid X size
      */
     public void setCartogramGridSizeInX(int gridSizeX) {
         mCartogramGridSizeX = gridSizeX;
@@ -597,6 +711,8 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the cartogram grid size in y direction.
+     * 
+     * @return the grid Y size
      */
     public int getCartogramGridSizeInY() {
         return mCartogramGridSizeY;
@@ -604,6 +720,9 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Changes the cartogram grid size in y direction.
+     * 
+     * @param gridSizeY
+     *            the grid Y size
      */
     public void setCartogramGridSizeInY(int gridSizeY) {
         mCartogramGridSizeY = gridSizeY;
@@ -641,6 +760,13 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Sets a cartogram computation error message for the user.
+     * 
+     * @param title
+     *            the title
+     * @param message
+     *            the message
+     * @param stackTrace
+     *            the stack trace
      */
     public void setComputationError(String title, String message,
             String stackTrace) {
@@ -652,15 +778,24 @@ public class CartogramWizard extends JFrame {
 
     /**
      * Returns the cancel button of the cartogram wizard.
+     * 
+     * @return the button
      */
     public JButton getCancelButton() {
         return mCancelButton;
     }
 
+    /**
+     * @return the missing value
+     */
     public String getMissingValue() {
         return mMissingValue;
     }
 
+    /**
+     * @param value
+     *            the value
+     */
     public void setMissingValue(String value) {
         mMissingValue = value;
     }
@@ -754,6 +889,9 @@ class CartogramWizardTitlePanel extends JPanel {
 
 }
 
+/**
+ *
+ */
 class WizardStepIconPanel extends JPanel {
 
     /**
@@ -761,14 +899,38 @@ class WizardStepIconPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 
+     */
     JLabel mIconLabel;
 
+    /**
+     * 
+     */
     ImageIcon mIcon1;
+    /**
+     * 
+     */
     ImageIcon mIcon2;
+    /**
+     * 
+     */
     ImageIcon mIcon3;
+    /**
+     * 
+     */
     ImageIcon mIcon4;
+    /**
+     * 
+     */
     ImageIcon mIcon5;
+    /**
+     * 
+     */
     ImageIcon mIcon6;
+    /**
+     * 
+     */
     ImageIcon mIcon7;
 
     /**
@@ -803,6 +965,10 @@ class WizardStepIconPanel extends JPanel {
 
     }
 
+    /**
+     * @param step
+     *            the number of steps
+     */
     public void setStepIcon(int step) {
         switch (step) {
             case 1:
@@ -852,6 +1018,9 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
 
     /**
      * The default constructor for the panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardPanelZero(JFrame contentFrame) {
 
@@ -961,7 +1130,13 @@ class CartogramWizardPanelOne extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     CartogramWizard mCartogramWizard = null;
+    /**
+     * 
+     */
     JComboBox mLayerMenu = null;
 
     /**
@@ -971,6 +1146,9 @@ class CartogramWizardPanelOne extends JPanel {
 
     /**
      * The default constructor for the panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardPanelOne(JFrame contentFrame) {
 
@@ -1199,8 +1377,17 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     CartogramWizard mCartogramWizard = null;
+    /**
+     * 
+     */
     JComboBox mAttributeMenu = null;
+    /**
+     * 
+     */
     String mCurrentCartogramLayer = null;
 
     /**
@@ -1212,13 +1399,25 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * The attribute type radio button.
      */
     ButtonGroup mAttributeTypeButtonGroup = null;
+    /**
+     * 
+     */
     JRadioButton mAttributeTypeDensityButton = null;
+    /**
+     * 
+     */
     JRadioButton mAttributeTypePopulationButton = null;
 
+    /**
+     * 
+     */
     JTextField mMissingValueTextField = null;
 
     /**
      * The default constructor for the panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardPanelTwo(JFrame contentFrame) {
 
@@ -1449,6 +1648,9 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         super.setVisible(visible);
     }
 
+    /**
+     * 
+     */
     public void updateAttributeName() {
 
         // Find out the current layer name.
@@ -1501,6 +1703,8 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     /**
      * Tells us whether the attribute type is a density or population value.
+     * 
+     * @return <code>true</code> if the attribute is a density value
      */
     public boolean attributeIsDensityValue() {
 
@@ -1522,6 +1726,9 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     }
 
+    /**
+     * @return the missing value
+     */
     public static String getMissingValue() {
         // return mMissingValueTextField.getText();
         return "";
@@ -1541,6 +1748,9 @@ class CartogramWizardPanelThree extends JPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 
+     */
     CartogramWizard mCartogramWizard = null;
 
     /**
@@ -1551,6 +1761,9 @@ class CartogramWizardPanelThree extends JPanel {
 
     /**
      * The default constructor for the panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardPanelThree(JFrame contentFrame) {
 
@@ -1697,6 +1910,9 @@ class CartogramWizardPanelFour extends JPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 
+     */
     CartogramWizard mCartogramWizard = null;
 
     /**
@@ -1707,6 +1923,9 @@ class CartogramWizardPanelFour extends JPanel {
 
     /**
      * The default constructor for the panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardPanelFour(JFrame contentFrame) {
 
@@ -1873,6 +2092,10 @@ class CartogramWizardPanelFour extends JPanel {
         super.setVisible(visible);
     }
 
+    /**
+     * @param enable
+     *            <code>true</code> to enable the deformation
+     */
     public void enableAmountOfDeformationSlider(boolean enable) {
         mDeformationSlider.setEnabled(enable);
     }
@@ -1908,10 +2131,16 @@ class CartogramWizardRunningPanel extends JPanel {
      * lengthy task, the label 2 may be used for more detailed user information.
      */
     JLabel mProgressLabel1 = null;
+    /**
+     * 
+     */
     JLabel mProgressLabel2 = null;
 
     /**
      * The default constructor.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     CartogramWizardRunningPanel(JFrame contentFrame) {
 
@@ -1968,6 +2197,9 @@ class CartogramWizardRunningPanel extends JPanel {
 
     /**
      * Updates the progress label 1.
+     * 
+     * @param label1
+     *            the label 1
      */
     public void updateProgressLabel1(String label1) {
 
@@ -1978,6 +2210,9 @@ class CartogramWizardRunningPanel extends JPanel {
 
     /**
      * Updates the progress label 2.
+     * 
+     * @param label2
+     *            the label 2
      */
     public void updateProgressLabel2(String label2) {
 
@@ -2169,6 +2404,9 @@ class CartogramWizardFinishedPanel extends JPanel {
 
     /**
      * Defines the short message.
+     * 
+     * @param message
+     *            the message
      */
     public void setShortMessage(String message) {
         mShortMessage = message;
@@ -2189,11 +2427,22 @@ class CartogramWizardGoToStepAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     CartogramWizard mWizard = null;
+    /**
+     * 
+     */
     int mStep = -1;
 
     /**
      * The constructor needs a reference to the CartogramWizard object.
+     * 
+     * @param wizard
+     *            the wizard
+     * @param step
+     *            the number of steps
      */
     CartogramWizardGoToStepAction(CartogramWizard wizard, int step) {
         mWizard = wizard;
@@ -2259,6 +2508,9 @@ class CartogramWizardComputeAction extends AbstractAction {
 
     /**
      * The default constructor.
+     * 
+     * @param cartogramWizard
+     *            the cartogram wizard
      */
     CartogramWizardComputeAction(CartogramWizard cartogramWizard) {
 
@@ -2358,6 +2610,9 @@ class CartogramWizardOptionsWindow extends JDialog implements
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 
+     */
     JCheckBox mAdvancedOptionsCheckBox = null;
 
     /**
@@ -2370,21 +2625,60 @@ class CartogramWizardOptionsWindow extends JDialog implements
      */
     JTextField mGridSizeTextField = null;
 
+    /**
+     * 
+     */
     JTextField mCartogramGridSizeTextField = null;
 
+    /**
+     * 
+     */
     JComboBox mDiffusionGridMenu = null;
+    /**
+     * 
+     */
     JTextField mDiffusionIterationsTextField = null;
 
+    /**
+     * 
+     */
     JTextPane mManualParametersPane = null;
+    /**
+     * 
+     */
     JTextPane mGrid1Pane = null;
+    /**
+     * 
+     */
     JLabel mCartogramGridSizeLabel = null;
+    /**
+     * 
+     */
     JTextPane mGrid2Pane = null;
+    /**
+     * 
+     */
     JLabel mDiffusionGridSizeLabel = null;
+    /**
+     * 
+     */
     JTextPane mIterPane = null;
+    /**
+     * 
+     */
     JLabel mIterationsLabel = null;
 
+    /**
+     * 
+     */
     JTextPane mBiasPane = null;
+    /**
+     * 
+     */
     JLabel mBiasLabel = null;
+    /**
+     * 
+     */
     JTextField mBiasTextField = null;
 
     /**
@@ -2723,7 +3017,13 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mActionToPerform = "showDialog";
+    /**
+     * 
+     */
     CartogramWizardOptionsWindow mDialog = null;
 
     /**
@@ -2782,6 +3082,9 @@ class CartogramWizardShowURL extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mUrl = null;
 
     /**
@@ -3060,7 +3363,13 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mActionToPerform = "showDialog";
+    /**
+     * 
+     */
     CartogramWizardSimulaneousLayerWindow mDialog = null;
 
     /**
@@ -3302,7 +3611,13 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mActionToPerform = "showDialog";
+    /**
+     * 
+     */
     CartogramWizardConstrainedLayerWindow mDialog = null;
 
     /**

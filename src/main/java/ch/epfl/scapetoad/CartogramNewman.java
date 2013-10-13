@@ -61,6 +61,9 @@ public class CartogramNewman {
      * Array for storing the grid points
      */
     private double[] gridPointsX;
+    /**
+     * 
+     */
     private double[] gridPointsY;
 
     /**
@@ -120,6 +123,9 @@ public class CartogramNewman {
 
     /**
      * Constructor for the CartogramNewman class.
+     * 
+     * @param g
+     *            the grid
      */
     public CartogramNewman(CartogramGrid g) {
         cartogramGrid = g;
@@ -137,8 +143,11 @@ public class CartogramNewman {
 
     /**
      * Starts the cartogram computation.
+     * 
+     * @throws InterruptedException
+     *             when it was interrupted
      */
-    public void compute() throws Exception {
+    public void compute() throws InterruptedException {
 
         // Allocate space for the cartogram code to use
         initializeArrays();
@@ -160,6 +169,9 @@ public class CartogramNewman {
 
     /**
      * Private method for initializing the class arrays.
+     * 
+     * @throws InterruptedException
+     *             when was interrupted
      */
     private void initializeArrays() throws InterruptedException {
         try {
@@ -198,7 +210,12 @@ public class CartogramNewman {
         fillDiffusionGrid(cgridv);
     }
 
-    // Fills fftrho using the provided grid values.
+    /**
+     * Fills fftrho using the provided grid values.
+     * 
+     * @param v
+     *            the grid values
+     */
     private void fillDiffusionGrid(double[][] v) {
         for (int i = 0; i < gridSize.iX; i++) {
             for (int j = 0; j < gridSize.iY; j++) {
@@ -230,6 +247,9 @@ public class CartogramNewman {
 
     /**
      * Do the transformation of the given set of points to the cartogram
+     * 
+     * @param blur
+     *            the blur value
      */
     private void makeCartogram(double blur) {
 
@@ -272,6 +292,11 @@ public class CartogramNewman {
     /**
      * Function to calculate the population density at arbitrary time by back-
      * transforming and put the result in a particular rhot[] snapshot array.
+     * 
+     * @param t
+     *            the time
+     * @param s
+     *            the snapshot
      */
     private void densitySnapshot(double t, int s) {
         int ix, iy;
@@ -303,16 +328,19 @@ public class CartogramNewman {
 
     }
 
-    /*
+    /**
      * Integrates 2h time into the future two different ways using fourth-order
      * Runge-Kutta and compare the differences for the purposes of the adaptive
      * step size.
      * 
-     * @param t the current time, i.e., start time of these two steps
+     * @param t
+     *            the current time, i.e., start time of these two steps
      * 
-     * @param h delta t
+     * @param h
+     *            delta t
      * 
-     * @param s snapshot index of the initial time
+     * @param s
+     *            snapshot index of the initial time
      * 
      * @return the snapshot index for the final function evaluation
      */
@@ -448,7 +476,7 @@ public class CartogramNewman {
         return s4;
     }
 
-    /*
+    /**
      * Computes the velocity at an arbitrary point from the grid velocities for
      * a specified snapshot by interpolating between grid points. If the
      * requested point is outside the boundaries, we extrapolate (ensures smooth
@@ -456,13 +484,16 @@ public class CartogramNewman {
      * actually do this because the calling method integrateTwoSteps() contains
      * code to prevent it).
      * 
-     * @param rx the x coordinate of the point for which we compute the
-     * velocity.
+     * @param rx
+     *            the x coordinate of the point for which we compute the
+     *            velocity.
      * 
-     * @param ry the y coordinate of the point for which we compute the
-     * velocity.
+     * @param ry
+     *            the y coordinate of the point for which we compute the
+     *            velocity.
      * 
-     * @param s the snapshot
+     * @param s
+     *            the snapshot
      * 
      * @return the velocity in x and y as a coordinate.
      */
@@ -554,6 +585,9 @@ public class CartogramNewman {
 
     }
 
+    /**
+     * 
+     */
     private void projectCartogramGrid() {
 
         // Project each point in the cartogram grid.

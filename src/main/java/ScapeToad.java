@@ -57,6 +57,19 @@ public class ScapeToad {
 
     /**
      * Initialize the logging system.
+     * 
+     * @throws ClassNotFoundException
+     *             if the logger configurator class isn't found
+     * @throws SecurityException
+     *             if the logger configuration file can't be accessed
+     * @throws NoSuchMethodException
+     *             if the logger configurator method isn't found
+     * @throws IllegalArgumentException
+     *             if the logger configurator parameters are wrongs
+     * @throws IllegalAccessException
+     *             if the logger configurator isn't accessible
+     * @throws InvocationTargetException
+     *             if the logger configurator can't be invoked
      */
     private static void initLog() throws ClassNotFoundException,
             SecurityException, NoSuchMethodException, IllegalArgumentException,
@@ -74,6 +87,9 @@ public class ScapeToad {
 
     /**
      * The main method for the ScapeToad application.
+     * 
+     * @param args
+     *            the arguments
      */
     public static void main(String args[]) {
         // Initialize the logging system
@@ -143,6 +159,10 @@ public class ScapeToad {
 
     }
 
+    /**
+     * @param args
+     *            the arguments
+     */
     public static void launchGUI(String[] args) {
 
         // Set the Look & Feel properties.

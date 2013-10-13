@@ -41,8 +41,17 @@ public class MainMenu extends JMenuBar {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     JMenuItem mMenuFile_RemoveLayer;
+    /**
+     * 
+     */
     JMenuItem mMenuFile_SaveLayer;
+    /**
+     * 
+     */
     JMenuItem mMenuFile_ExportAsSvg;
 
     /**

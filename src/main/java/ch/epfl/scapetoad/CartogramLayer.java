@@ -34,6 +34,9 @@ import com.vividsolutions.jump.feature.FeatureDataset;
 import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.workbench.model.Layer;
 
+/**
+ *
+ */
 public class CartogramLayer {
 
     /**
@@ -88,11 +91,15 @@ public class CartogramLayer {
      * We check at the same time if there are some values bigger than 0. If not,
      * we raise an exception as we cannot compute a cartogram on a 0 surface.
      * 
+     * @param layer
+     *            the layer
      * @param populationAttr
      *            the name of the (existing) attribute for which we shall
      *            compute the density.
      * @param densityAttr
      *            the name of the new density attribute.
+     * @throws DataFormatException
+     *             when the data format is wrong
      */
     public static void addDensityAttribute(Layer layer, String populationAttr,
             String densityAttr) throws DataFormatException {
@@ -139,6 +146,12 @@ public class CartogramLayer {
     /**
      * Computes the mean value for the given attribute weighted by the feature
      * area.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the mean density
      */
     public static double meanDensityWithAttribute(Layer layer, String attrName) {
         double totalArea = CartogramLayer.totalArea(layer);
@@ -159,6 +172,12 @@ public class CartogramLayer {
 
     /**
      * Returns the mean value for the given attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the mean value
      */
     public static double meanValueForAttribute(Layer layer, String attrName) {
 
@@ -183,6 +202,12 @@ public class CartogramLayer {
 
     /**
      * Returns the minimum value for the given attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the minimum value
      */
     public static double minValueForAttribute(Layer layer, String attrName) {
 
@@ -214,6 +239,12 @@ public class CartogramLayer {
 
     /**
      * Returns the maximum value for the given attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the maximum value
      */
     public static double maxValueForAttribute(Layer layer, String attrName) {
 
@@ -245,6 +276,12 @@ public class CartogramLayer {
 
     /**
      * Computes the sum of the provided attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the sum
      */
     public static double sumForAttribute(Layer layer, String attrName) {
         double sum = 0.0;
@@ -263,6 +300,12 @@ public class CartogramLayer {
 
     /**
      * Computes the variance of the provided attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the variance
      */
     public static double varianceForAttribute(Layer layer, String attrName) {
         double mean = CartogramLayer.meanValueForAttribute(layer, attrName);
@@ -286,6 +329,12 @@ public class CartogramLayer {
 
     /**
      * Computes the standard deviation of the provided attribute.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @return the standard deviation
      */
     public static double standardDeviationForAttribute(Layer layer,
             String attrName) {
@@ -298,8 +347,13 @@ public class CartogramLayer {
     /**
      * Returns the n-th percentile of the provided attribute.
      * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
      * @param n
      *            the percentile, must be between 0 and 100.
+     * @return the percentile
      */
     public static double percentileForAttribute(Layer layer, String attrName,
             int n) {
@@ -360,6 +414,15 @@ public class CartogramLayer {
 
     /**
      * Replaces a double attribute value with another.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
+     * @param oldValue
+     *            the old value
+     * @param newValue
+     *            the new value
      */
     public static void replaceAttributeValue(Layer layer, String attrName,
             double oldValue, double newValue) {
@@ -380,6 +443,10 @@ public class CartogramLayer {
 
     /**
      * Computes the total area of all features in this layer.
+     * 
+     * @param layer
+     *            the layer
+     * @return the total area
      */
     public static double totalArea(Layer layer) {
 
@@ -453,6 +520,12 @@ public class CartogramLayer {
 
     /**
      * Projects a layer using a cartogram grid. Returns the projected layer.
+     * 
+     * @param lyr
+     *            the layer
+     * @param grid
+     *            the grid
+     * @return the projected layer
      */
     public static Layer projectLayerWithGrid(Layer lyr, CartogramGrid grid) {
 
@@ -492,6 +565,15 @@ public class CartogramLayer {
      * * ((areaOptimal * Sum(areaReal)) / (areaReal * Sum(areaOptimal))) where
      * err : the size error areaOptimal : the optimal or theoretical area of a
      * polygon areaReal : the current area of a polygon
+     * 
+     * @param cartogramLayer
+     *            the cartogram layer
+     * @param cartogramAttribute
+     *            the cartogram attribute name
+     * @param originalLayer
+     *            the original layer
+     * @param errorAttribute
+     *            the error attribute name
      * 
      * @return the mean size error.
      */
@@ -547,6 +629,11 @@ public class CartogramLayer {
     /**
      * Checks the attribute values for invalid values and replaces them with a
      * zero value. This method works only with double value attributes.
+     * 
+     * @param layer
+     *            the layer
+     * @param attrName
+     *            the attribute name
      */
     public static void cleanAttributeValues(Layer layer, String attrName) {
 
@@ -575,6 +662,9 @@ public class CartogramLayer {
 
     /**
      * Creates a new FeatureSchema using the provided FeatureSchema.
+     * 
+     * @param fs
+     *            the feature schema
      * 
      * @return a new FeatureSchema
      */

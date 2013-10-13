@@ -96,6 +96,24 @@ public class Geometry {
 
     /**
      * Computes the intersection of two segments AB and CD.
+     * 
+     * @param ax
+     *            the x coordinate of point A
+     * @param ay
+     *            the y coordinate of point A
+     * @param bx
+     *            the x coordinate of point B
+     * @param by
+     *            the y coordinate of point B
+     * @param cx
+     *            the x coordinate of point C
+     * @param cy
+     *            the y coordinate of point C
+     * @param dx
+     *            the x coordinate of point D
+     * @param dy
+     *            the y coordinate of point D
+     * @return the intersection
      */
     public static double[] intersectionOfSegments(double ax, double ay,
             double bx, double by, double cx, double cy, double dx, double dy) {

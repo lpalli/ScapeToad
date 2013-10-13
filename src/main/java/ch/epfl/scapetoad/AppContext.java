@@ -91,6 +91,9 @@ public class AppContext {
      */
     public static MapPanel mapPanel = null;
 
+    /**
+     * 
+     */
     public static SizeErrorLegend sizeErrorLegend = new SizeErrorLegend();
 
 }

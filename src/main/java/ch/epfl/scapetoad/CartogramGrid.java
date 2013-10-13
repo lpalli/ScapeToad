@@ -54,6 +54,9 @@ public class CartogramGrid {
      * The grid size in x and y direction.
      */
     int mGridSizeX = 256;
+    /**
+     * 
+     */
     int mGridSizeY = 256;
 
     /**
@@ -66,9 +69,21 @@ public class CartogramGrid {
      * The arrays for storing the nodes and the cells.
      */
     double[][] mNodeX;
+    /**
+     * 
+     */
     double[][] mNodeY;
+    /**
+     * 
+     */
     double[][] mCellOriginalDensity;
+    /**
+     * 
+     */
     double[][] mCellCurrentDensity;
+    /**
+     * 
+     */
     short[][] mCellConstrainedDeformation;
 
     /**
@@ -81,6 +96,9 @@ public class CartogramGrid {
      * purpose only. Do not modify these values directly.
      */
     private double mCellSizeX;
+    /**
+     * 
+     */
     private double mCellSizeY;
 
     /**
@@ -90,10 +108,20 @@ public class CartogramGrid {
      * value of 10 at least.
      */
     public double bias = 0.00001;
+    /**
+     * 
+     */
     public double iMinValue = 10;
 
     /**
      * The constructor for the cartogram grid.
+     * 
+     * @param gridSizeX
+     *            the X grid size
+     * @param gridSizeY
+     *            the Y grid size
+     * @param env
+     *            the envelope
      */
     CartogramGrid(int gridSizeX, int gridSizeY, Envelope env) {
         // Store the attributes.
@@ -125,6 +153,8 @@ public class CartogramGrid {
 
     /**
      * Returns the x coordinates array.
+     * 
+     * @return the X coordnates
      */
     public double[][] getXCoordinates() {
         return mNodeX;
@@ -132,6 +162,8 @@ public class CartogramGrid {
 
     /**
      * Returns the y coordinates array.
+     * 
+     * @return the Y coordinates
      */
     public double[][] getYCoordinates() {
         return mNodeY;
@@ -139,6 +171,8 @@ public class CartogramGrid {
 
     /**
      * Returns the array containing the current densities for the grid.
+     * 
+     * @return the densities
      */
     public double[][] getCurrentDensityArray() {
         return mCellCurrentDensity;
@@ -146,6 +180,8 @@ public class CartogramGrid {
 
     /**
      * Returns the cartogram grid size.
+     * 
+     * @return the grid size
      */
     public Size getGridSize() {
         return new Size(mGridSizeX, mGridSizeY);
@@ -195,6 +231,10 @@ public class CartogramGrid {
      * @param attrIsDensityValue
      *            is true if the master attribute is a density value, and false
      *            if it is a population value.
+     * @throws InterruptedException
+     *             when was interrupted
+     * @throws DataFormatException
+     *             when the data format is wrong
      */
     public void computeOriginalDensityValuesWithLayer(Layer layer,
             String attrName, boolean attrIsDensityValue)
@@ -343,6 +383,9 @@ public class CartogramGrid {
 
     /**
      * Prepares the grid for constrained deformation using the provided feature.
+     * 
+     * @param feat
+     *            the feature
      */
     private void prepareGridForConstrainedDeformationWithFeature(Feature feat) {
 
@@ -568,6 +611,11 @@ public class CartogramGrid {
 
     /**
      * Tries to give the original form to the provided cell.
+     * 
+     * @param i
+     *            ???
+     * @param j
+     *            ???
      */
     private void applyConstrainedDeformationToCell(int i, int j) {
 
@@ -650,6 +698,15 @@ public class CartogramGrid {
      * Tries to move the provided node to the provided location. The decision to
      * move or not depends on the neighbourhood structure. The topology must be
      * respected in all cases.
+     * 
+     * @param i
+     *            ???
+     * @param j
+     *            ???
+     * @param aX
+     *            ???
+     * @param aY
+     *            ???
      */
     private void tryToMoveNode(int i, int j, double aX, double aY) {
         double x = aX;
@@ -867,7 +924,7 @@ public class CartogramGrid {
      * Converts a grid cell index in y direction into real world y coordinate.
      * The coordinate of the cell's lower left corner is returned.
      * 
-     * @param i
+     * @param j
      *            the cell index in y direction.
      * @return the y coordinate of the cell's lower left corner.
      */
@@ -1016,6 +1073,17 @@ public class CartogramGrid {
     /**
      * Fills a regular grid with the mean density. If there is no information,
      * the mean density for the whole grid is assumed to be the desired value.
+     * 
+     * @param densityGrid
+     *            the density grid
+     * @param minX
+     *            the min X
+     * @param maxX
+     *            the max X
+     * @param minY
+     *            the min Y
+     * @param maxY
+     *            the max Y
      */
     public void fillRegularDensityGrid(double[][] densityGrid, double minX,
             double maxX, double minY, double maxY) {
@@ -1185,6 +1253,12 @@ public class CartogramGrid {
 
     /**
      * Projects a line segment. Returns two or more coordinates.
+     * 
+     * @param c1
+     *            the first coordinate
+     * @param c2
+     *            the second coordinate
+     * @return the result coordinates
      */
     public Coordinate[] projectLineSegment(Coordinate c1, Coordinate c2) {
 
@@ -1303,6 +1377,10 @@ public class CartogramGrid {
 
     /**
      * Projects a coordinate sequence using this grid.
+     * 
+     * @param coords
+     *            the coordinates
+     * @return the projected coordinates
      */
     public Coordinate[] projectCoordinates(Coordinate[] coords) {
         int ncoords = coords.length;

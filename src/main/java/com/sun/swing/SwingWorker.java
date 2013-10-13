@@ -13,6 +13,9 @@ import javax.swing.SwingUtilities;
  * start() on the SwingWorker after creating it.
  */
 public abstract class SwingWorker {
+    /**
+     * 
+     */
     private Object value; // see getValue(), setValue()
 
     /**
@@ -20,26 +23,44 @@ public abstract class SwingWorker {
      * synchronization control.
      */
     private static class ThreadVar {
+        /**
+         * 
+         */
         private Thread thread;
 
+        /**
+         * @param t
+         *            the thread
+         */
         ThreadVar(Thread t) {
             thread = t;
         }
 
+        /**
+         * @return the thread
+         */
         synchronized Thread get() {
             return thread;
         }
 
+        /**
+         * 
+         */
         synchronized void clear() {
             thread = null;
         }
     }
 
+    /**
+     * 
+     */
     ThreadVar threadVar;
 
     /**
      * Get the value produced by the worker thread, or null if it hasn't been
      * constructed yet.
+     * 
+     * @return the value
      */
     protected synchronized Object getValue() {
         return value;
@@ -47,6 +68,9 @@ public abstract class SwingWorker {
 
     /**
      * Set the value produced by worker thread
+     * 
+     * @param x
+     *            the value
      */
     synchronized void setValue(Object x) {
         value = x;
@@ -54,6 +78,8 @@ public abstract class SwingWorker {
 
     /**
      * Compute the value to be returned by the <code>get</code> method.
+     * 
+     * @return an object
      */
     public abstract Object construct();
 
@@ -79,6 +105,8 @@ public abstract class SwingWorker {
 
     /**
      * A method to know whether the thread is running or not.
+     * 
+     * @return <code>true</code> if it is running
      */
     public boolean isRunning() {
         Thread t = threadVar.get();

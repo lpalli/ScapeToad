@@ -41,15 +41,36 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.StyleUtil;
  */
 public class SizeErrorStyle implements Style {
 
+    /**
+     * 
+     */
     boolean _enabled = false;
 
+    /**
+     * 
+     */
     String _attrName;
+    /**
+     * 
+     */
     Vector<Double> _limits;
+    /**
+     * 
+     */
     Vector<BasicStyle> _colors;
+    /**
+     * 
+     */
     BasicStyle _defaultStyle;
 
+    /**
+     * 
+     */
     private Stroke _fillStroke = new BasicStroke(1);
 
+    /**
+     * 
+     */
     public SizeErrorStyle() {
         _limits = new Vector<Double>();
         _colors = new Vector<BasicStyle>();
@@ -88,46 +109,95 @@ public class SizeErrorStyle implements Style {
         _enabled = enabled;
     }
 
+    /**
+     * @param defaultStyle
+     *            the style
+     */
     public void setDefaultStyle(BasicStyle defaultStyle) {
         _defaultStyle = defaultStyle;
     }
 
+    /**
+     * @return the number of colors
+     */
     public int getNumberOfColors() {
         return _colors.size();
     }
 
+    /**
+     * @param index
+     *            the index
+     * @return the color
+     */
     public BasicStyle getColorAtIndex(int index) {
         return _colors.get(index);
     }
 
+    /**
+     * @param color
+     *            the color
+     */
     public void addColor(BasicStyle color) {
         _colors.add(color);
     }
 
+    /**
+     * @param color
+     *            the color
+     * @param index
+     *            the index
+     */
     public void setColorAtIndex(BasicStyle color, int index) {
         _colors.set(index, color);
     }
 
+    /**
+     * @return the number of limits
+     */
     public int getNumberOfLimits() {
         return _limits.size();
     }
 
+    /**
+     * @param index
+     *            the index
+     * @return the limit at the specified index
+     */
     public Double getLimitAtIndex(int index) {
         return _limits.get(index);
     }
 
+    /**
+     * @param limit
+     *            the limit
+     */
     public void addLimit(Double limit) {
         _limits.add(limit);
     }
 
+    /**
+     * @param limit
+     *            the limit
+     * @param index
+     *            the index
+     */
     public void setLimitAtIndex(Double limit, int index) {
         _limits.set(index, limit);
     }
 
+    /**
+     * @param attrName
+     *            the attribute name
+     */
     public void setAttributeName(String attrName) {
         _attrName = attrName;
     }
 
+    /**
+     * @param f
+     *            the feature
+     * @return the style
+     */
     private BasicStyle getStyleForFeature(Feature f) {
 
         // Get the attribute value.

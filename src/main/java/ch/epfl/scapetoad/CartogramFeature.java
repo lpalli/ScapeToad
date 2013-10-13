@@ -46,6 +46,13 @@ import com.vividsolutions.jump.feature.FeatureSchema;
  */
 public class CartogramFeature {
 
+    /**
+     * @param feat
+     *            the feature
+     * @param attrName
+     *            the attribute name
+     * @return the value
+     */
     public static double getAttributeAsDouble(Feature feat, String attrName) {
         FeatureSchema fschema = feat.getSchema();
         if (fschema.hasAttribute(attrName) == false) {
@@ -64,6 +71,14 @@ public class CartogramFeature {
         return 0.0;
     }
 
+    /**
+     * @param feat
+     *            the feature
+     * @param attrName
+     *            the attribute name
+     * @param value
+     *            the value
+     */
     public static void setDoubleAttributeValue(Feature feat, String attrName,
             double value) {
         AttributeType attrType = feat.getSchema().getAttributeType(attrName);
@@ -77,6 +92,12 @@ public class CartogramFeature {
 
     /**
      * Projects the provided Feature using the provided cartogram grid.
+     * 
+     * @param feat
+     *            the feature
+     * @param grid
+     *            the grid
+     * @return the projected feature
      */
     public static Feature projectFeatureWithGrid(Feature feat,
             CartogramGrid grid) {
@@ -197,6 +218,12 @@ public class CartogramFeature {
 
     /**
      * Regularizes a geometry.
+     * 
+     * @param geom
+     *            the geometry
+     * @param maxlen
+     *            the maximum length
+     * @return the regularized geometry
      */
     public static Geometry regularizeGeometry(Geometry geom, double maxlen) {
 
@@ -284,6 +311,12 @@ public class CartogramFeature {
 
     /**
      * Regularizes a coordinate sequence.
+     * 
+     * @param coords
+     *            the coordinates
+     * @param maxlen
+     *            the maximum length
+     * @return the regularizeds coordinates
      */
     public static Coordinate[] regularizeCoordinates(Coordinate[] coords,
             double maxlen) {

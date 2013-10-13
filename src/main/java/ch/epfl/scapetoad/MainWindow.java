@@ -66,7 +66,13 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     MainPanel mMainPanel = null;
+    /**
+     * 
+     */
     MainMenu mMainMenu = null;
 
     /**
@@ -159,6 +165,9 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
 
 } // MainWindow
 
+/**
+ *
+ */
 class MainPanel extends JPanel {
 
     /**
@@ -166,6 +175,10 @@ class MainPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param contentFrame
+     *            the content frame
+     */
     MainPanel(JFrame contentFrame) {
 
         // Set the layout parameters.
@@ -262,6 +275,9 @@ class MapPanel extends JPanel {
 
     /**
      * The default constructor for the map panel.
+     * 
+     * @param contentFrame
+     *            the content frame
      */
     MapPanel(JFrame contentFrame) {
         this.setSize(contentFrame.getSize());
@@ -295,6 +311,9 @@ class MapPanel extends JPanel {
 
     } // MapPanel.<init>
 
+    /**
+     * 
+     */
     void update() {
         AppContext.layerViewPanel.setSize(this.getSize());
     }
@@ -443,6 +462,9 @@ class ActionZoomToFullExtent extends AbstractAction {
 
 }
 
+/**
+ * 
+ */
 class ActionCreateCartogram extends AbstractAction {
 
     /**
@@ -477,9 +499,21 @@ class ExportShapeFileDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     JButton mOkButton;
+    /**
+     * 
+     */
     JButton mCancelButton;
+    /**
+     * 
+     */
     JLabel mLayerMenuLabel;
+    /**
+     * 
+     */
     JComboBox mLayerMenu;
 
     /**
@@ -551,6 +585,9 @@ class ExportShapeFileDialog extends JDialog {
 
     } // ExportShapeFileDialog.<init>
 
+    /**
+     * 
+     */
     public void saveLayer() {
         String layerName = (String) mLayerMenu.getSelectedItem();
         if (layerName == "<none>") {
@@ -571,7 +608,13 @@ class ExportShapeFileDialogAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mActionToPerform = "closeDialogWithoutSaving";
+    /**
+     * 
+     */
     ExportShapeFileDialog mDialog = null;
 
     /**
@@ -627,11 +670,29 @@ class ExportSvgFileDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     JButton mOkButton;
+    /**
+     * 
+     */
     JButton mCancelButton;
+    /**
+     * 
+     */
     JPanel mLayerListPanel;
+    /**
+     * 
+     */
     JScrollPane mLayerListScrollPane;
+    /**
+     * 
+     */
     Vector<JCheckBox> mCheckBoxList;
+    /**
+     * 
+     */
     JLabel mNoLayerLabel;
 
     /**
@@ -743,6 +804,9 @@ class ExportSvgFileDialog extends JDialog {
 
     } // ExportSvgFileDialog.<init>
 
+    /**
+     * 
+     */
     public void exportLayers() {
 
         mOkButton.setEnabled(false);
@@ -785,9 +849,21 @@ class ExportSvgFileDialogAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
     String mActionToPerform = "closeDialogWithoutSaving";
+    /**
+     * 
+     */
     ExportSvgFileDialog mDialog = null;
 
+    /**
+     * @param actionToPerform
+     *            the action to perform
+     * @param dialog
+     *            the dialog
+     */
     ExportSvgFileDialogAction(String actionToPerform, ExportSvgFileDialog dialog) {
         mActionToPerform = actionToPerform;
         mDialog = dialog;
