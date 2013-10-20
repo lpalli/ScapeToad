@@ -27,6 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -53,6 +56,11 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
  * @version v1.0.0, 2007-11-30
  */
 public class Cartogram extends com.sun.swing.SwingWorker {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(Cartogram.class);
 
     /**
      * The cartogram wizard. We need the wizard reference for updating the
@@ -266,10 +274,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
             // Adjust the cartogram grid size in order to be proportional
             // to the envelope.
             adjustGridSizeToEnvelope();
-            if (AppContext.DEBUG) {
-                System.out.println("Adjusted grid size: " + mGridSizeX + "x"
-                        + mGridSizeY);
-            }
+            logger.debug(String.format("Adjusted grid size: %1$sx%2$s",
+                    mGridSizeX, mGridSizeY));
 
             mCartogramWizard.updateRunningStatus(20,
                     "Preparing the cartogram computation...",

@@ -21,6 +21,8 @@
 
 package ch.epfl.scapetoad;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.special.Erf;
 
@@ -41,6 +43,11 @@ import com.vividsolutions.jump.feature.FeatureSchema;
  * @version v1.0.0, 2007-11-30
  */
 public class CartogramGastner {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(CartogramGastner.class);
 
     /**
      * The cartogram grid which contains the density and which we will deform.
@@ -431,10 +438,7 @@ public class CartogramGastner {
                     double xinterpol = iX[j][k] + h * vx[j][k];
                     double yinterpol = iY[j][k] + h * vy[j][k];
                     if (xinterpol < 0.0 || yinterpol < 0.0) {
-                        if (AppContext.DEBUG) {
-                            System.out
-                                    .println("[ERROR] Cartogram out of bounds !");
-                        }
+                        logger.error("Cartogram out of bounds !");
                     }
 
                     vxplus = interpolateBilinear(gridvx, xinterpol, yinterpol);

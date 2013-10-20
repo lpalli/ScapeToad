@@ -47,6 +47,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerTreeModel;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
@@ -66,6 +69,11 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      * 
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(MainWindow.class);
     /**
      * 
      */
@@ -126,9 +134,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      */
     @Override
     public void handleThrowable(Throwable t) {
-        if (AppContext.DEBUG) {
-            t.printStackTrace();
-        }
+        logger.error("", t);
     }
 
     /**

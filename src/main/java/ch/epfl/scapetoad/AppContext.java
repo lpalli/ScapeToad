@@ -35,12 +35,6 @@ import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
 public class AppContext {
 
     /**
-     * Setting the debug flag enables the output of console messages for
-     * debugging purposes.
-     */
-    public static boolean DEBUG = false;
-
-    /**
      * The short program name.
      */
     public static String shortProgramName = "ScapeToad";

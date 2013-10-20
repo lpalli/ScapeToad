@@ -100,8 +100,7 @@ public class MainMenu extends JMenuBar {
         // Add a quit menu if we are not on a Mac.
         // (on a Mac, there is a default quit menu under the program name's
         // menu).
-        if (System.getProperty("os.name").indexOf("Mac OS") == -1
-                || AppContext.DEBUG) {
+        if (System.getProperty("os.name").indexOf("Mac OS") == -1) {
             JMenuItem sepMenu2 = new JMenuItem("-");
             fileMenu.add(sepMenu2);
 
