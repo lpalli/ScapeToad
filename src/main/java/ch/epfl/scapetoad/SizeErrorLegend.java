@@ -21,13 +21,16 @@
 
 package ch.epfl.scapetoad;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.Ostermiller.util.Browser;
 
@@ -48,13 +51,12 @@ public class SizeErrorLegend extends JFrame {
      * 
      */
     public SizeErrorLegend() {
-
         setTitle("Size Error");
-        this.setBounds(10, 30, 120, 220);
+        setBounds(10, 30, 120, 220);
         setVisible(false);
 
         // Loading the size error legend image from the resources.
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader cldr = getClass().getClassLoader();
         URL iconURL = cldr.getResource("resources/SizeErrorLegend.png");
         ImageIcon sizeErrorImage = new ImageIcon(iconURL);
 
@@ -68,44 +70,27 @@ public class SizeErrorLegend extends JFrame {
         iconLabel.addMouseListener(new IconMouseListener());
 
         // Add the icon label to this panel.
-        this.add(iconLabel);
+        add(iconLabel);
     }
-
 }
 
 /**
  *
  */
-class IconMouseListener implements MouseListener {
+class IconMouseListener extends MouseAdapter {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(IconMouseListener.class);
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent aEvent) {
         try {
             Browser.init();
             Browser.displayURL("http://scapetoad.choros.ch/help/d-computation-report.php#cartogram-error");
-        } catch (Exception exc) {
-            // Nothing to do
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
     }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Nothing to do
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Nothing to do
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // Nothing to do
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // Nothing to do
-    }
-
 }

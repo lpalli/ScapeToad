@@ -21,7 +21,6 @@
 
 package ch.epfl.scapetoad;
 
-import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
 import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
@@ -35,21 +34,6 @@ import com.vividsolutions.jump.workbench.ui.TreeLayerNamePanel;
 public class AppContext {
 
     /**
-     * The short program name.
-     */
-    public static String shortProgramName = "ScapeToad";
-
-    /**
-     * The program name including the version number.
-     */
-    public static String longProgramName = "ScapeToad version 1.0.0";
-
-    /**
-     * The copyright notice.
-     */
-    public static String copyrightNotice = "Copyright 2008 91NORD. All rights reserved.";
-
-    /**
      * The application's main window.
      */
     public static MainWindow mainWindow;
@@ -58,11 +42,6 @@ public class AppContext {
      * The layer manager from the JUMP project.
      */
     public static LayerManager layerManager = null;
-
-    /**
-     * The JUMP workbench.
-     */
-    public static JUMPWorkbench workBench = null;
 
     /**
      * The cartogram wizard.
@@ -84,10 +63,4 @@ public class AppContext {
      * The map panels displays the maps.
      */
     public static MapPanel mapPanel = null;
-
-    /**
-     * 
-     */
-    public static SizeErrorLegend sizeErrorLegend = new SizeErrorLegend();
-
 }

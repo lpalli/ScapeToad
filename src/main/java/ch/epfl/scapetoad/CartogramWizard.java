@@ -210,7 +210,7 @@ public class CartogramWizard extends JFrame {
      */
     public CartogramWizard() {
         // Set the window parameters.
-        setTitle(AppContext.shortProgramName + " _ Cartogram Wizard");
+        setTitle("ScapeToad _ Cartogram Wizard");
         setSize(640, 480);
         setLocation(30, 40);
         setResizable(false);
@@ -2245,22 +2245,16 @@ class CartogramWizardComputeAction extends AbstractAction {
      * This method launches the cartogram computation process.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        // Hide the 3rd wizard panel.
+    public void actionPerformed(ActionEvent aEvent) {
+        // Hide the 3rd wizard panel
         iCartogramWizard.getPanelFour().setVisible(false);
 
-        // Show the running panel.
+        // Show the running panel
         iCartogramWizard.getRunningPanel().setVisible(true);
 
         iCartogramWizard.getWizardStepIconPanel().setStepIcon(6);
 
-        // Get the name of the selected layer.
-        String selectedLayer = iCartogramWizard.getCartogramLayerName();
-
-        // Get the name of the selected attribute.
-        String selectedAttribute = iCartogramWizard.getCartogramAttributeName();
-
-        // Get the attribute type (population or density value).
+        // Get the attribute type (population or density value)
         boolean isDensityValue = iCartogramWizard.getPanelTwo()
                 .attributeIsDensityValue();
 
@@ -2268,47 +2262,40 @@ class CartogramWizardComputeAction extends AbstractAction {
         iCartogramWizard.setMissingValue(CartogramWizardPanelTwo
                 .getMissingValue());
 
-        // Create a new cartogram instance and set the parameters.
-        Cartogram cg = new Cartogram(iCartogramWizard);
-        cg.setLayerManager(AppContext.layerManager);
-        cg.setMasterLayer(selectedLayer);
-        cg.setMasterAttribute(selectedAttribute);
-        cg.setMasterAttributeIsDensityValue(isDensityValue);
-        cg.setMissingValue(iCartogramWizard.getMissingValue());
-        cg.setSlaveLayers(iCartogramWizard.getSimultaneousLayers());
-        cg.setConstrainedDeformationLayers(iCartogramWizard
+        // Create a new cartogram instance and set the parameters
+        Cartogram cartogram = new Cartogram(iCartogramWizard);
+        cartogram.setLayerManager(AppContext.layerManager);
+        cartogram.setMasterLayer(iCartogramWizard.getCartogramLayerName());
+        cartogram.setMasterAttribute(iCartogramWizard
+                .getCartogramAttributeName());
+        cartogram.setMasterAttributeIsDensityValue(isDensityValue);
+        cartogram.setMissingValue(iCartogramWizard.getMissingValue());
+        cartogram.setSlaveLayers(iCartogramWizard.getSimultaneousLayers());
+        cartogram.setConstrainedDeformationLayers(iCartogramWizard
                 .getConstrainedDeformationLayers());
-
-        cg.setAmountOfDeformation(iCartogramWizard.getAmountOfDeformation());
-
-        cg.setAdvancedOptionsEnabled(iCartogramWizard
+        cartogram.setAmountOfDeformation(iCartogramWizard
+                .getAmountOfDeformation());
+        cartogram.setAdvancedOptionsEnabled(iCartogramWizard
                 .getAdvancedOptionsEnabled());
-
-        cg.setGridSize(iCartogramWizard.getCartogramGridSizeInX(),
+        cartogram.setGridSize(iCartogramWizard.getCartogramGridSizeInX(),
                 iCartogramWizard.getCartogramGridSizeInY());
 
-        if (iCartogramWizard.getAdvancedOptionsEnabled()) {
-            cg.bias = iCartogramWizard.bias;
-        } else {
-            cg.bias = 0.000001;
-        }
+        // Set the parameters for the deformation grid layer
+        cartogram.setCreateGridLayer(iCartogramWizard.getCreateGridLayer());
+        cartogram.setGridLayerSize(iCartogramWizard.getDeformationGridSize());
 
-        // Set the parameters for the deformation grid layer.
-        cg.setCreateGridLayer(iCartogramWizard.getCreateGridLayer());
-        cg.setGridLayerSize(iCartogramWizard.getDeformationGridSize());
-
-        // Set the parameters for the legend layer.
-        // We have to estimate the legend values.
+        // Set the parameters for the legend layer
+        // We have to estimate the legend values
         if (isDensityValue) {
-            cg.setCreateLegendLayer(false);
+            cartogram.setCreateLegendLayer(false);
         } else {
-            cg.setCreateLegendLayer(true);
+            cartogram.setCreateLegendLayer(true);
         }
 
-        iCartogramWizard.setCartogram(cg);
+        iCartogramWizard.setCartogram(cartogram);
 
         // Start the cartogram computation.
-        cg.start();
+        cartogram.start();
     }
 }
 
@@ -3110,8 +3097,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
      */
     CartogramWizardConstrainedLayerWindow() {
         // Set the window parameters.
-        setTitle(AppContext.shortProgramName
-                + " _ Cartogram Wizard _ Constrained transformation layers");
+        setTitle("ScapeToad _ Cartogram Wizard _ Constrained transformation layers");
         setSize(300, 400);
         setLocation(40, 50);
         setResizable(false);

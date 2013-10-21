@@ -8,6 +8,9 @@
 
 package ch.epfl.scapetoad;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -20,66 +23,69 @@ import edu.emory.mathcs.jtransforms.dct.DoubleDCT_2D;
 public class CartogramNewman {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(CartogramNewman.class);
+
+    /**
      * The cartogram grid on which we will apply the cartogram transformation.
      */
-    private CartogramGrid cartogramGrid;
+    private CartogramGrid iCartogramGrid;
 
     /**
      * The size of the diffusion grid.
      */
-    public Size gridSize = new Size(512, 512);
+    public Size iGridSize = new Size(512, 512);
 
     /**
      * The cartogram bounding box. It is slightly larger than the grid bounding
      * box for computational reasons.
      */
-    private Envelope extent;
+    private Envelope iExtent;
 
     /**
      * Pop density at time t (five snaps needed)
      */
-    private double[][][] rhot;
+    private double[][][] iRhot;
 
     /**
      * FT of initial density
      */
-    private double[][] fftrho;
-    // private ComplexArray fftrho;
+    private double[][] iFftrho;
 
     /**
      * FT of density at time t
      */
-    // private ComplexArray fftexpt;
-    private double[][] fftexpt;
+    private double[][] iFftexpt;
 
     /**
      * Array needed for the Gaussian convolution
      */
-    private double[] expky;
+    private double[] iExpky;
 
     /**
      * Array for storing the grid points
      */
-    private double[] gridPointsX;
+    private double[] iGridPointsX;
     /**
      * 
      */
-    private double[] gridPointsY;
+    private double[] iGridPointsY;
 
     /**
      * Initial size of a time step
      */
-    public static double INITH = 0.001;
+    private static double INITH = 0.001;
 
     /**
      * Desired accuracy per step in pixels
      */
-    public static double TARGETERROR = 0.01;
+    private static double TARGETERROR = 0.01;
 
     /**
      * Max ratio to increase step size by
      */
-    public static double MAXRATIO = 4.0;
+    private static double MAXRATIO = 4.0;
 
     /**
      * Guess of the time it will take. Only used for the completion estimation.
@@ -90,56 +96,49 @@ public class CartogramNewman {
      * The maximum integration error found for any polygon vertex for the
      * complete two-step integration process.
      */
-    private double errorp;
+    private double iErrorp;
 
     /**
      * Maximum distance moved by any point during an integration step.
      */
-    private double drp;
+    private double iDrp;
 
     /**
      * The Cartogram Wizard is used to update the running status. If NULL, no
      * running status update is done.
      */
-    public CartogramWizard runningStatusWizard;
+    public CartogramWizard iRunningStatusWizard;
 
     /**
      * The value of the running status at the begin of the cartogram
      * computation.
      */
-    public int runningStatusMinimumValue;
+    public int iRunningStatusMinimumValue;
 
     /**
      * The value of the running statut at the end of the cartogram computation.
      */
-    public int runningStatusMaximumValue;
+    public int iRunningStatusMaximumValue;
 
     /**
      * The main string of the running status which is set by the caller. This
      * string will be displayed in the first line of the running status wizard.
      * The second line is freely used by this class.
      */
-    public String runningStatusMainString;
+    public String iRunningStatusMainString;
 
     /**
      * Constructor for the CartogramNewman class.
      * 
-     * @param g
+     * @param aCartogramGrid
      *            the grid
      */
-    public CartogramNewman(CartogramGrid g) {
-        cartogramGrid = g;
-        gridSize = g.getGridSize();
-        gridSize.iX--;
-        gridSize.iY--;
+    public CartogramNewman(CartogramGrid aCartogramGrid) {
+        iCartogramGrid = aCartogramGrid;
+        iGridSize = aCartogramGrid.getGridSize();
+        iGridSize.iX--;
+        iGridSize.iY--;
     }
-
-    /**
-     * Set the diffusion grid size.
-     */
-    /*
-     * public void setGridSize (int x, int y) { this.gridSize = new Size(x,y); }
-     */
 
     /**
      * Starts the cartogram computation.
@@ -148,7 +147,6 @@ public class CartogramNewman {
      *             when it was interrupted
      */
     public void compute() throws InterruptedException {
-
         // Allocate space for the cartogram code to use
         initializeArrays();
 
@@ -163,8 +161,6 @@ public class CartogramNewman {
 
         // Project the cartogram grid.
         projectCartogramGrid();
-
-        // this.writeGridOfPointsToFile("/Temp/gridOfPoints.txt");
     }
 
     /**
@@ -175,12 +171,12 @@ public class CartogramNewman {
      */
     private void initializeArrays() throws InterruptedException {
         try {
-            rhot = new double[5][gridSize.iX][gridSize.iY];
-            fftrho = new double[gridSize.iX][gridSize.iY];
-            fftexpt = new double[gridSize.iX][gridSize.iY];
-            expky = new double[gridSize.iY];
+            iRhot = new double[5][iGridSize.iX][iGridSize.iY];
+            iFftrho = new double[iGridSize.iX][iGridSize.iY];
+            iFftexpt = new double[iGridSize.iX][iGridSize.iY];
+            iExpky = new double[iGridSize.iY];
         } catch (Exception e) {
-            System.out.println("Out of memory error.");
+            logger.error("Out of memory error.");
             throw new InterruptedException(
                     "Out of memory. Use a smaller cartogram grid or increase memory.");
         }
@@ -194,8 +190,8 @@ public class CartogramNewman {
         readPopulationDensity();
 
         // Transform fftrho.
-        DoubleDCT_2D transform = new DoubleDCT_2D(gridSize.iX, gridSize.iY);
-        transform.forward(fftrho, false);
+        DoubleDCT_2D transform = new DoubleDCT_2D(iGridSize.iX, iGridSize.iY);
+        transform.forward(iFftrho, false);
     }
 
     /**
@@ -203,23 +199,22 @@ public class CartogramNewman {
      */
     private void readPopulationDensity() {
         // Copy the cartogram bounding box.
-        extent = cartogramGrid.envelope();
+        iExtent = iCartogramGrid.envelope();
 
         // Fill the diffusion grid using the cartogram grid values.
-        double[][] cgridv = cartogramGrid.getCurrentDensityArray();
-        fillDiffusionGrid(cgridv);
+        fillDiffusionGrid(iCartogramGrid.getCurrentDensityArray());
     }
 
     /**
      * Fills fftrho using the provided grid values.
      * 
-     * @param v
+     * @param aValue
      *            the grid values
      */
-    private void fillDiffusionGrid(double[][] v) {
-        for (int i = 0; i < gridSize.iX; i++) {
-            for (int j = 0; j < gridSize.iY; j++) {
-                fftrho[i][j] = v[i][j];
+    private void fillDiffusionGrid(double[][] aValue) {
+        for (int i = 0; i < iGridSize.iX; i++) {
+            for (int j = 0; j < iGridSize.iY; j++) {
+                iFftrho[i][j] = aValue[i][j];
             }
         }
     }
@@ -229,42 +224,38 @@ public class CartogramNewman {
      * points).
      */
     private void createGridOfPoints() {
-        gridPointsX = new double[(gridSize.iX + 1) * (gridSize.iY + 1)];
-        gridPointsY = new double[(gridSize.iX + 1) * (gridSize.iY + 1)];
+        iGridPointsX = new double[(iGridSize.iX + 1) * (iGridSize.iY + 1)];
+        iGridPointsY = new double[(iGridSize.iX + 1) * (iGridSize.iY + 1)];
 
         int i = 0;
-        double ix, iy;
-
-        for (iy = 0.0f; iy <= gridSize.iY; iy++) {
-            for (ix = 0.0f; ix <= gridSize.iX; ix++) {
-                gridPointsX[i] = ix;
-                gridPointsY[i] = iy;
+        for (int iy = 0; iy <= iGridSize.iY; iy++) {
+            for (int ix = 0; ix <= iGridSize.iX; ix++) {
+                iGridPointsX[i] = ix;
+                iGridPointsY[i] = iy;
                 i++;
             }
         }
-
     }
 
     /**
      * Do the transformation of the given set of points to the cartogram
      * 
-     * @param blur
+     * @param aBlur
      *            the blur value
      */
-    private void makeCartogram(double blur) {
-
+    private void makeCartogram(double aBlur) {
         // Calculate the initial density for snapshot zero */
         int s = 0;
         densitySnapshot(0.0, s);
 
         // Integrate the points.
-        double t = 0.5 * blur * blur;
+        double t = 0.5 * aBlur * aBlur;
         double h = INITH;
 
         int sp;
-        drp = 1.0f;
+        iDrp = 1.0f;
+        double desiredratio;
         do {
-
             // Do a combined (triple) integration step
             sp = integrateTwoSteps(t, h, s);
 
@@ -275,7 +266,7 @@ public class CartogramNewman {
             // Adjust the time-step.
             // Factor of 2 arises because the target for the two-step process is
             // twice the target for an individual step
-            double desiredratio = Math.pow(2 * TARGETERROR / errorp, 0.2);
+            desiredratio = Math.pow(2 * TARGETERROR / iErrorp, 0.2);
 
             if (desiredratio > MAXRATIO) {
                 h *= MAXRATIO;
@@ -284,48 +275,44 @@ public class CartogramNewman {
             }
 
             updateRunningStatus(t);
-
-        } while (drp > 0.0f); // If no point moved then we are finished
-
+        } while (iDrp > 0.0f); // If no point moved then we are finished
     }
 
     /**
      * Function to calculate the population density at arbitrary time by back-
      * transforming and put the result in a particular rhot[] snapshot array.
      * 
-     * @param t
+     * @param aT
      *            the time
-     * @param s
+     * @param aS
      *            the snapshot
      */
-    private void densitySnapshot(double t, int s) {
-        int ix, iy;
+    private void densitySnapshot(double aT, int aS) {
         double kx, ky;
         double expkx;
 
         // Calculate the expky array, to save time in the next part
-        for (iy = 0; iy < gridSize.iY; iy++) {
-            ky = Math.PI * iy / gridSize.iY;
-            expky[iy] = Math.exp(-ky * ky * t);
+        for (int iy = 0; iy < iGridSize.iY; iy++) {
+            ky = Math.PI * iy / iGridSize.iY;
+            iExpky[iy] = Math.exp(-ky * ky * aT);
         }
 
         // Multiply the FT of the density by the appropriate factors
-        for (ix = 0; ix < gridSize.iX; ix++) {
-            kx = Math.PI * ix / gridSize.iX;
-            expkx = Math.exp(-kx * kx * t);
-            for (iy = 0; iy < gridSize.iY; iy++) {
-                fftexpt[ix][iy] = expkx * expky[iy] * fftrho[ix][iy];
+        for (int ix = 0; ix < iGridSize.iX; ix++) {
+            kx = Math.PI * ix / iGridSize.iX;
+            expkx = Math.exp(-kx * kx * aT);
+            for (int iy = 0; iy < iGridSize.iY; iy++) {
+                iFftexpt[ix][iy] = expkx * iExpky[iy] * iFftrho[ix][iy];
 
                 // Save a copy to the rhot[s] array on which we will perform the
                 // DCT back-transform.
-                rhot[s][ix][iy] = fftexpt[ix][iy];
+                iRhot[aS][ix][iy] = iFftexpt[ix][iy];
             }
         }
 
         // Perform the back-transform
-        DoubleDCT_2D dct = new DoubleDCT_2D(gridSize.iX, gridSize.iY);
-        dct.inverse(rhot[s], false);
-
+        DoubleDCT_2D dct = new DoubleDCT_2D(iGridSize.iX, iGridSize.iY);
+        dct.inverse(iRhot[aS], false);
     }
 
     /**
@@ -333,53 +320,52 @@ public class CartogramNewman {
      * Runge-Kutta and compare the differences for the purposes of the adaptive
      * step size.
      * 
-     * @param t
+     * @param aT
      *            the current time, i.e., start time of these two steps
      * 
-     * @param h
+     * @param aH
      *            delta t
      * 
-     * @param s
+     * @param aS
      *            snapshot index of the initial time
      * 
      * @return the snapshot index for the final function evaluation
      */
-    private int integrateTwoSteps(double t, double h, int s) {
-
-        int s0 = s;
-        int s1 = (s + 1) % 5;
-        int s2 = (s + 2) % 5;
-        int s3 = (s + 3) % 5;
-        int s4 = (s + 4) % 5;
+    private int integrateTwoSteps(double aT, double aH, int aS) {
+        int s0 = aS;
+        int s1 = (aS + 1) % 5;
+        int s2 = (aS + 2) % 5;
+        int s3 = (aS + 3) % 5;
+        int s4 = (aS + 4) % 5;
 
         // Compute the density field for the four new time slices.
-        densitySnapshot(t + 0.5 * h, s1);
-        densitySnapshot(t + 1.0 * h, s2);
-        densitySnapshot(t + 1.5 * h, s3);
-        densitySnapshot(t + 2.0 * h, s4);
+        densitySnapshot(aT + 0.5 * aH, s1);
+        densitySnapshot(aT + 1.0 * aH, s2);
+        densitySnapshot(aT + 1.5 * aH, s3);
+        densitySnapshot(aT + 2.0 * aH, s4);
 
         // Do all three Runga-Kutta steps for each point in turn.
         double esqmax = 0.0;
         double drsqmax = 0.0;
-        int npoints = (gridSize.iX + 1) * (gridSize.iY + 1);
+        int npoints = (iGridSize.iX + 1) * (iGridSize.iY + 1);
         for (int p = 0; p < npoints; p++) {
-            double rx1 = gridPointsX[p];
-            double ry1 = gridPointsY[p];
+            double rx1 = iGridPointsX[p];
+            double ry1 = iGridPointsY[p];
 
             // Do the big combined (2h) Runga-Kutta step.
 
             Coordinate v1 = velocity(rx1, ry1, s0);
-            double k1x = 2 * h * v1.x;
-            double k1y = 2 * h * v1.y;
+            double k1x = 2 * aH * v1.x;
+            double k1y = 2 * aH * v1.y;
             Coordinate v2 = velocity(rx1 + 0.5 * k1x, ry1 + 0.5 * k1y, s2);
-            double k2x = 2 * h * v2.x;
-            double k2y = 2 * h * v2.y;
+            double k2x = 2 * aH * v2.x;
+            double k2y = 2 * aH * v2.y;
             Coordinate v3 = velocity(rx1 + 0.5 * k2x, ry1 + 0.5 * k2y, s2);
-            double k3x = 2 * h * v3.x;
-            double k3y = 2 * h * v3.y;
+            double k3x = 2 * aH * v3.x;
+            double k3y = 2 * aH * v3.y;
             Coordinate v4 = velocity(rx1 + k3x, ry1 + k3y, s4);
-            double k4x = 2 * h * v4.x;
-            double k4y = 2 * h * v4.y;
+            double k4x = 2 * aH * v4.x;
+            double k4y = 2 * aH * v4.y;
 
             double dx12 = (k1x + k4x + 2.0 * (k2x + k3x)) / 6.0;
             double dy12 = (k1y + k4y + 2.0 * (k2y + k3y)) / 6.0;
@@ -389,17 +375,17 @@ public class CartogramNewman {
             // because it would be the same as the one above, so there's no need
             // to do it again
 
-            k1x = h * v1.x;
-            k1y = h * v1.y;
+            k1x = aH * v1.x;
+            k1y = aH * v1.y;
             v2 = velocity(rx1 + 0.5 * k1x, ry1 + 0.5 * k1y, s1);
-            k2x = h * v2.x;
-            k2y = h * v2.y;
+            k2x = aH * v2.x;
+            k2y = aH * v2.y;
             v3 = velocity(rx1 + 0.5 * k2x, ry1 + 0.5 * k2y, s1);
-            k3x = h * v3.x;
-            k3y = h * v3.y;
+            k3x = aH * v3.x;
+            k3y = aH * v3.y;
             v4 = velocity(rx1 + k3x, ry1 + k3y, s2);
-            k4x = h * v4.x;
-            k4y = h * v4.y;
+            k4x = aH * v4.x;
+            k4y = aH * v4.y;
 
             double dx1 = (k1x + k4x + 2.0 * (k2x + k3x)) / 6.0;
             double dy1 = (k1y + k4y + 2.0 * (k2y + k3y)) / 6.0;
@@ -410,17 +396,17 @@ public class CartogramNewman {
             double ry2 = ry1 + dy1;
 
             v1 = velocity(rx2, ry2, s2);
-            k1x = h * v1.x;
-            k1y = h * v1.y;
+            k1x = aH * v1.x;
+            k1y = aH * v1.y;
             v2 = velocity(rx2 + 0.5 * k1x, ry2 + 0.5 * k1y, s3);
-            k2x = h * v2.x;
-            k2y = h * v2.y;
+            k2x = aH * v2.x;
+            k2y = aH * v2.y;
             v3 = velocity(rx2 + 0.5 * k2x, ry2 + 0.5 * k2y, s3);
-            k3x = h * v3.x;
-            k3y = h * v3.y;
+            k3x = aH * v3.x;
+            k3y = aH * v3.y;
             v4 = velocity(rx2 + k3x, ry2 + k3y, s4);
-            k4x = h * v4.x;
-            k4y = h * v4.y;
+            k4x = aH * v4.x;
+            k4y = aH * v4.y;
 
             double dx2 = (k1x + k4x + 2.0 * (k2x + k3x)) / 6.0;
             double dy2 = (k1y + k4y + 2.0 * (k2y + k3y)) / 6.0;
@@ -455,23 +441,22 @@ public class CartogramNewman {
 
             if (rx3 < 0) {
                 rx3 = 0;
-            } else if (rx3 > gridSize.iX) {
-                rx3 = gridSize.iX;
+            } else if (rx3 > iGridSize.iX) {
+                rx3 = iGridSize.iX;
             }
 
             if (ry3 < 0) {
                 ry3 = 0;
-            } else if (ry3 > gridSize.iY) {
-                ry3 = gridSize.iY;
+            } else if (ry3 > iGridSize.iY) {
+                ry3 = iGridSize.iY;
             }
 
-            gridPointsX[p] = rx3;
-            gridPointsY[p] = ry3;
-
+            iGridPointsX[p] = rx3;
+            iGridPointsY[p] = ry3;
         }
 
-        errorp = Math.sqrt(esqmax);
-        drp = Math.sqrt(drsqmax);
+        iErrorp = Math.sqrt(esqmax);
+        iDrp = Math.sqrt(drsqmax);
 
         return s4;
     }
@@ -484,28 +469,27 @@ public class CartogramNewman {
      * actually do this because the calling method integrateTwoSteps() contains
      * code to prevent it).
      * 
-     * @param rx
+     * @param aRx
      *            the x coordinate of the point for which we compute the
      *            velocity.
      * 
-     * @param ry
+     * @param aRy
      *            the y coordinate of the point for which we compute the
      *            velocity.
      * 
-     * @param s
+     * @param aS
      *            the snapshot
      * 
      * @return the velocity in x and y as a coordinate.
      */
-    private Coordinate velocity(double rx, double ry, int s) {
-
+    private Coordinate velocity(double aRx, double aRy, int aS) {
         // Deal with the boundary conditions.
 
-        int ix = (int) rx;
+        int ix = (int) aRx;
         if (ix < 0) {
             ix = 0;
-        } else if (ix >= gridSize.iX) {
-            ix = gridSize.iX - 1;
+        } else if (ix >= iGridSize.iX) {
+            ix = iGridSize.iX - 1;
         }
 
         int ixm1 = ix - 1;
@@ -513,15 +497,15 @@ public class CartogramNewman {
             ixm1 = 0;
         }
         int ixp1 = ix + 1;
-        if (ixp1 >= gridSize.iX) {
-            ixp1 = gridSize.iX - 1;
+        if (ixp1 >= iGridSize.iX) {
+            ixp1 = iGridSize.iX - 1;
         }
 
-        int iy = (int) ry;
+        int iy = (int) aRy;
         if (iy < 0) {
             iy = 0;
-        } else if (iy >= gridSize.iY) {
-            iy = gridSize.iY - 1;
+        } else if (iy >= iGridSize.iY) {
+            iy = iGridSize.iY - 1;
         }
 
         int iym1 = iy - 1;
@@ -529,20 +513,20 @@ public class CartogramNewman {
             iym1 = 0;
         }
         int iyp1 = iy + 1;
-        if (iyp1 >= gridSize.iY) {
-            iyp1 = gridSize.iY - 1;
+        if (iyp1 >= iGridSize.iY) {
+            iyp1 = iGridSize.iY - 1;
         }
 
         // Calculate the densities at the nine surrounding grid points
-        double rho00 = rhot[s][ixm1][iym1];
-        double rho10 = rhot[s][ix][iym1];
-        double rho20 = rhot[s][ixp1][iym1];
-        double rho01 = rhot[s][ixm1][iy];
-        double rho11 = rhot[s][ix][iy];
-        double rho21 = rhot[s][ixp1][iy];
-        double rho02 = rhot[s][ixm1][iyp1];
-        double rho12 = rhot[s][ix][iyp1];
-        double rho22 = rhot[s][ixp1][iyp1];
+        double rho00 = iRhot[aS][ixm1][iym1];
+        double rho10 = iRhot[aS][ix][iym1];
+        double rho20 = iRhot[aS][ixp1][iym1];
+        double rho01 = iRhot[aS][ixm1][iy];
+        double rho11 = iRhot[aS][ix][iy];
+        double rho21 = iRhot[aS][ixp1][iy];
+        double rho02 = iRhot[aS][ixm1][iyp1];
+        double rho12 = iRhot[aS][ix][iyp1];
+        double rho22 = iRhot[aS][ixp1][iyp1];
 
         // Calculate velocities at the four surrounding grid points
 
@@ -564,8 +548,8 @@ public class CartogramNewman {
 
         // Calculate the weights for the bilinear interpolation
 
-        double dx = rx - ix;
-        double dy = ry - iy;
+        double dx = aRx - ix;
+        double dy = aRy - iy;
 
         double dx1m = 1.0 - dx;
         double dy1m = 1.0 - dy;
@@ -580,39 +564,34 @@ public class CartogramNewman {
         double vxp = w11 * vx11 + w21 * vx21 + w12 * vx12 + w22 * vx22;
         double vyp = w11 * vy11 + w21 * vy21 + w12 * vy12 + w22 * vy22;
 
-        Coordinate vp = new Coordinate(vxp, vyp);
-        return vp;
-
+        return new Coordinate(vxp, vyp);
     }
 
     /**
      * 
      */
     private void projectCartogramGrid() {
-
         // Project each point in the cartogram grid.
-        double[][] x = cartogramGrid.getXCoordinates();
-        double[][] y = cartogramGrid.getYCoordinates();
+        double[][] x = iCartogramGrid.getXCoordinates();
+        double[][] y = iCartogramGrid.getYCoordinates();
 
         int gridSizeX = x.length;
         int gridSizeY = x[0].length;
 
-        double cellSizeX = extent.getWidth() / gridSize.iX;
-        double cellSizeY = extent.getHeight() / gridSize.iY;
+        double cellSizeX = iExtent.getWidth() / iGridSize.iX;
+        double cellSizeY = iExtent.getHeight() / iGridSize.iY;
 
-        double minX = extent.getMinX();
-        double minY = extent.getMinY();
+        double minX = iExtent.getMinX();
+        double minY = iExtent.getMinY();
 
-        int i, j;
         int index = 0;
-        for (j = 0; j < gridSizeY; j++) {
-            for (i = 0; i < gridSizeX; i++) {
-                x[i][j] = gridPointsX[index] * cellSizeX + minX;
-                y[i][j] = gridPointsY[index] * cellSizeY + minY;
+        for (int j = 0; j < gridSizeY; j++) {
+            for (int i = 0; i < gridSizeX; i++) {
+                x[i][j] = iGridPointsX[index] * cellSizeX + minX;
+                y[i][j] = iGridPointsY[index] * cellSizeY + minY;
                 index++;
             }
         }
-
     }
 
     /**
@@ -623,20 +602,19 @@ public class CartogramNewman {
      *            current time from the makeCartogram method.
      */
     private void updateRunningStatus(double t) {
-        if (runningStatusWizard != null) {
+        if (iRunningStatusWizard != null) {
             int perc = (int) Math.round(100.0 * Math.log(t / INITH)
                     / Math.log(EXPECTEDTIME / INITH));
             if (perc > 100) {
                 perc = 100;
             }
 
-            int res = (runningStatusMaximumValue - runningStatusMinimumValue)
+            int res = (iRunningStatusMaximumValue - iRunningStatusMinimumValue)
                     * perc / 100;
-            res += runningStatusMinimumValue;
-            runningStatusWizard.updateRunningStatus(res,
-                    runningStatusMainString, "Diffusion process: " + perc
+            res += iRunningStatusMinimumValue;
+            iRunningStatusWizard.updateRunningStatus(res,
+                    iRunningStatusMainString, "Diffusion process: " + perc
                             + "% done");
         }
     }
-
 }

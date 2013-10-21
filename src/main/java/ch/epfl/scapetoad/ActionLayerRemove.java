@@ -22,7 +22,6 @@
 package ch.epfl.scapetoad;
 
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -46,38 +45,29 @@ public class ActionLayerRemove extends AbstractAction {
      * Removes the selected layer from the layer manager.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        // Get the selected layers.
-        Layer[] lyrs = AppContext.layerListPanel.getSelectedLayers();
-
-        if (lyrs.length > 0) {
-            for (int i = 0; i < lyrs.length; i++) {
-                AppContext.layerManager.remove(lyrs[i]);
-            }
+    public void actionPerformed(ActionEvent aEvent) {
+        for (Layer layer : AppContext.layerListPanel.getSelectedLayers()) {
+            AppContext.layerManager.remove(layer);
         }
 
         // Remove all empty categories (but we keep at least one).
         @SuppressWarnings("unchecked")
-        List<Category> cats = AppContext.layerManager.getCategories();
-        if (cats.size() > 1) {
-            Iterator<Category> catIter = cats.iterator();
-            while (catIter.hasNext()) {
-                Category cat = catIter.next();
-                AppContext.layerManager.removeIfEmpty(cat);
+        List<Category> categories = AppContext.layerManager.getCategories();
+        if (categories.size() > 1) {
+            for (Category category : categories) {
+                AppContext.layerManager.removeIfEmpty(category);
             }
         }
 
         // If there is only one empty category left, rename it to
         // "Original layers".
-        if (cats.size() == 1) {
-            Category cat = cats.get(0);
-            if (cat.isEmpty()) {
-                cat.setName("Original layers");
+        if (categories.size() == 1) {
+            Category category = categories.get(0);
+            if (category.isEmpty()) {
+                category.setName("Original layers");
             }
         }
 
         AppContext.mainWindow.update();
-
-    } // ActionLayerRemove.actionPerformed
-
+    }
 }

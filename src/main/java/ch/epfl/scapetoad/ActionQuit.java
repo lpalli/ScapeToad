@@ -41,7 +41,7 @@ public class ActionQuit extends AbstractAction {
      * Terminates ScapeToad.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent aEvent) {
 
         if (AppContext.cartogramWizard != null) {
             AppContext.cartogramWizard.dispose();
@@ -50,7 +50,5 @@ public class ActionQuit extends AbstractAction {
         AppContext.mainWindow.dispose();
 
         System.exit(0);
-
     }
-
 }

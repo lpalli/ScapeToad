@@ -28,6 +28,9 @@ import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.Ostermiller.util.Browser;
 
 /**
@@ -37,6 +40,12 @@ import com.Ostermiller.util.Browser;
  * @version v1.0.0, 2009-05-21
  */
 public class AboutBox extends JDialog implements HyperlinkListener {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(AboutBox.class);
+
     /**
      * 
      */
@@ -45,19 +54,18 @@ public class AboutBox extends JDialog implements HyperlinkListener {
     /**
      * The constructor for the about box window.
      */
-    AboutBox() {
-
+    public AboutBox() {
         // Set the window parameters.
         setTitle("About ScapeToad");
 
-        this.setSize(500, 400);
-        this.setLocation(40, 50);
+        setSize(500, 400);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
 
         // About box content
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader cldr = getClass().getClassLoader();
         JTextPane aboutPane = new JTextPane();
         String aboutText = null;
         try {
@@ -70,8 +78,8 @@ public class AboutBox extends JDialog implements HyperlinkListener {
             }
             inStream.close();
             aboutText = inBuffer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
         aboutPane.setContentType("text/html");
         aboutPane.setText(aboutText);
@@ -80,22 +88,18 @@ public class AboutBox extends JDialog implements HyperlinkListener {
         aboutPane.setBackground(null);
         aboutPane.setLocation(50, 50);
         aboutPane.setSize(400, 300);
-        this.add(aboutPane);
-
+        add(aboutPane);
     }
 
     @Override
-    public void hyperlinkUpdate(HyperlinkEvent e) {
+    public void hyperlinkUpdate(HyperlinkEvent event) {
         try {
-            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 Browser.init();
-                Browser.displayURL(e.getURL().toString());
+                Browser.displayURL(event.getURL().toString());
             }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
-
     }
-
 }

@@ -106,8 +106,9 @@ public class ScapeToad {
 
         // An exception might be thrown when creating a new workbench.
         try {
-            AppContext.workBench = new JUMPWorkbench(
-                    AppContext.shortProgramName, aArgs, icon, window, tm);
+            @SuppressWarnings("unused")
+            JUMPWorkbench jump = new JUMPWorkbench("ScapeToad", aArgs, icon,
+                    window, tm);
         } catch (Exception e) {
             logger.error("Exception creating JUMP Workbench", e);
             System.exit(-1);

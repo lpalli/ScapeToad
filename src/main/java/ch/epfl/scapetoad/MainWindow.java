@@ -90,7 +90,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
 
         // Set the window parameters.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle(AppContext.shortProgramName);
+        setTitle("ScapeToad");
         this.setSize(640, 480);
         this.setLocation(20, 30);
 

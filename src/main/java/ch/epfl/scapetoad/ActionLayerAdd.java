@@ -44,17 +44,14 @@ public class ActionLayerAdd extends AbstractAction {
      * manager.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        Layer lyr = IOManager.openShapefile();
-        if (lyr == null) {
+    public void actionPerformed(ActionEvent aEvent) {
+        Layer aLayer = IOManager.openShapefile();
+        if (aLayer == null) {
             AppContext.mainWindow
                     .setStatusMessage("[Add layer...] Action has been cancelled.");
-
             return;
         }
 
         AppContext.mainWindow.update();
-
-    } // ActionLayerAdd.actionPerformed
-
+    }
 }

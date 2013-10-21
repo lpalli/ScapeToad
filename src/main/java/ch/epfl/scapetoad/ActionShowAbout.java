@@ -25,6 +25,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This class is an action performed on a show about box event.
  * 
@@ -33,18 +36,22 @@ import javax.swing.AbstractAction;
 public class ActionShowAbout extends AbstractAction {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(ActionShowAbout.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent aEvent) {
         try {
-            AboutBox abox = new AboutBox();
-            abox.setVisible(true);
-        } catch (Exception exc) {
-            // Nothing to do
+            AboutBox box = new AboutBox();
+            box.setVisible(true);
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
     }
-
 }

@@ -25,6 +25,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.Ostermiller.util.Browser;
 
 /**
@@ -35,6 +38,11 @@ import com.Ostermiller.util.Browser;
 public class ActionShowHelp extends AbstractAction {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(ActionShowHelp.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
@@ -43,13 +51,12 @@ public class ActionShowHelp extends AbstractAction {
      * Opens the browser and points it to the ScapeToad help web site.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent aEvent) {
         try {
             Browser.init();
             Browser.displayURL("http://scapetoad.choros.ch/help/");
-        } catch (Exception exc) {
-            // Nothing to do
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
     }
-
 }

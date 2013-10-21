@@ -22,7 +22,6 @@
 package ch.epfl.scapetoad;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.NoninvertibleTransformException;
@@ -44,38 +43,27 @@ public class SizeErrorStyle implements Style {
     /**
      * 
      */
-    boolean _enabled = false;
+    private boolean iEnabled = false;
 
     /**
      * 
      */
-    String _attrName;
-    /**
-     * 
-     */
-    Vector<Double> _limits;
-    /**
-     * 
-     */
-    Vector<BasicStyle> _colors;
-    /**
-     * 
-     */
-    BasicStyle _defaultStyle;
+    private String iAttrName;
 
     /**
      * 
      */
-    private Stroke _fillStroke = new BasicStroke(1);
+    private Vector<Double> iLimits = new Vector<Double>();
 
     /**
      * 
      */
-    public SizeErrorStyle() {
-        _limits = new Vector<Double>();
-        _colors = new Vector<BasicStyle>();
-        _defaultStyle = new BasicStyle(Color.ORANGE);
-    }
+    private Vector<BasicStyle> iColors = new Vector<BasicStyle>();
+
+    /**
+     * 
+     */
+    private Stroke iFillStroke = new BasicStroke(1);
 
     @Override
     public Object clone() {
@@ -83,139 +71,74 @@ public class SizeErrorStyle implements Style {
     }
 
     @Override
-    public void initialize(Layer layer) {
+    public void initialize(Layer aLayer) {
         // Nothing to do
     }
 
     @Override
     public boolean isEnabled() {
-        return _enabled;
+        return iEnabled;
     }
 
     @Override
-    public void paint(Feature f, Graphics2D g, Viewport viewport)
+    public void paint(Feature aFeature, Graphics2D aGraphics, Viewport aViewport)
             throws NoninvertibleTransformException {
+        BasicStyle style = getStyleForFeature(aFeature);
 
-        BasicStyle s = getStyleForFeature(f);
-
-        StyleUtil.paint(f.getGeometry(), g, viewport, s.isRenderingFill(),
-                _fillStroke, s.getFillColor(), s.isRenderingLine(),
-                s.getLineStroke(), s.getLineColor());
-
+        StyleUtil.paint(aFeature.getGeometry(), aGraphics, aViewport,
+                style.isRenderingFill(), iFillStroke, style.getFillColor(),
+                style.isRenderingLine(), style.getLineStroke(),
+                style.getLineColor());
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        _enabled = enabled;
+    public void setEnabled(boolean aEnabled) {
+        iEnabled = aEnabled;
     }
 
     /**
-     * @param defaultStyle
-     *            the style
-     */
-    public void setDefaultStyle(BasicStyle defaultStyle) {
-        _defaultStyle = defaultStyle;
-    }
-
-    /**
-     * @return the number of colors
-     */
-    public int getNumberOfColors() {
-        return _colors.size();
-    }
-
-    /**
-     * @param index
-     *            the index
-     * @return the color
-     */
-    public BasicStyle getColorAtIndex(int index) {
-        return _colors.get(index);
-    }
-
-    /**
-     * @param color
+     * @param aColor
      *            the color
      */
-    public void addColor(BasicStyle color) {
-        _colors.add(color);
+    public void addColor(BasicStyle aColor) {
+        iColors.add(aColor);
     }
 
     /**
-     * @param color
-     *            the color
-     * @param index
-     *            the index
-     */
-    public void setColorAtIndex(BasicStyle color, int index) {
-        _colors.set(index, color);
-    }
-
-    /**
-     * @return the number of limits
-     */
-    public int getNumberOfLimits() {
-        return _limits.size();
-    }
-
-    /**
-     * @param index
-     *            the index
-     * @return the limit at the specified index
-     */
-    public Double getLimitAtIndex(int index) {
-        return _limits.get(index);
-    }
-
-    /**
-     * @param limit
+     * @param aLimit
      *            the limit
      */
-    public void addLimit(Double limit) {
-        _limits.add(limit);
+    public void addLimit(Double aLimit) {
+        iLimits.add(aLimit);
     }
 
     /**
-     * @param limit
-     *            the limit
-     * @param index
-     *            the index
-     */
-    public void setLimitAtIndex(Double limit, int index) {
-        _limits.set(index, limit);
-    }
-
-    /**
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      */
-    public void setAttributeName(String attrName) {
-        _attrName = attrName;
+    public void setAttributeName(String aAttrName) {
+        iAttrName = aAttrName;
     }
 
     /**
-     * @param f
+     * @param aFeature
      *            the feature
      * @return the style
      */
-    private BasicStyle getStyleForFeature(Feature f) {
-
+    private BasicStyle getStyleForFeature(Feature aFeature) {
         // Get the attribute value.
-        Double value = (Double) f.getAttribute(_attrName);
+        Double value = (Double) aFeature.getAttribute(iAttrName);
 
         boolean valueFound = false;
         int limitIndex = 0;
-        while (valueFound == false && limitIndex < _limits.size()) {
-            Double limit = _limits.get(limitIndex);
+        while (valueFound == false && limitIndex < iLimits.size()) {
+            Double limit = iLimits.get(limitIndex);
             if (value.doubleValue() <= limit.doubleValue()) {
                 valueFound = true;
             }
-
             limitIndex++;
         }
 
-        return _colors.get(limitIndex);
-
+        return iColors.get(limitIndex);
     }
-
 }

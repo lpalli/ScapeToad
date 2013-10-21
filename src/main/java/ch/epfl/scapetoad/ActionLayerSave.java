@@ -39,20 +39,12 @@ public class ActionLayerSave extends AbstractAction {
 
     /**
      * This method is automatically called after a save layer event.
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        doAction();
-
-    } // ActionLayerSave.actionPerformed
-
-    /**
+     * 
      * Writes the currently selected layer into a Shape file. A Save file dialog
      * is presented to the user in order to choose the place on the disc.
      */
-    public static void doAction() {
+    @Override
+    public void actionPerformed(ActionEvent aEvent) {
         MainWindow.exportShapeFile();
-
-    } // ActionLayerSave.doAction
-
-} // ActionLayerSave
+    }
+}

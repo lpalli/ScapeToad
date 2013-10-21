@@ -39,20 +39,12 @@ public class ActionExportAsSvg extends AbstractAction {
 
     /**
      * This method is automatically called after a export as SVG event.
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        doAction();
-
-    } // ActionExportAsSvg.actionPerformed
-
-    /**
+     * 
      * Writes the currently selected layers into a SVG file. A Save file dialog
      * is presented to the user in order to choose the place on the disc.
      */
-    public static void doAction() {
+    @Override
+    public void actionPerformed(ActionEvent aEvent) {
         MainWindow.exportSvgFile();
-
-    } // ActionExportAsSvg.doAction
-
-} // ActionExportAsSvg
+    }
+}
