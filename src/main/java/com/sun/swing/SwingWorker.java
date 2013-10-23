@@ -2,6 +2,9 @@ package com.sun.swing;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This is the 3rd version of SwingWorker (also known as SwingWorker 3), an
  * abstract class that you subclass to perform GUI-related work in a dedicated
@@ -13,6 +16,11 @@ import javax.swing.SwingUtilities;
  * start() on the SwingWorker after creating it.
  */
 public abstract class SwingWorker {
+
+    /**
+     * The logger
+     */
+    protected static Log logger = LogFactory.getLog(SwingWorker.class);
 
     /**
      * The value produced by worker thread.
@@ -60,7 +68,7 @@ public abstract class SwingWorker {
     /**
      * The thread reference
      */
-    protected ThreadVar threadVar;
+    protected ThreadVar iThreadVar;
 
     /**
      * Get the value produced by the worker thread, or null if it hasn't been
@@ -102,11 +110,11 @@ public abstract class SwingWorker {
      * the worker to stop what it's doing.
      */
     public void interrupt() {
-        Thread thread = threadVar.get();
+        Thread thread = iThreadVar.get();
         if (thread != null) {
             thread.interrupt();
         }
-        threadVar.clear();
+        iThreadVar.clear();
     }
 
     /**
@@ -115,7 +123,7 @@ public abstract class SwingWorker {
      * @return <code>true</code> if it is running
      */
     public boolean isRunning() {
-        Thread thread = threadVar.get();
+        Thread thread = iThreadVar.get();
         if (thread == null) {
             return false;
         }
@@ -135,7 +143,7 @@ public abstract class SwingWorker {
      */
     public Object get() {
         while (true) {
-            Thread thread = threadVar.get();
+            Thread thread = iThreadVar.get();
             if (thread == null) {
                 return getValue();
             }
@@ -165,24 +173,25 @@ public abstract class SwingWorker {
             public void run() {
                 try {
                     setValue(construct());
-                } catch (OutOfMemoryError memEx) {
+                } catch (OutOfMemoryError exception) {
+                    logger.error("", exception);
                     Thread.currentThread().interrupt();
                 } finally {
-                    threadVar.clear();
+                    iThreadVar.clear();
                 }
 
                 SwingUtilities.invokeLater(doFinished);
             }
         };
 
-        threadVar = new ThreadVar(new Thread(doConstruct));
+        iThreadVar = new ThreadVar(new Thread(doConstruct));
     }
 
     /**
      * Start the worker thread.
      */
     public void start() {
-        Thread thread = threadVar.get();
+        Thread thread = iThreadVar.get();
         if (thread != null) {
             thread.start();
         }

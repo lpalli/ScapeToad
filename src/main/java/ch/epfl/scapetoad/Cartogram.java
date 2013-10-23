@@ -60,6 +60,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * The logger
      */
+    @SuppressWarnings("hiding")
     private static Log logger = LogFactory.getLog(Cartogram.class);
 
     /**
