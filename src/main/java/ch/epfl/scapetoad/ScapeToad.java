@@ -1,3 +1,4 @@
+package ch.epfl.scapetoad;
 /*
 
 	Copyright 2007 91NORD
@@ -32,9 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import com.vividsolutions.jump.task.DummyTaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.model.LayerManager;
-
-import ch.epfl.scapetoad.AppContext;
-import ch.epfl.scapetoad.MainWindow;
 
 /**
  * This class contains the main method of the ScapeToad application.

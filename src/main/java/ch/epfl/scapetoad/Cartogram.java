@@ -55,7 +55,7 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
  * @author christian@swisscarto.ch
  * @version v1.0.0, 2007-11-30
  */
-public class Cartogram extends com.sun.swing.SwingWorker {
+public class Cartogram extends SwingWorker {
 
     /**
      * The logger

@@ -1,4 +1,4 @@
-package com.sun.swing;
+package ch.epfl.scapetoad;
 
 import javax.swing.SwingUtilities;
 
