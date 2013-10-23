@@ -123,7 +123,7 @@ public class CartogramWizard extends JFrame {
     /**
      * The panel shown during cartogram computation.
      */
-    public final CartogramWizardRunningPanel iRunningPanel = new CartogramWizardRunningPanel();
+    protected final CartogramWizardRunningPanel iRunningPanel = new CartogramWizardRunningPanel();
 
     /**
      * The panel shown after cartogram computation.
@@ -277,7 +277,7 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the panel
      */
-    CartogramWizardPanelTwo getPanelTwo() {
+    protected CartogramWizardPanelTwo getPanelTwo() {
         return iPanelTwo;
     }
 
@@ -286,7 +286,7 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the panel
      */
-    CartogramWizardPanelFour getPanelFour() {
+    protected CartogramWizardPanelFour getPanelFour() {
         return iPanelFour;
     }
 
@@ -295,7 +295,7 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the panel
      */
-    CartogramWizardRunningPanel getRunningPanel() {
+    protected CartogramWizardRunningPanel getRunningPanel() {
         return iRunningPanel;
     }
 
