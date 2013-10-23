@@ -25,7 +25,8 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.NoninvertibleTransformException;
-import java.util.Vector;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.workbench.model.Layer;
@@ -53,12 +54,12 @@ public class SizeErrorStyle implements Style {
     /**
      * 
      */
-    private Vector<Double> iLimits = new Vector<Double>();
+    private AbstractList<Double> iLimits = new ArrayList<Double>();
 
     /**
      * 
      */
-    private Vector<BasicStyle> iColors = new Vector<BasicStyle>();
+    private AbstractList<BasicStyle> iColors = new ArrayList<BasicStyle>();
 
     /**
      * 

@@ -23,9 +23,9 @@ package ch.epfl.scapetoad;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,12 +108,12 @@ public class Cartogram extends com.sun.swing.SwingWorker {
     /**
      * The layers to deform simultaneously.
      */
-    private Vector<Layer> iSlaveLayers = null;
+    private AbstractList<Layer> iSlaveLayers = null;
 
     /**
      * The layers used for the constrained deformation.
      */
-    private Vector<Layer> iConstrainedDeforamtionLayers = null;
+    private AbstractList<Layer> iConstrainedDeforamtionLayers = null;
 
     /**
      * The initial envelope for all layers.
@@ -548,7 +548,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      * @param aSlaveLayers
      *            the slave layers
      */
-    public void setSlaveLayers(Vector<Layer> aSlaveLayers) {
+    public void setSlaveLayers(AbstractList<Layer> aSlaveLayers) {
         iSlaveLayers = aSlaveLayers;
     }
 
@@ -558,7 +558,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
      * @param aLayers
      *            the layers not deformed
      */
-    public void setConstrainedDeformationLayers(Vector<Layer> aLayers) {
+    public void setConstrainedDeformationLayers(AbstractList<Layer> aLayers) {
         iConstrainedDeforamtionLayers = aLayers;
     }
 
@@ -1008,7 +1008,8 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         rep.append("Attribute maximum value: " + max + "\n\n");
 
         rep.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
-        Vector<Layer> simLayers = iCartogramWizard.getSimultaneousLayers();
+        AbstractList<Layer> simLayers = iCartogramWizard
+                .getSimultaneousLayers();
         if (simLayers == null || simLayers.size() == 0) {
             rep.append("None\n\n");
         } else {
@@ -1021,7 +1022,7 @@ public class Cartogram extends com.sun.swing.SwingWorker {
         }
 
         rep.append("CONSTRAINED DEFORMATION LAYERS:\n");
-        Vector<Layer> constLayers = iCartogramWizard
+        AbstractList<Layer> constLayers = iCartogramWizard
                 .getConstrainedDeformationLayers();
         if (constLayers == null || constLayers.size() == 0) {
             rep.append("None\n\n");

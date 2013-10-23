@@ -28,9 +28,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.NoninvertibleTransformException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -695,7 +696,7 @@ class ExportSvgFileDialog extends JDialog {
     /**
      * 
      */
-    Vector<JCheckBox> mCheckBoxList;
+    AbstractList<JCheckBox> mCheckBoxList;
     /**
      * 
      */
@@ -722,7 +723,7 @@ class ExportSvgFileDialog extends JDialog {
         mLayerListPanel = new JPanel(new GridLayout(0, 1));
 
         // Create the checkbox array.
-        mCheckBoxList = new Vector<JCheckBox>();
+        mCheckBoxList = new ArrayList<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
@@ -819,7 +820,7 @@ class ExportSvgFileDialog extends JDialog {
         mCancelButton.setEnabled(false);
 
         if (mCheckBoxList.size() > 0) {
-            Vector<Layer> layers = new Vector<Layer>();
+            AbstractList<Layer> layers = new ArrayList<Layer>();
             Iterator<JCheckBox> iter = mCheckBoxList.iterator();
             while (iter.hasNext()) {
                 JCheckBox checkBox = iter.next();

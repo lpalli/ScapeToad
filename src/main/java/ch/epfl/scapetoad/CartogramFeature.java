@@ -21,7 +21,8 @@
 
 package ch.epfl.scapetoad;
 
-import java.util.Vector;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -326,7 +327,7 @@ public class CartogramFeature {
 
         // The vector where we will temporarily store the regularized
         // coordinates.
-        Vector<Coordinate> newCoords = new Vector<Coordinate>();
+        AbstractList<Coordinate> newCoords = new ArrayList<Coordinate>();
         newCoords.add(aCoordinates[0]);
 
         // Compute for each line segment the length. If the length is

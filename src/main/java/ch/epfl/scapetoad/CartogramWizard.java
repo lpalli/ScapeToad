@@ -33,8 +33,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -142,12 +143,12 @@ public class CartogramWizard extends JFrame {
     /**
      * Some parameters for the cartogram computation.
      */
-    private Vector<Layer> iSimultaneousLayers = null;
+    private AbstractList<Layer> iSimultaneousLayers = null;
 
     /**
      * 
      */
-    private Vector<Layer> iConstrainedDeformationLayers = null;
+    private AbstractList<Layer> iConstrainedDeformationLayers = null;
 
     /**
      * 
@@ -537,7 +538,7 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the layers
      */
-    public Vector<Layer> getSimultaneousLayers() {
+    public AbstractList<Layer> getSimultaneousLayers() {
         return iSimultaneousLayers;
     }
 
@@ -547,7 +548,7 @@ public class CartogramWizard extends JFrame {
      * @param layers
      *            the layer
      */
-    public void setSimultaneousLayers(Vector<Layer> layers) {
+    public void setSimultaneousLayers(AbstractList<Layer> layers) {
         iSimultaneousLayers = layers;
     }
 
@@ -556,7 +557,7 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the layers
      */
-    public Vector<Layer> getConstrainedDeformationLayers() {
+    public AbstractList<Layer> getConstrainedDeformationLayers() {
         return iConstrainedDeformationLayers;
     }
 
@@ -566,7 +567,7 @@ public class CartogramWizard extends JFrame {
      * @param layers
      *            the layers
      */
-    public void setConstrainedDeformationLayers(Vector<Layer> layers) {
+    public void setConstrainedDeformationLayers(AbstractList<Layer> layers) {
         iConstrainedDeformationLayers = layers;
     }
 
@@ -2852,7 +2853,7 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
     /**
      * The list with all the check boxes for the simultaneous layers.
      */
-    private Vector<JCheckBox> iCheckBoxList = null;
+    private AbstractList<JCheckBox> iCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
@@ -2889,12 +2890,12 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        iCheckBoxList = new Vector<JCheckBox>();
+        iCheckBoxList = new ArrayList<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
         // Create the check boxes.
-        Vector<Layer> simLayers = AppContext.cartogramWizard
+        AbstractList<Layer> simLayers = AppContext.cartogramWizard
                 .getSimultaneousLayers();
         int nlayers = AppContext.layerManager.size();
         if (nlayers > 1) {
@@ -2980,7 +2981,7 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
      */
     public void saveChanges() {
         int nlayers = iCheckBoxList.size();
-        Vector<Layer> layers = new Vector<Layer>();
+        AbstractList<Layer> layers = new ArrayList<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
             JCheckBox checkBox = iCheckBoxList.get(i);
@@ -3080,7 +3081,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
     /**
      * The list with all the check boxes for the constrained layers.
      */
-    private Vector<JCheckBox> iCheckBoxList = null;
+    private AbstractList<JCheckBox> iCheckBoxList = null;
 
     /**
      * The currently selected cartogram layer.
@@ -3116,12 +3117,12 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
                 .getCartogramLayerName();
 
         // Create the checkbox array.
-        iCheckBoxList = new Vector<JCheckBox>();
+        iCheckBoxList = new ArrayList<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
         // Create the check boxes.
-        Vector<Layer> constrLayers = AppContext.cartogramWizard
+        AbstractList<Layer> constrLayers = AppContext.cartogramWizard
                 .getConstrainedDeformationLayers();
         int nlayers = AppContext.layerManager.size();
         if (nlayers > 1) {
@@ -3208,7 +3209,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
      */
     public void saveChanges() {
         int nlayers = iCheckBoxList.size();
-        Vector<Layer> layers = new Vector<Layer>();
+        AbstractList<Layer> layers = new ArrayList<Layer>();
 
         for (int i = 0; i < nlayers; i++) {
             JCheckBox checkBox = iCheckBoxList.get(i);

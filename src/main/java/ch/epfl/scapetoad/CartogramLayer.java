@@ -21,9 +21,10 @@
 
 package ch.epfl.scapetoad;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.zip.DataFormatException;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -381,7 +382,7 @@ public class CartogramLayer {
         int nfeat = set.size();
 
         // Create a Vector from the TreeSet.
-        Vector<Double> attrVector = new Vector<Double>(set);
+        AbstractList<Double> attrVector = new ArrayList<Double>(set);
 
         // Get the indexes of the bounding features.
         double dblIndex = dblN / 100 * nfeat;
