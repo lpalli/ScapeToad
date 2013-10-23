@@ -63,6 +63,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.Ostermiller.util.Browser;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -79,6 +82,11 @@ import com.vividsolutions.jump.workbench.model.Layer;
  * @version v1.0.0, 2007-11-30
  */
 public class CartogramWizard extends JFrame {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(CartogramWizard.class);
 
     /**
      * 
@@ -512,21 +520,23 @@ public class CartogramWizard extends JFrame {
      * Updates the progress bar and the progress labels during cartogram
      * computation.
      * 
-     * @param progress
+     * @param aProgress
      *            the progress status (integer 0-1000).
-     * @param label1
+     * @param aLabel1
      *            the progress main message.
-     * @param label2
+     * @param aLabel2
      *            the progress secondary message.
      */
-    public void updateRunningStatus(final int progress, final String label1,
-            final String label2) {
+    public void updateRunningStatus(final int aProgress, final String aLabel1,
+            final String aLabel2) {
+        logger.debug(String.format("%1$s - %2$s - %3$s", aProgress, aLabel1,
+                aLabel2));
         Runnable doSetRunningStatus = new Runnable() {
             @Override
             public void run() {
-                iRunningPanel.updateProgressBar(progress);
-                iRunningPanel.updateProgressLabel1(label1);
-                iRunningPanel.updateProgressLabel2(label2);
+                iRunningPanel.updateProgressBar(aProgress);
+                iRunningPanel.updateProgressLabel1(aLabel1);
+                iRunningPanel.updateProgressLabel2(aLabel2);
             }
         };
 
