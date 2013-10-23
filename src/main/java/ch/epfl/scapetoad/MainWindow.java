@@ -75,47 +75,47 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      * The logger
      */
     private static Log logger = LogFactory.getLog(MainWindow.class);
+
     /**
      * 
      */
-    MainPanel mMainPanel = null;
+    private MainPanel iMainPanel = null;
+
     /**
      * 
      */
-    MainMenu mMainMenu = null;
+    private MainMenu iMainMenu = null;
 
     /**
      * The default constructor for the main window.
      */
     public MainWindow() {
-
         // Set the window parameters.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("ScapeToad");
-        this.setSize(640, 480);
-        this.setLocation(20, 30);
+        setSize(640, 480);
+        setLocation(20, 30);
 
         // Add the window content.
-        mMainPanel = new MainPanel(this);
-        getContentPane().add(mMainPanel);
+        iMainPanel = new MainPanel(this);
+        getContentPane().add(iMainPanel);
 
         // Create the menu bar.
-        mMainMenu = new MainMenu();
-        setJMenuBar(mMainMenu);
+        iMainMenu = new MainMenu();
+        setJMenuBar(iMainMenu);
 
-        this.update();
-
+        update();
     }
 
     /**
      * Displays a message indicating the status of current operations in the
      * status bar.
      * 
-     * @param message
+     * @param aMessage
      *            the message to display in the status bar.
      */
     @Override
-    public void setStatusMessage(String message) {
+    public void setStatusMessage(String aMessage) {
         // Nothing to do
     }
 
@@ -134,8 +134,8 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      * Handles an exception.
      */
     @Override
-    public void handleThrowable(Throwable t) {
-        logger.error("", t);
+    public void handleThrowable(Throwable aThrowable) {
+        logger.error("", aThrowable);
     }
 
     /**
@@ -146,9 +146,9 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
             AppContext.mapPanel.update();
             AppContext.layerViewPanel.getViewport().update();
             AppContext.layerViewPanel.repaint();
-            mMainMenu.enableMenus();
+            iMainMenu.enableMenus();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
     }
 
@@ -156,21 +156,16 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
      * Displays a dialog for exporting a Shape file.
      */
     public static void exportShapeFile() {
-        ExportShapeFileDialog dialog = new ExportShapeFileDialog();
-        dialog.setVisible(true);
-
-    } // MainWindow.exportShapeFile
+        new ExportShapeFileDialog().setVisible(true);
+    }
 
     /**
      * Displays a dialog for export the layers as a SVG file.
      */
     public static void exportSvgFile() {
-        ExportSvgFileDialog dialog = new ExportSvgFileDialog();
-        dialog.setVisible(true);
-
-    } // MainWindow.exportSvgFile
-
-} // MainWindow
+        new ExportSvgFileDialog().setVisible(true);
+    }
+}
 
 /**
  *
@@ -183,11 +178,10 @@ class MainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param contentFrame
+     * @param aContentFrame
      *            the content frame
      */
-    MainPanel(JFrame contentFrame) {
-
+    protected MainPanel(JFrame aContentFrame) {
         // Set the layout parameters.
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
@@ -195,11 +189,11 @@ class MainPanel extends JPanel {
         // Create the toolbar.
         MainToolbar toolbar = new MainToolbar();
         toolbar.setAlignmentX(LEFT_ALIGNMENT);
-        this.add(toolbar);
+        add(toolbar);
 
         // Create the two scroll views with the content pane.
 
-        AppContext.mapPanel = new MapPanel(contentFrame);
+        AppContext.mapPanel = new MapPanel(aContentFrame);
 
         JScrollPane rightScrollPane = new JScrollPane(AppContext.mapPanel);
 
@@ -219,11 +213,9 @@ class MainPanel extends JPanel {
 
         splitPane.setAlignmentX(LEFT_ALIGNMENT);
 
-        this.add(splitPane);
-
-    } // MainPanel.<init>
-
-} // MainPanel
+        add(splitPane);
+    }
+}
 
 /**
  * This class represents the layer list panel which is located inside the main
@@ -242,29 +234,15 @@ class LayerListPanel extends JPanel {
     /**
      * The default constructor for the layer list panel.
      */
-    LayerListPanel() {
-
-        LayerTreeModel layerTreeModel = new LayerTreeModel(
-                AppContext.layerViewPanel);
-
-        RenderingManager renderingManager = new RenderingManager(
-                AppContext.layerViewPanel);
-
+    protected LayerListPanel() {
         AppContext.layerListPanel = new TreeLayerNamePanel(
-                AppContext.layerViewPanel, layerTreeModel, renderingManager,
+                AppContext.layerViewPanel, new LayerTreeModel(
+                        AppContext.layerViewPanel), new RenderingManager(
+                        AppContext.layerViewPanel),
                 new TreeMap<Object, Object>());
 
-        // layerList.setBounds(20, 20, 160, 450);
-        // layerList.setLayout(new BoxLayer(contentFrame, BoxLayout.Y_AXIS));
-
-        // CGLayerListListener layerListListener = new
-        // CGLayerListListener(this);
-        // mLayerList.addListener(layerListListener);
-
-        this.add(AppContext.layerListPanel);
-
+        add(AppContext.layerListPanel);
     }
-
 }
 
 /**
@@ -276,6 +254,11 @@ class LayerListPanel extends JPanel {
 class MapPanel extends JPanel {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(MapPanel.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
@@ -283,13 +266,13 @@ class MapPanel extends JPanel {
     /**
      * The default constructor for the map panel.
      * 
-     * @param contentFrame
+     * @param aContentFrame
      *            the content frame
      */
-    MapPanel(JFrame contentFrame) {
-        this.setSize(contentFrame.getSize());
+    protected MapPanel(JFrame aContentFrame) {
+        setSize(aContentFrame.getSize());
         setLayout(null);
-        this.setLocation(0, 0);
+        setLocation(0, 0);
         setBackground(Color.WHITE);
 
         // Create the new layer view panel taken from the JUMP project.
@@ -311,21 +294,19 @@ class MapPanel extends JPanel {
             AppContext.layerViewPanel.getViewport().zoomToFullExtent();
             AppContext.layerViewPanel.getViewport().update();
         } catch (NoninvertibleTransformException exception) {
+            logger.error("Error while zooming to full extent.", exception);
             AppContext.mainWindow
                     .warnUser("Error while zooming to full extent.");
-
         }
-
-    } // MapPanel.<init>
+    }
 
     /**
      * 
      */
-    void update() {
+    protected void update() {
         AppContext.layerViewPanel.setSize(this.getSize());
     }
-
-} // MapPanel
+}
 
 /**
  * This class represents the main toolbar at the top of the main window.
@@ -343,8 +324,7 @@ class MainToolbar extends JPanel {
     /**
      * The default constructor for the map panel.
      */
-    MainToolbar() {
-
+    protected MainToolbar() {
         ClassLoader cldr = this.getClass().getClassLoader();
 
         // Full extent button
@@ -363,7 +343,7 @@ class MainToolbar extends JPanel {
         fullExtentButton.setBorderPainted(false);
 
         fullExtentButton.addActionListener(new ActionZoomToFullExtent());
-        this.add(fullExtentButton);
+        add(fullExtentButton);
 
         // Add layer button
 
@@ -381,7 +361,7 @@ class MainToolbar extends JPanel {
         addLayerButton.setBorderPainted(false);
 
         addLayerButton.addActionListener(new ActionLayerAdd());
-        this.add(addLayerButton);
+        add(addLayerButton);
 
         // Create cartogram button
 
@@ -400,7 +380,7 @@ class MainToolbar extends JPanel {
         createCartogramButton.setBorderPainted(false);
 
         createCartogramButton.addActionListener(new ActionCreateCartogram());
-        this.add(createCartogramButton);
+        add(createCartogramButton);
 
         // Export to SVG button
 
@@ -418,7 +398,7 @@ class MainToolbar extends JPanel {
         svgButton.setBorderPainted(false);
 
         svgButton.addActionListener(new ActionExportAsSvg());
-        this.add(svgButton);
+        add(svgButton);
 
         // Export to SHP button
 
@@ -436,11 +416,9 @@ class MainToolbar extends JPanel {
         shpButton.setBorderPainted(false);
 
         shpButton.addActionListener(new ActionLayerSave());
-        this.add(shpButton);
-
-    } // Toolbar.<init>
-
-} // MainToolbar
+        add(shpButton);
+    }
+}
 
 /**
  * This class is an action zooming to the full layer extent.
@@ -450,23 +428,25 @@ class MainToolbar extends JPanel {
 class ActionZoomToFullExtent extends AbstractAction {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(ActionZoomToFullExtent.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-
+    public void actionPerformed(ActionEvent aEvent) {
         AppContext.mainWindow.update();
 
         try {
             AppContext.layerViewPanel.getViewport().zoomToFullExtent();
-        } catch (NoninvertibleTransformException exc) {
-            exc.printStackTrace();
+        } catch (NoninvertibleTransformException exception) {
+            logger.error("", exception);
         }
-
-    } // ActionLayerAdd.actionPerformed
-
+    }
 }
 
 /**
@@ -480,8 +460,7 @@ class ActionCreateCartogram extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-
+    public void actionPerformed(ActionEvent aEvent) {
         if (AppContext.cartogramWizard == null
                 || AppContext.cartogramWizard.isVisible() == false) {
             AppContext.cartogramWizard = null;
@@ -489,9 +468,7 @@ class ActionCreateCartogram extends AbstractAction {
         }
 
         AppContext.cartogramWizard.setVisible(true);
-
     }
-
 }
 
 /**
@@ -506,105 +483,106 @@ class ExportShapeFileDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    JButton mOkButton;
+    private JButton iOkButton;
+
     /**
      * 
      */
-    JButton mCancelButton;
+    private JButton iCancelButton;
+
     /**
      * 
      */
-    JLabel mLayerMenuLabel;
+    private JLabel iLayerMenuLabel;
+
     /**
      * 
      */
-    JComboBox mLayerMenu;
+    private JComboBox iLayerMenu;
 
     /**
      * Constructor for the export Shape file dialog.
      */
-    ExportShapeFileDialog() {
-
+    protected ExportShapeFileDialog() {
         // Set the window parameters.
 
         setTitle("Export layer as Shape file");
-        this.setSize(300, 140);
-        this.setLocation(40, 50);
+        setSize(300, 140);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
 
         // Cancel button
 
-        mCancelButton = new JButton("Cancel");
-        mCancelButton.setLocation(70, 80);
-        mCancelButton.setSize(100, 26);
+        iCancelButton = new JButton("Cancel");
+        iCancelButton.setLocation(70, 80);
+        iCancelButton.setSize(100, 26);
 
-        mCancelButton.addActionListener(new ExportShapeFileDialogAction(
+        iCancelButton.addActionListener(new ExportShapeFileDialogAction(
                 "closeDialogWithoutSaving", this));
 
-        mCancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
-        this.add(mCancelButton);
+        iCancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
+        add(iCancelButton);
 
         // Ok button
 
-        mOkButton = new JButton("OK");
-        mOkButton.setLocation(180, 80);
-        mOkButton.setSize(100, 26);
+        iOkButton = new JButton("OK");
+        iOkButton.setLocation(180, 80);
+        iOkButton.setSize(100, 26);
 
-        mOkButton.addActionListener(new ExportShapeFileDialogAction(
+        iOkButton.addActionListener(new ExportShapeFileDialogAction(
                 "closeDialogWithSaving", this));
 
-        mOkButton.setMnemonic(KeyEvent.VK_ENTER);
-        this.add(mOkButton);
+        iOkButton.setMnemonic(KeyEvent.VK_ENTER);
+        add(iOkButton);
 
         // Add a popup menu with the list of available layers.
 
-        mLayerMenuLabel = new JLabel("Select the layer to export:");
-        mLayerMenuLabel.setFont(new Font(null, Font.PLAIN, 11));
-        mLayerMenuLabel.setBounds(20, 20, 210, 14);
-        this.add(mLayerMenuLabel);
+        iLayerMenuLabel = new JLabel("Select the layer to export:");
+        iLayerMenuLabel.setFont(new Font(null, Font.PLAIN, 11));
+        iLayerMenuLabel.setBounds(20, 20, 210, 14);
+        add(iLayerMenuLabel);
 
-        mLayerMenu = new JComboBox();
-        mLayerMenu.setBounds(20, 40, 210, 26);
-        mLayerMenu.setFont(new Font(null, Font.PLAIN, 11));
-        mLayerMenu.setMaximumRowCount(20);
+        iLayerMenu = new JComboBox();
+        iLayerMenu.setBounds(20, 40, 210, 26);
+        iLayerMenu.setFont(new Font(null, Font.PLAIN, 11));
+        iLayerMenu.setMaximumRowCount(20);
 
         int nlayers = AppContext.layerManager.size();
         for (int lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
             Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
-            mLayerMenu.addItem(lyr.getName());
+            iLayerMenu.addItem(lyr.getName());
         }
 
         // If there is no layer for the cartogram deformation,
         // add a menu item "<none>" and disable the "Next" button.
-        if (mLayerMenu.getItemCount() == 0) {
-            mLayerMenu.addItem("<none>");
-            mOkButton.setEnabled(false);
+        if (iLayerMenu.getItemCount() == 0) {
+            iLayerMenu.addItem("<none>");
+            iOkButton.setEnabled(false);
         } else {
-            mOkButton.setEnabled(true);
+            iOkButton.setEnabled(true);
         }
 
-        this.add(mLayerMenu);
-
-    } // ExportShapeFileDialog.<init>
+        add(iLayerMenu);
+    }
 
     /**
      * 
      */
-    public void saveLayer() {
-        String layerName = (String) mLayerMenu.getSelectedItem();
+    protected void saveLayer() {
+        String layerName = (String) iLayerMenu.getSelectedItem();
         if (layerName == "<none>") {
             return;
         }
         Layer lyr = AppContext.layerManager.getLayer(layerName);
         IOManager.saveShapefile(lyr.getFeatureCollectionWrapper());
     }
-
-} // ExportShapeFileDialog
+}
 
 /**
  * The actions for the export shape file dialog.
@@ -618,52 +596,47 @@ class ExportShapeFileDialogAction extends AbstractAction {
     /**
      * 
      */
-    String mActionToPerform = "closeDialogWithoutSaving";
+    private String iActionToPerform = "closeDialogWithoutSaving";
+
     /**
      * 
      */
-    ExportShapeFileDialog mDialog = null;
+    private ExportShapeFileDialog iDialog = null;
 
     /**
      * The default creator for the action.
      * 
-     * @param actionToPerform
+     * @param aActionToPerform
      *            defines the action to perform. Can be "showDialog", if we
      *            should create a new dialog and display it. Is
      *            "closeDialogWithSaving" if we should close the dialog and save
      *            the changes. is "closeDialogWithoutSaving" if we should
      *            discard the changes and close the dialog.
-     * @param dialog
+     * @param aDialog
      *            a reference to the dialog or null if it does not yet exist
      *            (for the showDialog action).
      */
-    ExportShapeFileDialogAction(String actionToPerform,
-            ExportShapeFileDialog dialog) {
-        mActionToPerform = actionToPerform;
-        mDialog = dialog;
-
-    } // ExportShapeFileDialogAction.<init>
+    protected ExportShapeFileDialogAction(String aActionToPerform,
+            ExportShapeFileDialog aDialog) {
+        iActionToPerform = aActionToPerform;
+        iDialog = aDialog;
+    }
 
     /**
      * Method which performs the previously specified action.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (mActionToPerform == "closeDialogWithoutSaving") {
-            mDialog.setVisible(false);
-            mDialog.dispose();
+    public void actionPerformed(ActionEvent aEvent) {
+        if (iActionToPerform == "closeDialogWithoutSaving") {
+            iDialog.setVisible(false);
+            iDialog.dispose();
+        } else if (iActionToPerform == "closeDialogWithSaving") {
+            iDialog.saveLayer();
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
-
-        else if (mActionToPerform == "closeDialogWithSaving") {
-            mDialog.saveLayer();
-            mDialog.setVisible(false);
-            mDialog.dispose();
-        }
-
-    } // ExportShapeFileDialogAction.actionPerformed
-
-} // ExportShapeFileDialogAction
+    }
+}
 
 /**
  * Dialog window for specifying the layers to export into a SVG file.
@@ -677,41 +650,46 @@ class ExportSvgFileDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
      * 
      */
-    JButton mOkButton;
+    private JButton iOkButton;
+
     /**
      * 
      */
-    JButton mCancelButton;
+    private JButton iCancelButton;
+
     /**
      * 
      */
-    JPanel mLayerListPanel;
+    private JPanel iLayerListPanel;
+
     /**
      * 
      */
-    JScrollPane mLayerListScrollPane;
+    private JScrollPane iLayerListScrollPane;
+
     /**
      * 
      */
-    AbstractList<JCheckBox> mCheckBoxList;
+    private AbstractList<JCheckBox> iCheckBoxList;
+
     /**
      * 
      */
-    JLabel mNoLayerLabel;
+    private JLabel iNoLayerLabel;
 
     /**
      * Constructor for the export SVG file dialog.
      */
-    ExportSvgFileDialog() {
-
+    protected ExportSvgFileDialog() {
         // Set the window parameters.
 
         setTitle("Export layers to SVG file");
-        this.setSize(300, 400);
-        this.setLocation(40, 50);
+        setSize(300, 400);
+        setLocation(40, 50);
         setResizable(false);
         setLayout(null);
         setModal(true);
@@ -720,17 +698,16 @@ class ExportSvgFileDialog extends JDialog {
 
         // Create a new pane containing the check boxes with
         // the layers.
-        mLayerListPanel = new JPanel(new GridLayout(0, 1));
+        iLayerListPanel = new JPanel(new GridLayout(0, 1));
 
         // Create the checkbox array.
-        mCheckBoxList = new ArrayList<JCheckBox>();
+        iCheckBoxList = new ArrayList<JCheckBox>();
 
         Font smallFont = new Font(null, Font.PLAIN, 11);
 
         int nlayers = AppContext.layerManager.size();
         int layersInList = 0;
-        int lyrcnt = 0;
-        for (lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
+        for (int lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
             Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
             JCheckBox checkbox = new JCheckBox(lyr.getName());
             checkbox.setFont(smallFont);
@@ -741,8 +718,8 @@ class ExportSvgFileDialog extends JDialog {
                 checkbox.setSelected(false);
             }
 
-            mCheckBoxList.add(checkbox);
-            mLayerListPanel.add(checkbox);
+            iCheckBoxList.add(checkbox);
+            iLayerListPanel.add(checkbox);
             layersInList++;
         }
 
@@ -758,14 +735,14 @@ class ExportSvgFileDialog extends JDialog {
 
         // Create a new scroll pane where we will display the
         // list of layers.
-        mLayerListScrollPane = new JScrollPane(mLayerListPanel);
-        mLayerListScrollPane.setSize(260, scrollPaneHeight);
-        mLayerListScrollPane.setLocation(20, 50);
+        iLayerListScrollPane = new JScrollPane(iLayerListPanel);
+        iLayerListScrollPane.setSize(260, scrollPaneHeight);
+        iLayerListScrollPane.setLocation(20, 50);
 
-        mLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0,
+        iLayerListScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0,
                 0));
 
-        this.add(mLayerListScrollPane);
+        add(iLayerListScrollPane);
 
         // Label for the layers to deform.
         JLabel layerListLabel = new JLabel(
@@ -773,55 +750,53 @@ class ExportSvgFileDialog extends JDialog {
         layerListLabel.setSize(260, 14);
         layerListLabel.setFont(smallFont);
         layerListLabel.setLocation(20, 20);
-        this.add(layerListLabel);
+        add(layerListLabel);
 
         // Cancel button
 
-        mCancelButton = new JButton("Cancel");
-        mCancelButton.setLocation(70, 330);
-        mCancelButton.setSize(100, 26);
+        iCancelButton = new JButton("Cancel");
+        iCancelButton.setLocation(70, 330);
+        iCancelButton.setSize(100, 26);
 
-        mCancelButton.addActionListener(new ExportSvgFileDialogAction(
+        iCancelButton.addActionListener(new ExportSvgFileDialogAction(
                 "closeDialogWithoutSaving", this));
 
-        mCancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
-        this.add(mCancelButton);
+        iCancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
+        add(iCancelButton);
 
         // Ok button
 
-        mOkButton = new JButton("OK");
-        mOkButton.setLocation(180, 330);
-        mOkButton.setSize(100, 26);
+        iOkButton = new JButton("OK");
+        iOkButton.setLocation(180, 330);
+        iOkButton.setSize(100, 26);
 
-        mOkButton.addActionListener(new ExportSvgFileDialogAction(
+        iOkButton.addActionListener(new ExportSvgFileDialogAction(
                 "closeDialogWithSaving", this));
 
-        mOkButton.setMnemonic(KeyEvent.VK_ENTER);
-        this.add(mOkButton);
+        iOkButton.setMnemonic(KeyEvent.VK_ENTER);
+        add(iOkButton);
 
         // Label for no present layers.
         if (nlayers == 0) {
-            mNoLayerLabel = new JLabel("No layers to be exported.");
-            mNoLayerLabel.setSize(260, 14);
-            mNoLayerLabel.setFont(smallFont);
-            mNoLayerLabel.setLocation(20, 50);
-            mOkButton.setEnabled(false);
-            this.add(mNoLayerLabel);
+            iNoLayerLabel = new JLabel("No layers to be exported.");
+            iNoLayerLabel.setSize(260, 14);
+            iNoLayerLabel.setFont(smallFont);
+            iNoLayerLabel.setLocation(20, 50);
+            iOkButton.setEnabled(false);
+            add(iNoLayerLabel);
         }
-
-    } // ExportSvgFileDialog.<init>
+    }
 
     /**
      * 
      */
-    public void exportLayers() {
+    protected void exportLayers() {
+        iOkButton.setEnabled(false);
+        iCancelButton.setEnabled(false);
 
-        mOkButton.setEnabled(false);
-        mCancelButton.setEnabled(false);
-
-        if (mCheckBoxList.size() > 0) {
+        if (iCheckBoxList.size() > 0) {
             AbstractList<Layer> layers = new ArrayList<Layer>();
-            Iterator<JCheckBox> iter = mCheckBoxList.iterator();
+            Iterator<JCheckBox> iter = iCheckBoxList.iterator();
             while (iter.hasNext()) {
                 JCheckBox checkBox = iter.next();
                 if (checkBox.isSelected()) {
@@ -844,8 +819,7 @@ class ExportSvgFileDialog extends JDialog {
             IOManager.saveSvg(lyrs);
         }
     }
-
-} // ExportSvgFileDialog
+}
 
 /**
  * The actions for the export SVG file dialog.
@@ -856,26 +830,28 @@ class ExportSvgFileDialogAction extends AbstractAction {
      * 
      */
     private static final long serialVersionUID = 1L;
-    /**
-     * 
-     */
-    String mActionToPerform = "closeDialogWithoutSaving";
-    /**
-     * 
-     */
-    ExportSvgFileDialog mDialog = null;
 
     /**
-     * @param actionToPerform
+     * 
+     */
+    private String iActionToPerform = "closeDialogWithoutSaving";
+
+    /**
+     * 
+     */
+    private ExportSvgFileDialog iDialog = null;
+
+    /**
+     * @param aActionToPerform
      *            the action to perform
-     * @param dialog
+     * @param aDialog
      *            the dialog
      */
-    ExportSvgFileDialogAction(String actionToPerform, ExportSvgFileDialog dialog) {
-        mActionToPerform = actionToPerform;
-        mDialog = dialog;
-
-    } // ExportSvgFileDialogAction.<init>
+    protected ExportSvgFileDialogAction(String aActionToPerform,
+            ExportSvgFileDialog aDialog) {
+        iActionToPerform = aActionToPerform;
+        iDialog = aDialog;
+    }
 
     /**
      * Method which performs the previously specified action.
@@ -883,18 +859,15 @@ class ExportSvgFileDialogAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (mActionToPerform == "closeDialogWithoutSaving") {
-            mDialog.setVisible(false);
-            mDialog.dispose();
+        if (iActionToPerform == "closeDialogWithoutSaving") {
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
 
-        else if (mActionToPerform == "closeDialogWithSaving") {
-            mDialog.exportLayers();
-            mDialog.setVisible(false);
-            mDialog.dispose();
+        else if (iActionToPerform == "closeDialogWithSaving") {
+            iDialog.exportLayers();
+            iDialog.setVisible(false);
+            iDialog.dispose();
         }
-
-    } // ExportSvgFileDialogAction.actionPerformed
-
-} // ExportSvgFileDialogAction
-
+    }
+}
