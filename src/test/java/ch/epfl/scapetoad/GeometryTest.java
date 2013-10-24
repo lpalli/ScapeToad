@@ -4,7 +4,6 @@
 package ch.epfl.scapetoad;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -14,15 +13,6 @@ import org.junit.Test;
  */
 @SuppressWarnings("static-method")
 public class GeometryTest {
-
-    /**
-     * 
-     */
-    @Test
-    public void areaOfQuadrangleTest() {
-        assertEquals(1, Geometry.areaOfQuadrangle(0, 0, 1, 0, 1, 1, 0, 1),
-                0.001);
-    }
 
     /**
      * 

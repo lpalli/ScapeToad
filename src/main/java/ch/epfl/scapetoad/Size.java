@@ -16,12 +16,12 @@ public class Size {
     /**
      * The X size.
      */
-    public int iX = 0;
+    private int iX = 0;
 
     /**
      * the Y size
      */
-    public int iY = 0;
+    private int iY = 0;
 
     /**
      * Initializes the size using the provided integer values.
@@ -32,7 +32,45 @@ public class Size {
      *            the Y size
      */
     public Size(int aX, int aY) {
+        setX(aX);
+        setY(aY);
+    }
+
+    /**
+     * Get the X size.
+     * 
+     * @return the X size
+     */
+    public int getX() {
+        return iX;
+    }
+
+    /**
+     * Set the X size.
+     * 
+     * @param aX
+     *            the X size
+     */
+    public void setX(int aX) {
         iX = aX;
+    }
+
+    /**
+     * Get the Y size.
+     * 
+     * @return the Y size
+     */
+    public int getY() {
+        return iY;
+    }
+
+    /**
+     * Set the Y size.
+     * 
+     * @param aY
+     *            the Y size
+     */
+    public void setY(int aY) {
         iY = aY;
     }
 }

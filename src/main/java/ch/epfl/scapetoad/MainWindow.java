@@ -146,7 +146,7 @@ public class MainWindow extends JFrame implements LayerViewPanelContext {
             AppContext.mapPanel.update();
             AppContext.layerViewPanel.getViewport().update();
             AppContext.layerViewPanel.repaint();
-            iMainMenu.enableMenus();
+            iMainMenu.update();
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -647,6 +647,11 @@ class ExportShapeFileDialogAction extends AbstractAction {
 class ExportSvgFileDialog extends JDialog {
 
     /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(ExportSvgFileDialog.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
@@ -797,26 +802,23 @@ class ExportSvgFileDialog extends JDialog {
         if (iCheckBoxList.size() > 0) {
             AbstractList<Layer> layers = new ArrayList<Layer>();
             Iterator<JCheckBox> iter = iCheckBoxList.iterator();
+            JCheckBox checkBox;
+            Layer layer;
             while (iter.hasNext()) {
-                JCheckBox checkBox = iter.next();
+                checkBox = iter.next();
                 if (checkBox.isSelected()) {
-                    String layerName = checkBox.getText();
-                    Layer lyr = AppContext.layerManager.getLayer(layerName);
-                    if (lyr == null) {
-                        System.out
-                                .println("Layer " + layerName + " not found.");
+                    layer = AppContext.layerManager
+                            .getLayer(checkBox.getText());
+                    if (layer == null) {
+                        logger.warn("Layer " + checkBox.getText()
+                                + " not found.");
                     } else {
-                        layers.add(lyr);
+                        layers.add(layer);
                     }
                 }
             }
 
-            int nlyrs = layers.size();
-            Layer[] lyrs = new Layer[nlyrs];
-            for (int lyrcnt = 0; lyrcnt < nlyrs; lyrcnt++) {
-                lyrs[lyrcnt] = layers.get(lyrcnt);
-            }
-            IOManager.saveSvg(lyrs);
+            IOManager.saveSvg(layers.toArray(new Layer[layers.size()]));
         }
     }
 }

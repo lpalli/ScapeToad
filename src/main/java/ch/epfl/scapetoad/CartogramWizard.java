@@ -2991,14 +2991,13 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
      */
     public void saveChanges() {
         int nlayers = iCheckBoxList.size();
-        AbstractList<Layer> layers = new ArrayList<Layer>();
+        AbstractList<Layer> layers = new ArrayList<Layer>(nlayers);
 
+        JCheckBox checkBox;
         for (int i = 0; i < nlayers; i++) {
-            JCheckBox checkBox = iCheckBoxList.get(i);
+            checkBox = iCheckBoxList.get(i);
             if (checkBox.isSelected()) {
-                String layerName = checkBox.getText();
-                Layer lyr = AppContext.layerManager.getLayer(layerName);
-                layers.add(lyr);
+                layers.add(AppContext.layerManager.getLayer(checkBox.getText()));
             }
         }
 

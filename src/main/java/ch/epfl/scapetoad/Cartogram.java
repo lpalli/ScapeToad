@@ -353,7 +353,7 @@ public class Cartogram extends SwingWorker {
             iCartogramWizard.updateRunningStatus(750,
                     "Projecting the layers...", "");
 
-            Layer[] projLayers = projectLayers();
+            Layer[] layers = projectLayers();
 
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -374,7 +374,7 @@ public class Cartogram extends SwingWorker {
             iCartogramWizard.updateRunningStatus(950,
                     "Producing the computation report...", "");
 
-            return projLayers;
+            return layers;
         } catch (Exception exception) {
             logger.error("", exception);
             String exceptionType = exception.getClass().getName();
@@ -414,9 +414,9 @@ public class Cartogram extends SwingWorker {
 
         // *** GET THE PROJECTED LAYERS ***
 
-        Layer[] lyr = (Layer[]) get();
+        Layer[] layers = (Layer[]) get();
 
-        if (lyr == null) {
+        if (layers == null) {
             iCartogramWizard
                     .setComputationError(
                             "An error occured during cartogram computation!",
@@ -429,31 +429,28 @@ public class Cartogram extends SwingWorker {
         // *** HIDE ALL LAYERS ALREADY PRESENT ***
         @SuppressWarnings("unchecked")
         List<Layer> layerList = iLayerManager.getLayers();
-        Iterator<Layer> layerIter = layerList.iterator();
-        while (layerIter.hasNext()) {
-            Layer l = layerIter.next();
-            l.setVisible(false);
+        for (Layer layer : layerList) {
+            layer.setVisible(false);
         }
 
         // *** ADD ALL THE LAYERS ***
 
-        String catName = getCategoryName();
+        String category = getCategoryName();
 
-        if (iLayerManager.getCategory(catName) == null) {
-            iLayerManager.addCategory(catName);
+        if (iLayerManager.getCategory(category) == null) {
+            iLayerManager.addCategory(category);
         }
 
-        int nlyrs = lyr.length;
-        for (int lyrcnt = 0; lyrcnt < nlyrs; lyrcnt++) {
-            iLayerManager.addLayer(catName, lyr[lyrcnt]);
+        for (Layer layer : layers) {
+            iLayerManager.addLayer(category, layer);
         }
 
         if (iDeformationGrid != null) {
-            iLayerManager.addLayer(catName, iDeformationGrid);
+            iLayerManager.addLayer(category, iDeformationGrid);
         }
 
         if (mLegendLayer != null) {
-            iLayerManager.addLayer(catName, mLegendLayer);
+            iLayerManager.addLayer(category, mLegendLayer);
         }
 
         // *** PRODUCE THE COMPUTATION REPORT ***
@@ -463,9 +460,9 @@ public class Cartogram extends SwingWorker {
 
         // Create a color table for the size error attribute.
 
-        BasicStyle bs = (BasicStyle) iProjectedMasterLayer
+        BasicStyle style = (BasicStyle) iProjectedMasterLayer
                 .getStyle(BasicStyle.class);
-        bs.setFillColor(Color.WHITE);
+        style.setFillColor(Color.WHITE);
 
         SizeErrorStyle errorStyle = new SizeErrorStyle();
 
@@ -486,9 +483,9 @@ public class Cartogram extends SwingWorker {
         errorStyle.addLimit(new Double(110));
         errorStyle.addLimit(new Double(120));
 
-        lyr[0].addStyle(errorStyle);
+        layers[0].addStyle(errorStyle);
         errorStyle.setEnabled(true);
-        lyr[0].getStyle(BasicStyle.class).setEnabled(false);
+        layers[0].getStyle(BasicStyle.class).setEnabled(false);
 
         new SizeErrorLegend().setVisible(true);
 
@@ -635,10 +632,10 @@ public class Cartogram extends SwingWorker {
 
         if (width < height) {
             // Adjust the x grid size.
-            iGridSizeX = (int) Math.round(iGridSizeY * (width / height));
+            iGridSizeX = (int) Math.round(iGridSizeY * width / height);
         } else if (width > height) {
             // Adjust the y grid size.
-            iGridSizeY = (int) Math.round(iGridSizeX * (height / width));
+            iGridSizeY = (int) Math.round(iGridSizeX * height / width);
         }
     }
 
@@ -762,94 +759,88 @@ public class Cartogram extends SwingWorker {
      * Creates a layer with the deformation grid.
      */
     private void createGridLayer() {
-        Envelope env = iEnvelope;
-
         // Compute the deformation grid size in x and y direction.
-
-        double resolution = Math.max(env.getWidth() / (iGridLayerSize + 1),
-                env.getHeight() / (iGridLayerSize + 1));
-
-        int sizeX = (int) Math.round(Math.floor(env.getWidth() / resolution)) - 1;
-
-        int sizeY = (int) Math.round(Math.floor(env.getHeight() / resolution)) - 1;
+        double resolution = Math.max(iEnvelope.getWidth()
+                / (iGridLayerSize + 1), iEnvelope.getHeight()
+                / (iGridLayerSize + 1));
+        int sizeX = (int) Math.round(Math.floor(iEnvelope.getWidth()
+                / resolution)) - 1;
+        int sizeY = (int) Math.round(Math.floor(iEnvelope.getHeight()
+                / resolution)) - 1;
 
         // CREATE THE NEW LAYER
 
         // Create a new Feature Schema for the new layer.
-        FeatureSchema fs = new FeatureSchema();
-        fs.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-        fs.addAttribute("ID", AttributeType.INTEGER);
+        FeatureSchema schema = new FeatureSchema();
+        schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
+        schema.addAttribute("ID", AttributeType.INTEGER);
 
         // Create a new empty Feature Dataset.
-        FeatureDataset fd = new FeatureDataset(fs);
+        FeatureDataset dataset = new FeatureDataset(schema);
 
         // Create a Geometry Factory for creating the points.
-        GeometryFactory gf = new GeometryFactory();
+        GeometryFactory factory = new GeometryFactory();
 
         // CREATE ALL FEATURES AND LINES
-        int j, k;
         int i = 0;
 
+        BasicFeature feature;
+        Coordinate[] coords;
+        LineString line;
         // Horizontal lines
-        for (k = 0; k < sizeY; k++) {
+        for (int k = 0; k < sizeY; k++) {
             // Create an empty Feature.
-            BasicFeature feat = new BasicFeature(fs);
+            feature = new BasicFeature(schema);
 
             // Create the line string and add it to the Feature.
-            Coordinate[] coords = new Coordinate[sizeX];
-            for (j = 0; j < sizeX; j++) {
-                double x = env.getMinX() + j * resolution;
-                double y = env.getMinY() + k * resolution;
-                coords[j] = iGrid.projectPointAsCoordinate(x, y);
+            coords = new Coordinate[sizeX];
+            for (int j = 0; j < sizeX; j++) {
+                coords[j] = iGrid.projectPointAsCoordinate(iEnvelope.getMinX()
+                        + j * resolution, iEnvelope.getMinY() + k * resolution);
             }
+            line = factory.createLineString(coords);
 
-            LineString ls = null;
-            ls = gf.createLineString(coords);
-
-            if (ls != null) {
-                feat.setGeometry(ls);
+            if (line != null) {
+                feature.setGeometry(line);
 
                 // Add the other attributes.
                 Integer idobj = new Integer(i);
-                feat.setAttribute("ID", idobj);
+                feature.setAttribute("ID", idobj);
                 i++;
 
                 // Add Feature to the Feature Dataset.
-                fd.add(feat);
+                dataset.add(feature);
             }
         }
 
         // Vertical lines
-        for (j = 0; j < sizeX; j++) {
+        for (int j = 0; j < sizeX; j++) {
             // Create an empty Feature.
-            BasicFeature feat = new BasicFeature(fs);
+            feature = new BasicFeature(schema);
 
             // Create the line string and add it to the Feature.
-            Coordinate[] coords = new Coordinate[sizeY];
-            for (k = 0; k < sizeY; k++) {
-                double x = env.getMinX() + j * resolution;
-                double y = env.getMinY() + k * resolution;
-                coords[k] = iGrid.projectPointAsCoordinate(x, y);
+            coords = new Coordinate[sizeY];
+            for (int k = 0; k < sizeY; k++) {
+                coords[k] = iGrid.projectPointAsCoordinate(iEnvelope.getMinX()
+                        + j * resolution, iEnvelope.getMinY() + k * resolution);
             }
+            line = factory.createLineString(coords);
 
-            LineString ls = null;
-            ls = gf.createLineString(coords);
-
-            if (ls != null) {
-                feat.setGeometry(ls);
+            if (line != null) {
+                feature.setGeometry(line);
 
                 // Add the other attributes.
                 Integer idobj = new Integer(i);
-                feat.setAttribute("ID", idobj);
+                feature.setAttribute("ID", idobj);
                 i++;
 
                 // Add Feature to the Feature Dataset.
-                fd.add(feat);
+                dataset.add(feature);
             }
         }
 
         // Create the layer.
-        iDeformationGrid = new Layer("Deformation grid", Color.GRAY, fd,
+        iDeformationGrid = new Layer("Deformation grid", Color.GRAY, dataset,
                 iLayerManager);
     }
 
@@ -962,104 +953,120 @@ public class Cartogram extends SwingWorker {
      *            the projected master layer
      */
     private void produceComputationReport(Layer aProjectedMasterLayer) {
-        StringBuffer rep = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
 
-        rep.append("CARTOGRAM COMPUTATION REPORT\n\n");
+        buffer.append("CARTOGRAM COMPUTATION REPORT\n\n");
 
-        rep.append("CARTOGRAM PARAMETERS:\n");
-        rep.append("Cartogram layer: " + iMasterLayer + "\n");
-        rep.append("Cartogram attribute: " + iMasterAttribute + "\n");
+        buffer.append("CARTOGRAM PARAMETERS:\n");
+        buffer.append("Cartogram layer: ");
+        buffer.append(iMasterLayer);
+        buffer.append('\n');
+        buffer.append("Cartogram attribute: ");
+        buffer.append(iMasterAttribute);
+        buffer.append('\n');
 
-        String attrType = "Population value";
+        buffer.append("Attribute type: ");
         if (iMasterAttributeIsDensityValue) {
-            attrType = "Density value";
-        }
-        rep.append("Attribute type: " + attrType + "\n");
-
-        String transformationQuality = "";
-        if (iAdvancedOptionsEnabled) {
-            transformationQuality = "disabled";
+            buffer.append("Density value");
         } else {
-            transformationQuality = "" + iAmountOfDeformation + " of 100";
+            buffer.append("Population value");
         }
-        rep.append("Transformation quality: " + transformationQuality + "\n");
+        buffer.append('\n');
 
-        rep.append("Cartogram grid size: " + iGridSizeX + " x " + iGridSizeY
-                + "\n");
-        rep.append("\n");
-        // rep.append("Diffusion grid size: "+ mDiffusionGridSize +"\n");
-        // rep.append("Diffusion iterations: "+ mDiffusionIterations +"\n\n");
+        buffer.append("Transformation quality: ");
+        if (iAdvancedOptionsEnabled) {
+            buffer.append("disabled");
+        } else {
+            buffer.append(iAmountOfDeformation);
+            buffer.append(" of 100");
+        }
+        buffer.append('\n');
 
-        rep.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
+        buffer.append("Cartogram grid size: ");
+        buffer.append(iGridSizeX);
+        buffer.append(" x ");
+        buffer.append(iGridSizeY);
+        buffer.append("\n\n");
+
+        buffer.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
         Layer masterLayer = iLayerManager.getLayer(iMasterLayer);
-        int nfeat = masterLayer.getFeatureCollectionWrapper().getFeatures()
-                .size();
-        rep.append("Number of features: " + nfeat + "\n");
+        buffer.append("Number of features: ");
+        buffer.append(masterLayer.getFeatureCollectionWrapper().getFeatures()
+                .size());
+        buffer.append('\n');
 
-        double mean = CartogramLayer.meanValueForAttribute(masterLayer,
-                iMasterAttribute);
-        rep.append("Attribute mean value: " + mean + "\n");
+        buffer.append("Attribute mean value: ");
+        buffer.append(CartogramLayer.meanValueForAttribute(masterLayer,
+                iMasterAttribute));
+        buffer.append('\n');
 
-        double min = CartogramLayer.minValueForAttribute(masterLayer,
-                iMasterAttribute);
-        rep.append("Attribute minimum value: " + min + "\n");
+        buffer.append("Attribute minimum value: ");
+        buffer.append(CartogramLayer.minValueForAttribute(masterLayer,
+                iMasterAttribute));
+        buffer.append('\n');
 
-        double max = CartogramLayer.maxValueForAttribute(masterLayer,
-                iMasterAttribute);
-        rep.append("Attribute maximum value: " + max + "\n\n");
+        buffer.append("Attribute maximum value: ");
+        buffer.append(CartogramLayer.maxValueForAttribute(masterLayer,
+                iMasterAttribute));
+        buffer.append("\n\n");
 
-        rep.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
+        buffer.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
         AbstractList<Layer> simLayers = iCartogramWizard
                 .getSimultaneousLayers();
         if (simLayers == null || simLayers.size() == 0) {
-            rep.append("None\n\n");
+            buffer.append("None\n\n");
         } else {
-            Iterator<Layer> simLayerIter = simLayers.iterator();
-            while (simLayerIter.hasNext()) {
-                Layer lyr = simLayerIter.next();
-                rep.append(lyr.getName() + "\n");
+            for (Layer layer : simLayers) {
+                buffer.append(layer.getName());
+                buffer.append('\n');
             }
-            rep.append("\n");
+            buffer.append('\n');
         }
 
-        rep.append("CONSTRAINED DEFORMATION LAYERS:\n");
+        buffer.append("CONSTRAINED DEFORMATION LAYERS:\n");
         AbstractList<Layer> constLayers = iCartogramWizard
                 .getConstrainedDeformationLayers();
         if (constLayers == null || constLayers.size() == 0) {
-            rep.append("None\n\n");
+            buffer.append("None\n\n");
         } else {
-            Iterator<Layer> constLayerIter = constLayers.iterator();
-            while (constLayerIter.hasNext()) {
-                Layer lyr = constLayerIter.next();
-                rep.append(lyr.getName() + "\n");
+            for (Layer layer : constLayers) {
+                buffer.append(layer.getName());
+                buffer.append('\n');
             }
-            rep.append("\n");
+            buffer.append('\n');
         }
 
-        // Compute the cartogram error.
+        // Compute the cartogram error
         double meanError = CartogramLayer.computeCartogramSizeError(
                 aProjectedMasterLayer, iMasterAttribute, masterLayer,
                 "SizeError");
 
-        rep.append("CARTOGRAM ERROR\n");
-        rep.append("The cartogram error is a measure for the quality of the result.\n");
-        rep.append("Mean cartogram error: " + meanError + "\n");
+        buffer.append("CARTOGRAM ERROR\n");
+        buffer.append("The cartogram error is a measure for the quality of the result.\n");
+        buffer.append("Mean cartogram error: ");
+        buffer.append(meanError);
+        buffer.append('\n');
 
         double stdDev = CartogramLayer.standardDeviationForAttribute(
                 aProjectedMasterLayer, "SizeError");
-        rep.append("Standard deviation: " + stdDev + "\n");
+        buffer.append("Standard deviation: ");
+        buffer.append(stdDev);
+        buffer.append('\n');
 
-        double pctl25 = CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 25);
-        rep.append("25th percentile: " + pctl25 + "\n");
+        buffer.append("25th percentile: ");
+        buffer.append(CartogramLayer.percentileForAttribute(
+                aProjectedMasterLayer, "SizeError", 25));
+        buffer.append('\n');
 
-        double pctl50 = CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 50);
-        rep.append("50th percentile: " + pctl50 + "\n");
+        buffer.append("50th percentile: ");
+        buffer.append(CartogramLayer.percentileForAttribute(
+                aProjectedMasterLayer, "SizeError", 50));
+        buffer.append('\n');
 
-        double pctl75 = CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 75);
-        rep.append("75th percentile: " + pctl75 + "\n");
+        buffer.append("75th percentile: ");
+        buffer.append(CartogramLayer.percentileForAttribute(
+                aProjectedMasterLayer, "SizeError", 75));
+        buffer.append('\n');
 
         // Compute the number of features between the 25th and 75th
         // percentile and the percentage.
@@ -1071,31 +1078,31 @@ public class Cartogram extends SwingWorker {
         Iterator<Feature> featIter = fcw.iterator();
         int nFeaturesInStdDev = 0;
         int nFeatures = fcw.size();
+        double value;
         while (featIter.hasNext()) {
             Feature feat = featIter.next();
 
-            double value = CartogramFeature.getAttributeAsDouble(feat,
-                    "SizeError");
+            value = CartogramFeature.getAttributeAsDouble(feat, "SizeError");
 
             if (value >= meanError - stdDev && value <= meanError + stdDev) {
                 nFeaturesInStdDev++;
             }
         }
 
-        double percFeaturesInStdDev = (double) nFeaturesInStdDev
-                / (double) nFeatures * 100;
+        buffer.append("Features with mean error +/- 1 standard deviation: ");
+        buffer.append(nFeaturesInStdDev);
+        buffer.append(" of ");
+        buffer.append(nFeatures);
+        buffer.append(" (");
+        buffer.append((int) Math.round((double) nFeaturesInStdDev
+                / (double) nFeatures * 100));
+        buffer.append("%)\n\n");
 
-        int pfint = (int) Math.round(percFeaturesInStdDev);
+        buffer.append("Computation time: ");
+        buffer.append((System.nanoTime() - iComputationStartTime) / 1000000000);
+        buffer.append(" seconds\n");
 
-        rep.append("Features with mean error +/- 1 standard deviation: "
-                + nFeaturesInStdDev + " of " + nFeatures + " (" + pfint
-                + "%)\n\n");
-
-        long estimatedTime = System.nanoTime() - iComputationStartTime;
-        estimatedTime /= 1000000000;
-        rep.append("Computation time: " + estimatedTime + " seconds\n");
-
-        iComputationReport = rep.toString();
+        iComputationReport = buffer.toString();
     }
 
     /**

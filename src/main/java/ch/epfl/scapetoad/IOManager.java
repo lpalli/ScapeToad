@@ -90,9 +90,7 @@ public class IOManager {
         }
 
         // Check the file type
-        String shpName = fileDialog.getFile();
-        if (shpName.endsWith(".shp") == false
-                && shpName.endsWith(".SHP") == false) {
+        if (fileDialog.getFile().toUpperCase().endsWith(".SHP") == false) {
             OpenLayerErrorDialog errorDialog = new OpenLayerErrorDialog();
             errorDialog.setModal(true);
             errorDialog.setVisible(true);
@@ -257,7 +255,7 @@ public class IOManager {
 
         int nlyrs = aLayers.length;
         if (nlyrs < 1) {
-            System.out.println("No layer available");
+            logger.warn("No layer available");
             return;
         }
 
@@ -537,8 +535,8 @@ public class IOManager {
 
         int coordcnt = 0;
         for (coordcnt = 0; coordcnt < ncoords; coordcnt++) {
-            double x = (aCoordinates[coordcnt].x - aEnveloppe.getMinX()) * aScaleFactor
-                    + aMinX;
+            double x = (aCoordinates[coordcnt].x - aEnveloppe.getMinX())
+                    * aScaleFactor + aMinX;
             double y = (aCoordinates[coordcnt].y - aEnveloppe.getMinY())
                     / aEnveloppe.getHeight();
             y = 1.0 - y;

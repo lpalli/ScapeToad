@@ -67,11 +67,9 @@ public class CartogramFeature {
         if (schema.hasAttribute(aAttrName)) {
             AttributeType type = schema.getAttributeType(aAttrName);
             if (type == AttributeType.DOUBLE) {
-                return ((Double) aFeature.getAttribute(aAttrName))
-                        .doubleValue();
+                return (Double) aFeature.getAttribute(aAttrName);
             } else if (type == AttributeType.INTEGER) {
-                return ((Integer) aFeature.getAttribute(aAttrName))
-                        .doubleValue();
+                return (Integer) aFeature.getAttribute(aAttrName);
             }
         }
 
@@ -90,10 +88,9 @@ public class CartogramFeature {
             String aAttrName, double aValue) {
         AttributeType type = aFeature.getSchema().getAttributeType(aAttrName);
         if (type == AttributeType.DOUBLE) {
-            aFeature.setAttribute(aAttrName, new Double(aValue));
+            aFeature.setAttribute(aAttrName, aValue);
         } else if (type == AttributeType.INTEGER) {
-            int intValue = (int) Math.round(aValue);
-            aFeature.setAttribute(aAttrName, new Integer(intValue));
+            aFeature.setAttribute(aAttrName, (int) Math.round(aValue));
         }
     }
 
@@ -116,100 +113,89 @@ public class CartogramFeature {
         Feature feature = aFeature.clone(true);
 
         if (type == "Point") {
-            Point pt = (Point) geometry;
-            double[] c = aGrid.projectPoint(pt.getX(), pt.getY());
-            Point pt2 = factory.createPoint(new Coordinate(c[0], c[1]));
-            feature.setGeometry(pt2);
+            Point point = (Point) geometry;
+            double[] coordinate = aGrid
+                    .projectPoint(point.getX(), point.getY());
+            feature.setGeometry(factory.createPoint(new Coordinate(
+                    coordinate[0], coordinate[1])));
         } else if (type == "LineString") {
-            LineString l1 = (LineString) geometry;
-            Coordinate[] cs = aGrid.projectCoordinates(l1.getCoordinates());
-            LineString l2 = factory.createLineString(cs);
-            feature.setGeometry(l2);
+            feature.setGeometry(factory.createLineString(aGrid
+                    .projectCoordinates(((LineString) geometry)
+                            .getCoordinates())));
         } else if (type == "LinearRing") {
-            LinearRing l1 = (LinearRing) geometry;
-            Coordinate[] cs = aGrid.projectCoordinates(l1.getCoordinates());
-            LinearRing l2 = factory.createLinearRing(cs);
-            feature.setGeometry(l2);
+            feature.setGeometry(factory.createLinearRing(aGrid
+                    .projectCoordinates(((LinearRing) geometry)
+                            .getCoordinates())));
         } else if (type == "MultiLineString") {
-            MultiLineString mls1 = (MultiLineString) geometry;
-            int ngeoms = mls1.getNumGeometries();
+            MultiLineString multiLine = (MultiLineString) geometry;
+            int ngeoms = multiLine.getNumGeometries();
             LineString[] lineStrings = new LineString[ngeoms];
-            for (int geomcnt = 0; geomcnt < ngeoms; geomcnt++) {
-                LineString l1 = (LineString) mls1.getGeometryN(geomcnt);
-                Coordinate[] cs = aGrid.projectCoordinates(l1.getCoordinates());
-                lineStrings[geomcnt] = factory.createLineString(cs);
+            for (int i = 0; i < ngeoms; i++) {
+                lineStrings[i] = factory.createLineString(aGrid
+                        .projectCoordinates(((LineString) multiLine
+                                .getGeometryN(i)).getCoordinates()));
             }
-            MultiLineString mls2 = factory.createMultiLineString(lineStrings);
-            feature.setGeometry(mls2);
+            feature.setGeometry(factory.createMultiLineString(lineStrings));
         } else if (type == "MultiPoint") {
-            MultiPoint mp1 = (MultiPoint) geometry;
-            int npts = mp1.getNumPoints();
+            MultiPoint multiPoint = (MultiPoint) geometry;
+            int npts = multiPoint.getNumPoints();
             Point[] points = new Point[npts];
-            for (int ptcnt = 0; ptcnt < npts; ptcnt++) {
-                Point pt = (Point) mp1.getGeometryN(ptcnt);
-                Coordinate c = aGrid.projectPointAsCoordinate(pt.getX(),
-                        pt.getY());
-                points[ptcnt] = factory.createPoint(c);
+            Point point;
+            for (int i = 0; i < npts; i++) {
+                point = (Point) multiPoint.getGeometryN(i);
+                points[i] = factory.createPoint(aGrid.projectPointAsCoordinate(
+                        point.getX(), point.getY()));
             }
-            MultiPoint mp2 = factory.createMultiPoint(points);
-            feature.setGeometry(mp2);
+            feature.setGeometry(factory.createMultiPoint(points));
         } else if (type == "Polygon") {
-            Polygon p1 = (Polygon) geometry;
-            Coordinate[] exteriorRingCoords = aGrid.projectCoordinates(p1
-                    .getExteriorRing().getCoordinates());
-            LinearRing exteriorRing = factory
-                    .createLinearRing(exteriorRingCoords);
+            Polygon polygon = (Polygon) geometry;
             LinearRing[] interiorRings = null;
-            int nrings = p1.getNumInteriorRing();
+            int nrings = polygon.getNumInteriorRing();
             if (nrings > 0) {
                 interiorRings = new LinearRing[nrings];
-                for (int ringcnt = 0; ringcnt < nrings; ringcnt++) {
-                    Coordinate[] interiorRingCoords = aGrid
-                            .projectCoordinates(p1.getInteriorRingN(ringcnt)
-                                    .getCoordinates());
-                    interiorRings[ringcnt] = factory
-                            .createLinearRing(interiorRingCoords);
+                for (int i = 0; i < nrings; i++) {
+                    interiorRings[i] = factory.createLinearRing(aGrid
+                            .projectCoordinates(polygon.getInteriorRingN(i)
+                                    .getCoordinates()));
                 }
             }
-            Polygon p2 = factory.createPolygon(exteriorRing, interiorRings);
-            if (p2 == null) {
+            polygon = factory.createPolygon(factory.createLinearRing(aGrid
+                    .projectCoordinates(polygon.getExteriorRing()
+                            .getCoordinates())), interiorRings);
+            if (polygon == null) {
                 logger.error("Polygon creation failed.");
             }
-            feature.setGeometry(p2);
+            feature.setGeometry(polygon);
         } else if (type == "MultiPolygon") {
-            MultiPolygon mp1 = (MultiPolygon) geometry;
-            int npolys = mp1.getNumGeometries();
-            Polygon[] polys = new Polygon[npolys];
-            for (int polycnt = 0; polycnt < npolys; polycnt++) {
-                Polygon p1 = (Polygon) mp1.getGeometryN(polycnt);
-                Coordinate[] exteriorRingCoords = aGrid.projectCoordinates(p1
-                        .getExteriorRing().getCoordinates());
-                LinearRing exteriorRing = factory
-                        .createLinearRing(exteriorRingCoords);
-                LinearRing[] interiorRings = null;
-                int nrings = p1.getNumInteriorRing();
+            MultiPolygon multiPolygon = (MultiPolygon) geometry;
+            int npolys = multiPolygon.getNumGeometries();
+            Polygon[] polygons = new Polygon[npolys];
+            Polygon polygon;
+            LinearRing[] interiorRings;
+            for (int i = 0; i < npolys; i++) {
+                polygon = (Polygon) multiPolygon.getGeometryN(i);
+                interiorRings = null;
+                int nrings = polygon.getNumInteriorRing();
                 if (nrings > 0) {
                     interiorRings = new LinearRing[nrings];
-                    for (int ringcnt = 0; ringcnt < nrings; ringcnt++) {
-                        Coordinate[] interiorRingCoords = aGrid
-                                .projectCoordinates(p1
-                                        .getInteriorRingN(ringcnt)
-                                        .getCoordinates());
-
-                        interiorRings[ringcnt] = factory
-                                .createLinearRing(interiorRingCoords);
+                    for (int j = 0; j < nrings; j++) {
+                        interiorRings[j] = factory.createLinearRing(aGrid
+                                .projectCoordinates(polygon.getInteriorRingN(j)
+                                        .getCoordinates()));
                     }
                 }
-                polys[polycnt] = factory.createPolygon(exteriorRing,
+                polygons[i] = factory.createPolygon(factory
+                        .createLinearRing(aGrid.projectCoordinates(polygon
+                                .getExteriorRing().getCoordinates())),
                         interiorRings);
             }
 
-            MultiPolygon mp2 = factory.createMultiPolygon(polys);
-            if (mp2 == null) {
+            multiPolygon = factory.createMultiPolygon(polygons);
+            if (multiPolygon == null) {
                 logger.error("Multi-polygon creation failed.");
             }
 
-            feature.setGeometry(mp2);
+            feature.setGeometry(multiPolygon);
         } else {
             logger.error("Unknown feature type");
         }
@@ -236,74 +222,59 @@ public class CartogramFeature {
         }
 
         if (type == "MultiLineString") {
-            MultiLineString mls = (MultiLineString) aGeometry;
-            int ngeoms = mls.getNumGeometries();
-            LineString[] lss = new LineString[ngeoms];
-            for (int lscnt = 0; lscnt < ngeoms; lscnt++) {
-                LineString ls = (LineString) mls.getGeometryN(lscnt);
-                lss[lscnt] = (LineString) CartogramFeature.regularizeGeometry(
-                        ls, aMaxLength);
+            MultiLineString multiLine = (MultiLineString) aGeometry;
+            int ngeoms = multiLine.getNumGeometries();
+            LineString[] linestrings = new LineString[ngeoms];
+            for (int i = 0; i < ngeoms; i++) {
+                linestrings[i] = (LineString) CartogramFeature
+                        .regularizeGeometry(multiLine.getGeometryN(i),
+                                aMaxLength);
             }
-            mls = factory.createMultiLineString(lss);
-            return mls;
+            return factory.createMultiLineString(linestrings);
         }
 
         if (type == "MultiPolygon") {
-            MultiPolygon mpoly = (MultiPolygon) aGeometry;
-            int ngeoms = mpoly.getNumGeometries();
-            Polygon[] polys = new Polygon[ngeoms];
-            for (int polycnt = 0; polycnt < ngeoms; polycnt++) {
-                Polygon poly = (Polygon) mpoly.getGeometryN(polycnt);
-                polys[polycnt] = (Polygon) CartogramFeature.regularizeGeometry(
-                        poly, aMaxLength);
+            MultiPolygon multiPolygon = (MultiPolygon) aGeometry;
+            int ngeoms = multiPolygon.getNumGeometries();
+            Polygon[] polygons = new Polygon[ngeoms];
+            for (int i = 0; i < ngeoms; i++) {
+                polygons[i] = (Polygon) CartogramFeature.regularizeGeometry(
+                        multiPolygon.getGeometryN(i), aMaxLength);
             }
-            mpoly = factory.createMultiPolygon(polys);
-            return mpoly;
+            return factory.createMultiPolygon(polygons);
         }
 
         if (type == "LineString") {
-            Coordinate[] cs1 = aGeometry.getCoordinates();
-            Coordinate[] cs2 = CartogramFeature.regularizeCoordinates(cs1,
-                    aMaxLength);
-
-            LineString ls = factory.createLineString(cs2);
-            return ls;
+            return factory.createLineString(CartogramFeature
+                    .regularizeCoordinates(aGeometry.getCoordinates(),
+                            aMaxLength));
         }
 
         if (type == "LinearRing") {
-            Coordinate[] cs1 = aGeometry.getCoordinates();
-            Coordinate[] cs2 = CartogramFeature.regularizeCoordinates(cs1,
-                    aMaxLength);
-
-            LinearRing lr = factory.createLinearRing(cs2);
-            return lr;
+            return factory.createLinearRing(CartogramFeature
+                    .regularizeCoordinates(aGeometry.getCoordinates(),
+                            aMaxLength));
         }
 
         if (type == "Polygon") {
-            Polygon p = (Polygon) aGeometry;
-            LineString shell = p.getExteriorRing();
-            Coordinate[] shellCoords = CartogramFeature.regularizeCoordinates(
-                    shell.getCoordinates(), aMaxLength);
-            LinearRing regShell = factory.createLinearRing(shellCoords);
+            Polygon polygon = (Polygon) aGeometry;
 
-            int nholes = p.getNumInteriorRing();
+            int nholes = polygon.getNumInteriorRing();
             LinearRing[] holes = null;
             if (nholes > 0) {
                 holes = new LinearRing[nholes];
 
-                for (int holecnt = 0; holecnt < nholes; holecnt++) {
-                    LineString hole = p.getInteriorRingN(holecnt);
-                    Coordinate[] holeCoords = CartogramFeature
-                            .regularizeCoordinates(hole.getCoordinates(),
-                                    aMaxLength);
-
-                    holes[holecnt] = factory.createLinearRing(holeCoords);
+                for (int i = 0; i < nholes; i++) {
+                    holes[i] = factory.createLinearRing(CartogramFeature
+                            .regularizeCoordinates(polygon.getInteriorRingN(i)
+                                    .getCoordinates(), aMaxLength));
                 }
             }
 
-            Polygon p2 = factory.createPolygon(regShell, holes);
-
-            return p2;
+            return factory.createPolygon(factory
+                    .createLinearRing(CartogramFeature.regularizeCoordinates(
+                            polygon.getExteriorRing().getCoordinates(),
+                            aMaxLength)), holes);
         }
 
         return null;
@@ -374,8 +345,8 @@ public class CartogramFeature {
         // Convert the vector holding all coordinates into an array.
         ncoords = newCoords.size();
         Coordinate[] newCoordsArray = new Coordinate[ncoords];
-        for (int coordcnt = 0; coordcnt < ncoords; coordcnt++) {
-            newCoordsArray[coordcnt] = newCoords.get(coordcnt);
+        for (int i = 0; i < ncoords; i++) {
+            newCoordsArray[i] = newCoords.get(i);
         }
 
         return newCoordsArray;

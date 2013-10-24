@@ -206,19 +206,19 @@ public class CartogramGrid {
         iCellSizeX = iEnvelope.getWidth() / (iGridSizeX - 1);
         iCellSizeY = iEnvelope.getHeight() / (iGridSizeY - 1);
 
-        double x = iEnvelope.getMinX();
+        double x;
         double y = iEnvelope.getMinY();
 
         // Create all nodes.
-        int i, j;
-        for (j = 0; j < iGridSizeY; j++) {
-            for (i = 0; i < iGridSizeX; i++) {
+        for (int j = 0; j < iGridSizeY; j++) {
+            x = iEnvelope.getMinX();
+
+            for (int i = 0; i < iGridSizeX; i++) {
                 iNodeX[i][j] = x;
                 iNodeY[i][j] = y;
                 x += iCellSizeX;
             }
 
-            x = iEnvelope.getMinX();
             y += iCellSizeY;
         }
     }
@@ -920,13 +920,6 @@ public class CartogramGrid {
         if (j >= iGridSizeY - 1) {
             j = iGridSizeY - 2;
         }
-
-        /*
-         * if (i < 0 || i >= (mGridSizeX-1) || j < 0 || j >= (mGridSizeY-1)) {
-         * System.out.println(
-         * "[CartogramGrid projectPoint] Coordinate outside bounds."); return
-         * null; }
-         */
 
         double ti = p1x - i;
         double tj = p1y - j;

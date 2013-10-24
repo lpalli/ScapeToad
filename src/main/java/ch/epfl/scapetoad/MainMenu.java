@@ -97,12 +97,10 @@ public class MainMenu extends JMenuBar {
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         fileMenu.add(iExportAsSvg);
 
-        // Add a quit menu if we are not on a Mac.
-        // (on a Mac, there is a default quit menu under the program name's
-        // menu).
+        // Add a quit menu if we are not on a Mac (on a Mac, there is a default
+        // quit menu under the program name's menu).
         if (System.getProperty("os.name").indexOf("Mac OS") == -1) {
-            JMenuItem sepMenu2 = new JMenuItem("-");
-            fileMenu.add(sepMenu2);
+            fileMenu.add(new JMenuItem("-"));
 
             // File > Quit
             JMenuItem menuFile_Quit = new JMenuItem("Quit ScapeToad");
@@ -114,7 +112,7 @@ public class MainMenu extends JMenuBar {
 
         add(fileMenu);
 
-        // Add the Help menu.
+        // Add the Help menu
         JMenu helpMenu = new JMenu("Help");
         JMenuItem menuHelp_Help = new JMenuItem("ScapeToad Help");
         menuHelp_Help.addActionListener(new ActionShowHelp());
@@ -124,25 +122,21 @@ public class MainMenu extends JMenuBar {
         JMenuItem sepMenu3 = new JMenuItem("-");
         helpMenu.add(sepMenu3);
 
+        // Add the About menu
         JMenuItem menuHelp_About = new JMenuItem("About...");
         menuHelp_About.addActionListener(new ActionShowAbout());
-
         helpMenu.add(menuHelp_About);
+
         add(helpMenu);
     }
 
     /**
-     * Enables/disables the menu items.
+     * Update the menu items.
      */
-    public void enableMenus() {
-        if (AppContext.layerManager.getLayers().size() > 0) {
-            iRemoveLayer.setEnabled(true);
-            iSaveLayer.setEnabled(true);
-            iExportAsSvg.setEnabled(true);
-        } else {
-            iRemoveLayer.setEnabled(false);
-            iSaveLayer.setEnabled(false);
-            iExportAsSvg.setEnabled(false);
-        }
+    public void update() {
+        boolean layers = AppContext.layerManager.getLayers().size() > 0;
+        iRemoveLayer.setEnabled(layers);
+        iSaveLayer.setEnabled(layers);
+        iExportAsSvg.setEnabled(layers);
     }
 }

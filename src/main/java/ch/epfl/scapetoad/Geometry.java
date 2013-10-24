@@ -38,59 +38,6 @@ public class Geometry {
     private static Log logger = LogFactory.getLog(Geometry.class);
 
     /**
-     * Computes the area of the triangle defined by the points A, B and C.
-     * 
-     * @param aAx
-     *            the x coordinate of point A
-     * @param aAy
-     *            the y coordinate of point A
-     * @param aBx
-     *            the x coordinate of point B
-     * @param aBy
-     *            the y coordinate of point B
-     * @param aCx
-     *            the x coordinate of point C
-     * @param aCy
-     *            the y coordinate of point C
-     * @return the area of the triangle ABC
-     */
-    private static double areaOfTriangle(double aAx, double aAy, double aBx,
-            double aBy, double aCx, double aCy) {
-        return Math.abs(0.5 * ((aAx - aCx) * (aBy - aCy) - (aAy - aCy)
-                * (aBx - aCx)));
-    }
-
-    /**
-     * Computes the area of an irregular quadrangle defined by the points A, B,
-     * C and D. The four points must be following points in the quadrangle
-     * (clockwise or counter-clockwise). Therefore, point A can not be a
-     * neighbor of point C.
-     * 
-     * @param aAx
-     *            the x coordinate of point A
-     * @param aAy
-     *            the y coordinate of point A
-     * @param aBx
-     *            the x coordinate of point B
-     * @param aBy
-     *            the y coordinate of point B
-     * @param aCx
-     *            the x coordinate of point C
-     * @param aCy
-     *            the y coordinate of point C
-     * @param aDx
-     *            the x coordinate of point D
-     * @param aDy
-     *            the y coordinate of point D
-     * @return the area of the quadrangle ABCD
-     */
-    public static double areaOfQuadrangle(double aAx, double aAy, double aBx,
-            double aBy, double aCx, double aCy, double aDx, double aDy) {
-        return Geometry.areaOfTriangle(aAx, aAy, aBx, aBy, aCx, aCy)
-                + Geometry.areaOfTriangle(aAx, aAy, aCx, aCy, aDx, aDy);
-    }
-
-    /**
      * Computes the intersection of two segments AB and CD.
      * 
      * @param aAx
