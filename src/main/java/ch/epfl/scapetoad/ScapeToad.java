@@ -92,10 +92,12 @@ public class ScapeToad {
         Log logger = LogFactory.getLog(ScapeToad.class);
         logger.debug("Starting...");
 
-        // Set the Look & Feel properties.
-        // This is specific for MacOS X environments.
-        // On other environments, this property does not have any effect.
+        // Set the Look & Feel and application name for for MacOS X
+        // environments, on other environments, this properties does not have
+        // any effect
         System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                "ScapeToad");
 
         // Create a new JUMP workbench.
         ImageIcon icon = new ImageIcon("resources/scapetoad-icon-small.gif");
