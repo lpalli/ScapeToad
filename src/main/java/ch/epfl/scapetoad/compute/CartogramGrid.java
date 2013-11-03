@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -36,6 +36,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.workbench.model.Layer;
+
+import ch.epfl.scapetoad.ICartogramStatus;
 
 /**
  * The cartogram grid class represents the grid which is overlaid on all the

@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;

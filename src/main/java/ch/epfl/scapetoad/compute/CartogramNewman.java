@@ -6,13 +6,15 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+
+import ch.epfl.scapetoad.ICartogramStatus;
 
 import edu.emory.mathcs.jtransforms.dct.DoubleDCT_2D;
 

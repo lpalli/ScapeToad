@@ -74,6 +74,8 @@ import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
 import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.workbench.model.Layer;
 
+import ch.epfl.scapetoad.compute.Cartogram;
+
 /**
  * The cartogram wizard guiding the user through the process of cartogram
  * creation.
@@ -2263,7 +2265,8 @@ class CartogramWizardComputeAction extends AbstractAction {
         CartogramWorker worker = new CartogramWorker(iCartogramWizard);
         Cartogram cartogram = worker.getCartogram();
         cartogram.setLayerManager(AppContext.layerManager);
-        cartogram.setMasterLayer(iCartogramWizard.getCartogramLayerName());
+        cartogram.setMasterLayer(AppContext.layerManager
+                .getLayer(iCartogramWizard.getCartogramLayerName()));
         cartogram.setMasterAttribute(iCartogramWizard
                 .getCartogramAttributeName());
         cartogram.setMasterAttributeIsDensityValue(isDensityValue);

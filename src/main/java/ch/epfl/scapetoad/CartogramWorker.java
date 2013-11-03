@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jump.workbench.model.Layer;
 
+import ch.epfl.scapetoad.compute.Cartogram;
+
 /**
  * The cartogram worker class is the computation manager class. It is a subclass
  * of the SwingWorker class. It has methods for setting all the parameters and

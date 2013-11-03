@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import java.util.AbstractList;
 import java.util.ArrayList;

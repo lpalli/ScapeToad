@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -46,6 +46,8 @@ import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
+
+import ch.epfl.scapetoad.ICartogramStatus;
 
 /**
  * The cartogram class is the main computation class. It is a subclass of the
@@ -80,7 +82,7 @@ public class Cartogram {
     /**
      * The name of the master layer.
      */
-    private String iMasterLayer = null;
+    private Layer iMasterLayer = null;
 
     /**
      * The name of the master attribute.
@@ -260,17 +262,16 @@ public class Cartogram {
             iStatus.updateRunningStatus(50,
                     "Check the cartogram attribute values...", "");
 
-            Layer masterLayer = AppContext.layerManager.getLayer(iMasterLayer);
-            CartogramLayer.cleanAttributeValues(masterLayer, iMasterAttribute);
+            CartogramLayer.cleanAttributeValues(iMasterLayer, iMasterAttribute);
 
             // Replace the missing values with the layer mean value.
             if (iMissingValue != "" && iMissingValue != null) {
-                double mean = CartogramLayer.meanValueForAttribute(masterLayer,
-                        iMasterAttribute);
+                double mean = CartogramLayer.meanValueForAttribute(
+                        iMasterLayer, iMasterAttribute);
 
                 Double missVal = new Double(iMissingValue);
 
-                CartogramLayer.replaceAttributeValue(masterLayer,
+                CartogramLayer.replaceAttributeValue(iMasterLayer,
                         iMasterAttribute, missVal.doubleValue(), mean);
             }
 
@@ -280,7 +281,7 @@ public class Cartogram {
             iStatus.updateRunningStatus(100,
                     "Computing the density for the cartogram grid...", "");
 
-            iGrid.computeOriginalDensityValuesWithLayer(masterLayer,
+            iGrid.computeOriginalDensityValuesWithLayer(iMasterLayer,
                     iMasterAttribute, iMasterAttributeIsDensityValue, iStatus);
 
             if (Thread.interrupted()) {
@@ -413,6 +414,10 @@ public class Cartogram {
             return;
         }
 
+        // Produce the computation report
+        produceComputationReport(iProjectedMasterLayer, aSimultaneousLayers,
+                aConstrainedDeformationLayers);
+
         // *** HIDE ALL LAYERS ALREADY PRESENT ***
         @SuppressWarnings("unchecked")
         List<Layer> layerList = iLayerManager.getLayers();
@@ -439,10 +444,6 @@ public class Cartogram {
         if (iLegendLayer != null) {
             iLayerManager.addLayer(category, iLegendLayer);
         }
-
-        // *** PRODUCE THE COMPUTATION REPORT ***
-        produceComputationReport(iProjectedMasterLayer, aSimultaneousLayers,
-                aConstrainedDeformationLayers);
 
         // *** CREATE A THEMATIC MAP USING THE SIZE ERROR ATTRIBUTE ***
 
@@ -492,13 +493,13 @@ public class Cartogram {
     }
 
     /**
-     * Sets the name of the cartogram master layer.
+     * Sets the cartogram master layer.
      * 
-     * @param aLayerName
-     *            the master layer name
+     * @param aLayer
+     *            the master layer
      */
-    public void setMasterLayer(String aLayerName) {
-        iMasterLayer = aLayerName;
+    public void setMasterLayer(Layer aLayer) {
+        iMasterLayer = aLayer;
     }
 
     /**
@@ -571,8 +572,8 @@ public class Cartogram {
      */
     private void updateEnvelope() {
         // Setting the initial envelope using the master layer.
-        Envelope envelope = iLayerManager.getLayer(iMasterLayer)
-                .getFeatureCollectionWrapper().getEnvelope();
+        Envelope envelope = iMasterLayer.getFeatureCollectionWrapper()
+                .getEnvelope();
         iEnvelope = new Envelope(envelope.getMinX(), envelope.getMaxX(),
                 envelope.getMinY(), envelope.getMaxY());
 
@@ -645,10 +646,9 @@ public class Cartogram {
         iStatus.updateRunningStatus(750, "Projecting the layers...",
                 "Layer 1 of " + nlyrs);
 
-        Layer masterLayer = iLayerManager.getLayer(iMasterLayer);
-        CartogramLayer.regularizeLayer(masterLayer, iMaximumSegmentLength);
+        CartogramLayer.regularizeLayer(iMasterLayer, iMaximumSegmentLength);
         iProjectedMasterLayer = CartogramLayer.projectLayerWithGrid(
-                masterLayer, iGrid);
+                iMasterLayer, iGrid);
 
         layers[0] = iProjectedMasterLayer;
 
@@ -828,15 +828,12 @@ public class Cartogram {
      * Creates an optional legend layer.
      */
     private void createLegendLayer() {
-        // The master layer.
-        Layer masterLayer = iLayerManager.getLayer(iMasterLayer);
-
-        double distanceBetweenSymbols = masterLayer
+        double distanceBetweenSymbols = iMasterLayer
                 .getFeatureCollectionWrapper().getEnvelope().getWidth() / 10;
 
         // Estimate legend values if there are none.
 
-        double attrMax = CartogramLayer.maxValueForAttribute(masterLayer,
+        double attrMax = CartogramLayer.maxValueForAttribute(iMasterLayer,
                 iMasterAttribute);
 
         if (iLegendValues == null) {
@@ -870,8 +867,8 @@ public class Cartogram {
 
         // CREATE THE FEATURES FOR THE LEGEND LAYER.
         int nvals = iLegendValues.length;
-        double totalArea = CartogramLayer.totalArea(masterLayer);
-        double valuesSum = CartogramLayer.sumForAttribute(masterLayer,
+        double totalArea = CartogramLayer.totalArea(iMasterLayer);
+        double valuesSum = CartogramLayer.sumForAttribute(iMasterLayer,
                 iMasterAttribute);
         double x = iEnvelope.getMinX();
         double y = iEnvelope.getMinY();
@@ -945,7 +942,7 @@ public class Cartogram {
 
         buffer.append("CARTOGRAM PARAMETERS:\n");
         buffer.append("Cartogram layer: ");
-        buffer.append(iMasterLayer);
+        buffer.append(iMasterLayer.getName());
         buffer.append('\n');
         buffer.append("Cartogram attribute: ");
         buffer.append(iMasterAttribute);
@@ -975,24 +972,23 @@ public class Cartogram {
         buffer.append("\n\n");
 
         buffer.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
-        Layer masterLayer = iLayerManager.getLayer(iMasterLayer);
         buffer.append("Number of features: ");
-        buffer.append(masterLayer.getFeatureCollectionWrapper().getFeatures()
+        buffer.append(iMasterLayer.getFeatureCollectionWrapper().getFeatures()
                 .size());
         buffer.append('\n');
 
         buffer.append("Attribute mean value: ");
-        buffer.append(CartogramLayer.meanValueForAttribute(masterLayer,
+        buffer.append(CartogramLayer.meanValueForAttribute(iMasterLayer,
                 iMasterAttribute));
         buffer.append('\n');
 
         buffer.append("Attribute minimum value: ");
-        buffer.append(CartogramLayer.minValueForAttribute(masterLayer,
+        buffer.append(CartogramLayer.minValueForAttribute(iMasterLayer,
                 iMasterAttribute));
         buffer.append('\n');
 
         buffer.append("Attribute maximum value: ");
-        buffer.append(CartogramLayer.maxValueForAttribute(masterLayer,
+        buffer.append(CartogramLayer.maxValueForAttribute(iMasterLayer,
                 iMasterAttribute));
         buffer.append("\n\n");
 
@@ -1021,7 +1017,7 @@ public class Cartogram {
 
         // Compute the cartogram error
         double meanError = CartogramLayer.computeCartogramSizeError(
-                aProjectedMasterLayer, iMasterAttribute, masterLayer,
+                aProjectedMasterLayer, iMasterAttribute, iMasterLayer,
                 "SizeError");
 
         buffer.append("CARTOGRAM ERROR\n");
@@ -1119,10 +1115,6 @@ public class Cartogram {
         if (envArea <= 0.0) {
             return 500.0;
         }
-        Layer layer = iLayerManager.getLayer(iMasterLayer);
-        if (layer == null) {
-            return 500.0;
-        }
 
         // Compute the edge length of the square having the same area as
         // the cartogram envelope.
@@ -1130,8 +1122,8 @@ public class Cartogram {
         // 1/10 of the length per feature is our estimate for the maximum
         // segment length.
         return Math.sqrt(envArea)
-                / Math.sqrt(layer.getFeatureCollectionWrapper().getFeatures()
-                        .size()) / 10;
+                / Math.sqrt(iMasterLayer.getFeatureCollectionWrapper()
+                        .getFeatures().size()) / 10;
     }
 
     /**
