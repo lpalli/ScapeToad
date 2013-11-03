@@ -187,7 +187,7 @@ public class Cartogram extends SwingWorker {
     /**
      * The layer containing the cartogram legend.
      */
-    private Layer mLegendLayer = null;
+    private Layer iLegendLayer = null;
 
     /**
      * The computation report.
@@ -449,8 +449,8 @@ public class Cartogram extends SwingWorker {
             iLayerManager.addLayer(category, iDeformationGrid);
         }
 
-        if (mLegendLayer != null) {
-            iLayerManager.addLayer(category, mLegendLayer);
+        if (iLegendLayer != null) {
+            iLayerManager.addLayer(category, iLegendLayer);
         }
 
         // *** PRODUCE THE COMPUTATION REPORT ***
@@ -938,8 +938,8 @@ public class Cartogram extends SwingWorker {
 
         // Create the layer.
         iLayerManager.setFiringEvents(false);
-        mLegendLayer = new Layer("Legend", Color.GREEN, fd, iLayerManager);
-        LabelStyle legendLabels = mLegendLayer.getLabelStyle();
+        iLegendLayer = new Layer("Legend", Color.GREEN, fd, iLayerManager);
+        LabelStyle legendLabels = iLegendLayer.getLabelStyle();
         legendLabels.setAttribute("VALUE");
         legendLabels.setEnabled(true);
         legendLabels.setFont(new Font(null, Font.PLAIN, 10));
