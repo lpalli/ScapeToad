@@ -21,19 +21,16 @@
 
 package ch.epfl.scapetoad.compute;
 
+import java.awt.Color;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.zip.DataFormatException;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jump.feature.AttributeType;
-import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
-import com.vividsolutions.jump.feature.FeatureDataset;
-import com.vividsolutions.jump.feature.FeatureSchema;
-import com.vividsolutions.jump.workbench.model.Layer;
 
 /**
  *
@@ -41,132 +38,171 @@ import com.vividsolutions.jump.workbench.model.Layer;
 public class CartogramLayer {
 
     /**
-     * Adds a new attribute to an existing layer.
-     * 
-     * @param lyr
-     *            the layer to which we should add the new attribute.
-     * @param name
-     *            the name of the new attribute.
-     * @param type
-     *            the type of the new attribute.
+     * The name.
      */
-    public static void addAttribute(Layer lyr, String name, AttributeType type) {
+    private String iName;
 
-        // Get the FeatureSchema.
-        FeatureCollectionWrapper fcw = lyr.getFeatureCollectionWrapper();
-        FeatureSchema fs = CartogramLayer.copyFeatureSchema(fcw
-                .getFeatureSchema());
+    /**
+     * The default fill color.
+     */
+    private Color iColor;
 
-        // If there is already an attribute with the given name, don't add it.
-        if (fs.hasAttribute(name)) {
-            return;
+    /**
+     * The attributes.
+     */
+    @SuppressWarnings("rawtypes")
+    private Map<String, Class> iAttributes;
+
+    /**
+     * The features.
+     */
+    private List<CartogramFeature> iFeatures;
+
+    /**
+     * Constructor.
+     * 
+     * @param aName
+     *            the layer name
+     * @param aColor
+     *            the default fill color
+     * @param aAttributes
+     *            the attributes
+     * @param aFeatures
+     *            the features
+     */
+    public CartogramLayer(String aName, Color aColor,
+            @SuppressWarnings("rawtypes")
+            Map<String, Class> aAttributes, List<CartogramFeature> aFeatures) {
+        iName = aName;
+        iColor = aColor;
+        iAttributes = aAttributes;
+        iFeatures = aFeatures;
+    }
+
+    /**
+     * Constructor using a base layer with new features.
+     * 
+     * @param aLayer
+     *            the base layer
+     * @param aFeatires
+     *            the new features
+     */
+    public CartogramLayer(CartogramLayer aLayer,
+            List<CartogramFeature> aFeatires) {
+        iName = aLayer.iName;
+        iColor = aLayer.iColor;
+        iAttributes = aLayer.iAttributes;
+        iFeatures = aFeatires;
+    }
+
+    /**
+     * Returns the features.
+     * 
+     * @return the features
+     */
+    public List<CartogramFeature> getFeatures() {
+        return iFeatures;
+    }
+
+    /**
+     * Returns the envelope.
+     * 
+     * @return the envelope
+     */
+    public Envelope getEnvelope() {
+        Envelope envelope = new Envelope();
+        for (CartogramFeature feature : iFeatures) {
+            envelope.expandToInclude(feature.getGeometry()
+                    .getEnvelopeInternal());
         }
+        return envelope;
+    }
 
-        fs.addAttribute(name, type);
-        FeatureDataset fd = new FeatureDataset(fs);
+    /**
+     * Returns the name.
+     * 
+     * @return the name
+     */
+    public String getName() {
+        return iName;
+    }
 
-        // After updating the FeatureSchema, we need to create a bigger
-        // array for each Feature where the attribute values can be stored.
-        int nattrs = fs.getAttributeCount();
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featiter = fcw.iterator();
-        while (featiter.hasNext()) {
-            Feature feat = featiter.next();
-            feat.setSchema(fs);
-            Object[] newAttributes = new Object[nattrs];
-            Object[] oldAttributes = feat.getAttributes();
-            for (int attrcnt = 0; attrcnt < oldAttributes.length; attrcnt++) {
-                newAttributes[attrcnt] = oldAttributes[attrcnt];
-            }
-            feat.setAttributes(newAttributes);
+    /**
+     * Returns the default fill color.
+     * 
+     * @return the color
+     */
+    public Color getColor() {
+        return iColor;
+    }
 
-            fd.add(feat);
-        }
-
-        lyr.setFeatureCollection(fd);
-
-    } // CartogramLayer.addAttribute
+    /**
+     * Returns the attributes.
+     * 
+     * @return the attributes
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<String, Class> getAttributes() {
+        return iAttributes;
+    }
 
     /**
      * Adds a new attribute containing the density value for a given attribute.
      * We check at the same time if there are some values bigger than 0. If not,
      * we raise an exception as we cannot compute a cartogram on a 0 surface.
      * 
-     * @param layer
-     *            the layer
-     * @param populationAttr
+     * @param aPopulationAttr
      *            the name of the (existing) attribute for which we shall
      *            compute the density.
-     * @param densityAttr
+     * @param aDensityAttr
      *            the name of the new density attribute.
      * @throws DataFormatException
      *             when the data format is wrong
      */
-    public static void addDensityAttribute(Layer layer, String populationAttr,
-            String densityAttr) throws DataFormatException {
+    public void addDensityAttribute(String aPopulationAttr, String aDensityAttr)
+            throws DataFormatException {
+        // Add the attribute metadata
+        iAttributes.put(aDensityAttr, Double.class);
 
         boolean allValuesAreZero = true;
+        double geomArea;
+        double attrValue;
+        double density;
+        for (CartogramFeature feature : iFeatures) {
+            geomArea = feature.getGeometry().getArea();
+            attrValue = feature.getAttributeAsDouble(aPopulationAttr);
 
-        CartogramLayer.addAttribute(layer, densityAttr, AttributeType.DOUBLE);
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
-            double geomArea = geom.getArea();
-            double attrValue = CartogramFeature.getAttributeAsDouble(feat,
-                    populationAttr);
-
-            double density = 0.0;
+            density = 0.0;
             if (geomArea > 0 && attrValue > 0) {
                 density = attrValue / geomArea;
                 allValuesAreZero = false;
             }
 
-            feat.setAttribute(densityAttr, new Double(density));
+            feature.setAttribute(aDensityAttr, density);
         }
 
         if (allValuesAreZero) {
             throw new DataFormatException(
-                    "All values in the attribute '"
-                            + populationAttr
-                            + "' of layer '"
-                            + layer.getName()
-                            + "' \n"
-                            + "are zero.\n\n"
-                            + "This might be an error related to the underlying JUMP framework.\n\n"
-                            + "Please check your layer with a GIS software such as: \n"
-                            + "- QuantumGIS (www.qgis.org) or\n"
-                            + "- OpenJUMP (www.openjump.org).");
+                    String.format(
+                            "All values in the attribute '%1$s' of layer '%2$s' \nare zero.\n\nThis might be an error related to the underlying JUMP framework.\n\nPlease check your layer with a GIS software such as: \n- QuantumGIS (www.qgis.org) or\n- OpenJUMP (www.openjump.org).",
+                            aPopulationAttr, getName()));
         }
-
-    } // CartogramLayer.addDensityAttribute
+    }
 
     /**
      * Computes the mean value for the given attribute weighted by the feature
      * area.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the mean density
      */
-    public static double meanDensityWithAttribute(Layer layer, String attrName) {
-        double totalArea = CartogramLayer.totalArea(layer);
+    public double meanDensityWithAttribute(String aAttrName) {
+        double totalArea = totalArea();
         double meanDensity = 0.0;
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
-            double geomArea = geom.getArea();
-            double attrValue = CartogramFeature.getAttributeAsDouble(feat,
-                    attrName);
-            meanDensity += geomArea / totalArea * attrValue;
+        for (CartogramFeature feature : iFeatures) {
+            meanDensity += feature.getGeometry().getArea() / totalArea
+                    * feature.getAttributeAsDouble(aAttrName);
         }
         return meanDensity;
     }
@@ -174,391 +210,255 @@ public class CartogramLayer {
     /**
      * Returns the mean value for the given attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the mean value
      */
-    public static double meanValueForAttribute(Layer layer, String attrName) {
-
+    public double meanValueForAttribute(String aAttrName) {
         int nobj = 0;
         double meanValue = 0.0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
-            meanValue += val;
+        for (CartogramFeature feature : iFeatures) {
+            meanValue += feature.getAttributeAsDouble(aAttrName);
             nobj++;
         }
-
-        meanValue = meanValue / nobj;
-
-        return meanValue;
-
+        return meanValue / nobj;
     }
 
     /**
      * Returns the minimum value for the given attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the minimum value
      */
-    public static double minValueForAttribute(Layer layer, String attrName) {
-
-        double minValue = 0.0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        if (featIter.hasNext() == false) {
-            return 0.0;
-        }
-
-        Feature feat = featIter.next();
-        minValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
-
-        while (featIter.hasNext()) {
-            feat = featIter.next();
-            double attrValue = CartogramFeature.getAttributeAsDouble(feat,
-                    attrName);
-
+    public double minValueForAttribute(String aAttrName) {
+        double minValue = Double.MAX_VALUE;
+        double attrValue;
+        for (CartogramFeature feature : iFeatures) {
+            attrValue = feature.getAttributeAsDouble(aAttrName);
             if (attrValue < minValue) {
                 minValue = attrValue;
             }
         }
 
+        if (minValue == Double.MAX_VALUE) {
+            return 0.0;
+        }
         return minValue;
-
     }
 
     /**
      * Returns the maximum value for the given attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the maximum value
      */
-    public static double maxValueForAttribute(Layer layer, String attrName) {
-
-        double maxValue = 0.0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        if (featIter.hasNext() == false) {
-            return 0.0;
-        }
-
-        Feature feat = featIter.next();
-        maxValue = CartogramFeature.getAttributeAsDouble(feat, attrName);
-
-        while (featIter.hasNext()) {
-            feat = featIter.next();
-            double attrValue = CartogramFeature.getAttributeAsDouble(feat,
-                    attrName);
-
+    public double maxValueForAttribute(String aAttrName) {
+        double maxValue = Double.MIN_VALUE;
+        double attrValue;
+        for (CartogramFeature feature : iFeatures) {
+            attrValue = feature.getAttributeAsDouble(aAttrName);
             if (attrValue > maxValue) {
                 maxValue = attrValue;
             }
         }
 
+        if (maxValue == Double.MIN_VALUE) {
+            return 0.0;
+        }
         return maxValue;
-
     }
 
     /**
      * Computes the sum of the provided attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the sum
      */
-    public static double sumForAttribute(Layer layer, String attrName) {
+    public double sumForAttribute(String aAttrName) {
         double sum = 0.0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            sum += CartogramFeature.getAttributeAsDouble(feat, attrName);
+        for (CartogramFeature feature : iFeatures) {
+            sum += feature.getAttributeAsDouble(aAttrName);
         }
-
         return sum;
-
     }
 
     /**
      * Computes the variance of the provided attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the variance
      */
-    public static double varianceForAttribute(Layer layer, String attrName) {
-        double mean = CartogramLayer.meanValueForAttribute(layer, attrName);
+    public double varianceForAttribute(String aAttrName) {
+        double mean = meanValueForAttribute(aAttrName);
         double diffSum = 0.0;
         double nFeat = 0;
 
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
+        double val;
+        for (CartogramFeature feature : iFeatures) {
+            val = feature.getAttributeAsDouble(aAttrName);
             diffSum += (val - mean) * (val - mean);
             nFeat += 1.0;
         }
 
-        double var = diffSum / nFeat;
-        return var;
-
-    } // CartogramLayer.varianceForAttribute
+        return diffSum / nFeat;
+    }
 
     /**
      * Computes the standard deviation of the provided attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      * @return the standard deviation
      */
-    public static double standardDeviationForAttribute(Layer layer,
-            String attrName) {
-        double variance = CartogramLayer.varianceForAttribute(layer, attrName);
-        double stdDev = Math.sqrt(variance);
-        return stdDev;
-
-    } // CartogramLayer.standardDeviationForAttribute
+    public double standardDeviationForAttribute(String aAttrName) {
+        return Math.sqrt(varianceForAttribute(aAttrName));
+    }
 
     /**
      * Returns the n-th percentile of the provided attribute.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
-     * @param n
-     *            the percentile, must be between 0 and 100.
+     * @param aPercentile
+     *            the percentile, must be between 0 and 100
      * @return the percentile
      */
-    public static double percentileForAttribute(Layer layer, String attrName,
-            int n) {
-
-        double dblN = n;
-        if (n < 0) {
+    public double percentileForAttribute(String aAttrName, int aPercentile) {
+        double dblN = aPercentile;
+        if (aPercentile < 0) {
             dblN = 0;
         }
-        if (n > 100) {
+        if (aPercentile > 100) {
             dblN = 100;
         }
 
-        // Create a new TreeSet and store the attribute values inside.
+        // Create a new TreeSet and store the attribute values inside
         TreeSet<Double> set = new TreeSet<Double>();
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
-            set.add(new Double(val));
+        for (CartogramFeature feature : iFeatures) {
+            set.add(feature.getAttributeAsDouble(aAttrName));
         }
 
-        // Get the number of features.
+        // Get the number of features
         int nfeat = set.size();
 
-        // Create a Vector from the TreeSet.
+        // Create a Vector from the TreeSet
         AbstractList<Double> attrVector = new ArrayList<Double>(set);
 
-        // Get the indexes of the bounding features.
+        // Get the indexes of the bounding features
         double dblIndex = dblN / 100 * nfeat;
         int lowerIndex = Math.round((float) Math.floor(dblIndex));
         int upperIndex = Math.round((float) Math.ceil(dblIndex));
 
         if (lowerIndex == upperIndex) {
-            Double pval = attrVector.get(lowerIndex);
-            return pval.doubleValue();
+            return attrVector.get(lowerIndex);
         }
 
         double lowerPctl = (double) lowerIndex / (double) nfeat * 100;
-        Double lowerValueDbl = attrVector.get(lowerIndex);
-        double lowerValue = lowerValueDbl.doubleValue();
+        double lowerValue = attrVector.get(lowerIndex);
         double upperPctl = (double) upperIndex / (double) nfeat * 100;
-        Double upperValueDbl = attrVector.get(upperIndex);
-        double upperValue = upperValueDbl.doubleValue();
+        double upperValue = attrVector.get(upperIndex);
 
         double scalingFactor = 1.0;
         if (upperPctl - lowerPctl > 0) {
             scalingFactor = (dblN - lowerPctl) / (upperPctl - lowerPctl);
         }
 
-        double percentileValue = scalingFactor * (upperValue - lowerValue)
-                + lowerValue;
-
-        return percentileValue;
-
-    } // CartogramLayer.percentileForAttribute
+        return scalingFactor * (upperValue - lowerValue) + lowerValue;
+    }
 
     /**
      * Replaces a double attribute value with another.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
-     * @param oldValue
+     * @param aOldValue
      *            the old value
-     * @param newValue
+     * @param aNewValue
      *            the new value
      */
-    public static void replaceAttributeValue(Layer layer, String attrName,
-            double oldValue, double newValue) {
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            double val = CartogramFeature.getAttributeAsDouble(feat, attrName);
-            if (val == oldValue) {
-                CartogramFeature.setDoubleAttributeValue(feat, attrName,
-                        newValue);
+    public void replaceAttributeValue(String aAttrName, double aOldValue,
+            double aNewValue) {
+        double value;
+        for (CartogramFeature feature : iFeatures) {
+            value = feature.getAttributeAsDouble(aAttrName);
+            if (value == aOldValue) {
+                feature.setAttribute(aAttrName, aNewValue);
             }
         }
-
-    } // CartogramLayer.replaceAttributeValue
+    }
 
     /**
      * Computes the total area of all features in this layer.
      * 
-     * @param layer
-     *            the layer
      * @return the total area
      */
-    public static double totalArea(Layer layer) {
-
+    public double totalArea() {
         double totalArea = 0.0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
-            totalArea += geom.getArea();
+        for (CartogramFeature feature : iFeatures) {
+            totalArea += feature.getGeometry().getArea();
         }
-
         return totalArea;
-
-    } // CartogramLayer.totalArea
+    }
 
     /**
      * Computes the contour of this layer.
      * 
-     * @param layer
-     *            the layer for which we should compute the layer.
-     * @return the contour as a Geometry.
+     * @return the contour as a Geometry
      */
-    public static Geometry contour(Layer layer) {
-
+    public Geometry contour() {
         Geometry contour = null;
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = layer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
+        Geometry geometry;
+        for (CartogramFeature feature : iFeatures) {
+            geometry = feature.getGeometry();
             if (contour == null) {
-                contour = geom;
+                contour = geometry;
             } else {
-                contour = contour.union(geom);
+                contour = contour.union(geometry);
             }
         }
-
         return contour;
-
-    } // CartogramLayer.contour
+    }
 
     /**
      * Regularizes a layer. This means the length of all line segments does not
      * exceed a given value. In the case of a too long line segment, the line is
      * repeatedly divided in two until the length is less than the given value.
      * 
-     * @param lyr
-     *            the layer to regularize.
-     * @param maxlen
-     *            the maximum length of the line segments.
+     * @param aMaxlen
+     *            the maximum length of the line segments
      */
-    public static void regularizeLayer(Layer lyr, double maxlen) {
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = lyr.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
-            Geometry regGeom = CartogramFeature
-                    .regularizeGeometry(geom, maxlen);
-
-            feat.setGeometry(regGeom);
+    public void regularizeLayer(double aMaxlen) {
+        for (CartogramFeature feature : iFeatures) {
+            feature.regularizeGeometry(aMaxlen);
         }
-
-    } // CartogramLayer.regularizeLayer
+    }
 
     /**
      * Projects a layer using a cartogram grid. Returns the projected layer.
      * 
-     * @param lyr
-     *            the layer
-     * @param grid
+     * @param aGrid
      *            the grid
      * @return the projected layer
      */
-    public static Layer projectLayerWithGrid(Layer lyr, CartogramGrid grid) {
+    public CartogramLayer projectLayerWithGrid(CartogramGrid aGrid) {
+        List<CartogramFeature> featires = new ArrayList<CartogramFeature>(
+                iFeatures.size());
+        // Project each Feature one by one
+        for (CartogramFeature feature : iFeatures) {
+            feature = feature.projectFeatureWithGrid(aGrid);
 
-        // Create a new FeatureDataset for storing our projected features.
-        FeatureSchema fs = lyr.getFeatureCollectionWrapper().getFeatureSchema();
-
-        // Make a copy of the FeatureSchema.
-        FeatureSchema fs2 = (FeatureSchema) fs.clone();
-        FeatureDataset fd = new FeatureDataset(fs2);
-
-        // Project each Feature one by one.
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = lyr.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Feature projFeat = CartogramFeature.projectFeatureWithGrid(feat,
-                    grid);
-
-            if (projFeat != null) {
-                projFeat.setSchema(fs2);
-                fd.add(projFeat);
+            if (feature != null) {
+                featires.add(feature);
             }
         }
 
-        // Create a layer with the FeatureDataset.
-        Layer projectedLayer = new Layer(lyr.getName(), lyr.getBasicStyle()
-                .getFillColor(), fd, lyr.getLayerManager());
-
-        return projectedLayer;
-
-    } // CartogramLayer.projectLayerWithGrid
+        // Create a layer with the FeatureDataset
+        return new CartogramLayer(this, featires);
+    }
 
     /**
      * Computes the cartogram size error and stores it in the layer's attribute
@@ -567,121 +467,61 @@ public class CartogramLayer {
      * err : the size error areaOptimal : the optimal or theoretical area of a
      * polygon areaReal : the current area of a polygon
      * 
-     * @param cartogramLayer
-     *            the cartogram layer
-     * @param cartogramAttribute
+     * @param aCartogramAttribute
      *            the cartogram attribute name
-     * @param originalLayer
+     * @param aOriginalLayer
      *            the original layer
-     * @param errorAttribute
+     * @param aErrorAttribute
      *            the error attribute name
      * 
      * @return the mean size error.
      */
-    public static double computeCartogramSizeError(Layer cartogramLayer,
-            String cartogramAttribute, Layer originalLayer,
-            String errorAttribute) {
-
-        double sumOfRealAreas = CartogramLayer.totalArea(cartogramLayer);
-        double sumOfOptimalAreas = CartogramLayer.totalArea(originalLayer);
-        double sumOfValues = CartogramLayer.sumForAttribute(cartogramLayer,
-                cartogramAttribute);
+    public double computeCartogramSizeError(String aCartogramAttribute,
+            CartogramLayer aOriginalLayer, String aErrorAttribute) {
+        double sumOfRealAreas = totalArea();
+        double sumOfOptimalAreas = aOriginalLayer.totalArea();
+        double sumOfValues = sumForAttribute(aCartogramAttribute);
 
         if (sumOfOptimalAreas == 0 || sumOfValues == 0 || sumOfRealAreas == 0) {
             return 0.0;
         }
 
-        CartogramLayer.addAttribute(cartogramLayer, errorAttribute,
-                AttributeType.DOUBLE);
+        iAttributes.put(aErrorAttribute, Double.class);
 
-        FeatureCollectionWrapper fcw = cartogramLayer
-                .getFeatureCollectionWrapper();
+        double geomArea;
+        double featError;
+        for (CartogramFeature feature : iFeatures) {
+            geomArea = feature.getGeometry().getArea();
 
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = fcw.iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Geometry geom = feat.getGeometry();
-            double geomArea = geom.getArea();
-            double attrValue = CartogramFeature.getAttributeAsDouble(feat,
-                    cartogramAttribute);
-
-            // Compute the optimal cartogram area.
-            double optimalArea = attrValue / sumOfValues * sumOfOptimalAreas;
-
-            double featError = 0.0;
+            featError = 0.0;
             if (geomArea > 0.0) {
-                featError = 100 * (optimalArea * sumOfRealAreas / (geomArea * sumOfOptimalAreas));
+                // Compute the optimal cartogram area
+                featError = 100 * (feature
+                        .getAttributeAsDouble(aCartogramAttribute)
+                        / sumOfValues * sumOfOptimalAreas * sumOfRealAreas / (geomArea * sumOfOptimalAreas));
             }
 
-            if (feat.getSchema().hasAttribute(errorAttribute)) {
-                feat.setAttribute(errorAttribute, new Double(featError));
-            }
-
+            feature.setAttribute(aErrorAttribute, new Double(featError));
         }
 
-        double meanError = CartogramLayer.meanValueForAttribute(cartogramLayer,
-                errorAttribute);
-
-        return meanError;
-
-    } // CartogramLayer.computeCartogramSizeError
+        return meanValueForAttribute(aErrorAttribute);
+    }
 
     /**
      * Checks the attribute values for invalid values and replaces them with a
      * zero value. This method works only with double value attributes.
      * 
-     * @param layer
-     *            the layer
-     * @param attrName
+     * @param aAttrName
      *            the attribute name
      */
-    public static void cleanAttributeValues(Layer layer, String attrName) {
-
-        FeatureCollectionWrapper fcw = layer.getFeatureCollectionWrapper();
-        FeatureSchema fs = fcw.getFeatureSchema();
-        if (fs.hasAttribute(attrName) == false) {
-            return;
-        }
-
-        AttributeType attrType = fs.getAttributeType(attrName);
-        if (attrType != AttributeType.DOUBLE) {
-            return;
-        }
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = fcw.iterator();
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-            Double attrValue = (Double) feat.getAttribute(attrName);
-            if (attrValue == null || attrValue.isNaN()) {
-                feat.setAttribute(attrName, new Double(0.0));
+    public void cleanAttributeValues(String aAttrName) {
+        Object value;
+        for (CartogramFeature feature : iFeatures) {
+            value = feature.getAttribute(aAttrName);
+            if (value == null || value instanceof Double
+                    && ((Double) value).isNaN()) {
+                feature.setAttribute(aAttrName, new Double(0.0));
             }
         }
-
-    } // CartogramLayer.cleanAttributeValues
-
-    /**
-     * Creates a new FeatureSchema using the provided FeatureSchema.
-     * 
-     * @param fs
-     *            the feature schema
-     * 
-     * @return a new FeatureSchema
-     */
-    public static FeatureSchema copyFeatureSchema(FeatureSchema fs) {
-        FeatureSchema copy = new FeatureSchema();
-        int nattrs = fs.getAttributeCount();
-
-        for (int i = 0; i < nattrs; i++) {
-            String attrName = fs.getAttributeName(i);
-            AttributeType attrType = fs.getAttributeType(i);
-            copy.addAttribute(attrName, attrType);
-        }
-
-        return copy;
-
-    } // CartogramLayer.copyFeatureSchema
-
-} // CartogramLayer
-
+    }
+}

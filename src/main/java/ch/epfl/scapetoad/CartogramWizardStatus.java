@@ -33,8 +33,9 @@ public class CartogramWizardStatus implements ICartogramStatus {
 
     @Override
     public void updateRunningStatus(int aProgress, String aLabel1,
-            String aLabel2) {
-        iWizard.updateRunningStatus(aProgress, aLabel1, aLabel2);
+            String aLabelFormat, Object... aArgs) {
+        iWizard.updateRunningStatus(aProgress, aLabel1,
+                String.format(aLabelFormat, aArgs));
     }
 
     @Override

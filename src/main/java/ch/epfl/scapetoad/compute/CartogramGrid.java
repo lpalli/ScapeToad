@@ -24,7 +24,6 @@ package ch.epfl.scapetoad.compute;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.zip.DataFormatException;
 
 import org.apache.commons.logging.Log;
@@ -34,8 +33,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.workbench.model.Layer;
 
 import ch.epfl.scapetoad.ICartogramStatus;
 
@@ -234,7 +231,7 @@ public class CartogramGrid {
      * @throws DataFormatException
      *             when the data format is wrong
      */
-    public void computeOriginalDensityValuesWithLayer(Layer aLayer,
+    public void computeOriginalDensityValuesWithLayer(CartogramLayer aLayer,
             String aAttrName, boolean aAttrIsDensityValue,
             ICartogramStatus aStatus) throws InterruptedException,
             DataFormatException {
@@ -243,13 +240,11 @@ public class CartogramGrid {
         String densityAttrName = aAttrName;
         if (!aAttrIsDensityValue) {
             densityAttrName = aAttrName + "Density";
-            CartogramLayer.addDensityAttribute(aLayer, aAttrName,
-                    densityAttrName);
+            aLayer.addDensityAttribute(aAttrName, densityAttrName);
         }
 
         // Compute the mean density.
-        iMeanDensity = CartogramLayer.meanDensityWithAttribute(aLayer,
-                densityAttrName);
+        iMeanDensity = aLayer.meanDensityWithAttribute(densityAttrName);
 
         // For each Feature in the layer, we find all grid cells which are at
         // least in part inside the Feature. We add the density weighted by the
@@ -265,16 +260,9 @@ public class CartogramGrid {
             }
         }
 
-        int nFeat = aLayer.getFeatureCollectionWrapper().size();
+        int nFeat = aLayer.getFeatures().size();
         int featCnt = 0;
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = aLayer.getFeatureCollectionWrapper()
-                .iterator();
-        while (featIter.hasNext()) {
-
-            int progress = 100 + featCnt * 100 / nFeat;
-
+        for (CartogramFeature feature : aLayer.getFeatures()) {
             // Interrupt the process ?
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -282,13 +270,11 @@ public class CartogramGrid {
                         "Computation has been interrupted by the user.");
             }
 
-            aStatus.updateRunningStatus(progress,
+            aStatus.updateRunningStatus(100 + featCnt * 100 / nFeat,
                     "Computing the density for the cartogram grid...",
-                    "Treating feature " + (featCnt + 1) + " of " + nFeat);
+                    "Treating feature %1$s of %2$s", featCnt + 1, nFeat);
 
-            Feature feat = featIter.next();
-
-            fillDensityValueWithFeature(feat, densityAttrName);
+            fillDensityValueWithFeature(feature, densityAttrName);
 
             featCnt++;
         }
@@ -348,7 +334,8 @@ public class CartogramGrid {
      * @param aLayers
      *            a Vector containing the constrained layer names.
      */
-    public void prepareGridForConstrainedDeformation(AbstractList<Layer> aLayers) {
+    public void prepareGridForConstrainedDeformation(
+            AbstractList<CartogramLayer> aLayers) {
         if (aLayers == null) {
             return;
         }
@@ -357,12 +344,9 @@ public class CartogramGrid {
         // feature, we set the constrained cell value to 1.
         // The cell values of 0 are for deformation cells, and -1 for
         // empty cells.
-        for (Layer layer : aLayers) {
-            @SuppressWarnings("unchecked")
-            Iterator<Feature> iterator = layer.getFeatureCollectionWrapper()
-                    .iterator();
-            while (iterator.hasNext()) {
-                prepareGridForConstrainedDeformationWithFeature(iterator.next());
+        for (CartogramLayer layer : aLayers) {
+            for (CartogramFeature feature : layer.getFeatures()) {
+                prepareGridForConstrainedDeformationWithFeature(feature);
             }
         }
     }
@@ -374,7 +358,7 @@ public class CartogramGrid {
      *            the feature
      */
     private void prepareGridForConstrainedDeformationWithFeature(
-            Feature aFeature) {
+            CartogramFeature aFeature) {
         // Extract the minimum and maximum coordinates from the Feature
         Geometry geometry = aFeature.getGeometry();
         Envelope envelope = geometry.getEnvelopeInternal();
@@ -423,15 +407,14 @@ public class CartogramGrid {
      *            the name of the attribute containing the density value for the
      *            Feature.
      */
-    private void fillDensityValueWithFeature(Feature aFeature,
+    private void fillDensityValueWithFeature(CartogramFeature aFeature,
             String aDensityAttribute) {
         // Extract the minimum and maximum coordinates from the Feature.
         Geometry geometry = aFeature.getGeometry();
         Envelope envelope = aFeature.getGeometry().getEnvelopeInternal();
 
         // Get the density attribute value.
-        double densityValue = CartogramFeature.getAttributeAsDouble(aFeature,
-                aDensityAttribute);
+        double densityValue = aFeature.getAttributeAsDouble(aDensityAttribute);
 
         // Find the maximum cell indexes for this Feature
         int maxI = originalCellIndexForCoordinateX(envelope.getMaxX());

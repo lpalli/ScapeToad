@@ -632,7 +632,7 @@ public class CartogramNewman {
             int res = (iMaximumStatus - iMinimumStatus) * perc / 100;
             res += iMinimumStatus;
             iStatus.updateRunningStatus(res, iStatusMessage,
-                    "Diffusion process: " + perc + "% done");
+                    "Diffusion process: %1$s%% done", perc);
         }
     }
 }

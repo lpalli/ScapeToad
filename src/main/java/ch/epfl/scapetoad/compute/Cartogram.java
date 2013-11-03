@@ -22,30 +22,20 @@
 package ch.epfl.scapetoad.compute;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.util.AbstractList;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jump.feature.AttributeType;
-import com.vividsolutions.jump.feature.BasicFeature;
-import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
-import com.vividsolutions.jump.feature.FeatureDataset;
-import com.vividsolutions.jump.feature.FeatureSchema;
-import com.vividsolutions.jump.workbench.model.Layer;
-import com.vividsolutions.jump.workbench.model.LayerManager;
-import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
-import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
 
 import ch.epfl.scapetoad.ICartogramStatus;
 
@@ -70,19 +60,9 @@ public class Cartogram {
     private ICartogramStatus iStatus;
 
     /**
-     * The layer manager used for cartogram computation.
-     */
-    private LayerManager iLayerManager = null;
-
-    /**
-     * The category name for our cartogram layers.
-     */
-    private String iCategoryName = null;
-
-    /**
      * The name of the master layer.
      */
-    private Layer iMasterLayer = null;
+    private CartogramLayer iMasterLayer = null;
 
     /**
      * The name of the master attribute.
@@ -104,17 +84,17 @@ public class Cartogram {
      * The projected master layer. We store this in order to make the
      * computation report after the projection.
      */
-    private Layer iProjectedMasterLayer = null;
+    private CartogramLayer iProjectedMasterLayer = null;
 
     /**
      * The layers to deform simultaneously.
      */
-    private AbstractList<Layer> iSlaveLayers = null;
+    private AbstractList<CartogramLayer> iSlaveLayers = null;
 
     /**
      * The layers used for the constrained deformation.
      */
-    private AbstractList<Layer> iConstrainedDeforamtionLayers = null;
+    private AbstractList<CartogramLayer> iConstrainedDeforamtionLayers = null;
 
     /**
      * The initial envelope for all layers.
@@ -166,7 +146,7 @@ public class Cartogram {
     /**
      * The layer containing the deformation grid.
      */
-    private Layer iDeformationGrid = null;
+    private CartogramLayer iDeformationGrid = null;
 
     /**
      * Should we create a legend layer ?
@@ -182,7 +162,7 @@ public class Cartogram {
     /**
      * The layer containing the cartogram legend.
      */
-    private Layer iLegendLayer = null;
+    private CartogramLayer iLegendLayer = null;
 
     /**
      * The computation report.
@@ -216,7 +196,7 @@ public class Cartogram {
      * 
      * @return the projected layers
      */
-    public Layer[] compute() {
+    public CartogramLayer[] compute() {
         try {
             iComputationStartTime = System.nanoTime();
 
@@ -262,17 +242,17 @@ public class Cartogram {
             iStatus.updateRunningStatus(50,
                     "Check the cartogram attribute values...", "");
 
-            CartogramLayer.cleanAttributeValues(iMasterLayer, iMasterAttribute);
+            iMasterLayer.cleanAttributeValues(iMasterAttribute);
 
             // Replace the missing values with the layer mean value.
             if (iMissingValue != "" && iMissingValue != null) {
-                double mean = CartogramLayer.meanValueForAttribute(
-                        iMasterLayer, iMasterAttribute);
+                double mean = iMasterLayer
+                        .meanValueForAttribute(iMasterAttribute);
 
                 Double missVal = new Double(iMissingValue);
 
-                CartogramLayer.replaceAttributeValue(iMasterLayer,
-                        iMasterAttribute, missVal.doubleValue(), mean);
+                iMasterLayer.replaceAttributeValue(iMasterAttribute, missVal,
+                        mean);
             }
 
             // Compute the density values for the cartogram grid using
@@ -343,7 +323,7 @@ public class Cartogram {
 
             iStatus.updateRunningStatus(750, "Projecting the layers...", "");
 
-            Layer[] layers = projectLayers();
+            CartogramLayer[] layers = projectLayers();
 
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -397,9 +377,9 @@ public class Cartogram {
      * @param aConstrainedDeformationLayers
      *            the constrained deformation layers
      */
-    public void finish(Layer[] aLayers,
-            AbstractList<Layer> aSimultaneousLayers,
-            AbstractList<Layer> aConstrainedDeformationLayers) {
+    public void finish(CartogramLayer[] aLayers,
+            AbstractList<CartogramLayer> aSimultaneousLayers,
+            AbstractList<CartogramLayer> aConstrainedDeformationLayers) {
         // If there was an error, stop here.
         if (iErrorOccured) {
             return;
@@ -417,79 +397,6 @@ public class Cartogram {
         // Produce the computation report
         produceComputationReport(iProjectedMasterLayer, aSimultaneousLayers,
                 aConstrainedDeformationLayers);
-
-        // *** HIDE ALL LAYERS ALREADY PRESENT ***
-        @SuppressWarnings("unchecked")
-        List<Layer> layerList = iLayerManager.getLayers();
-        for (Layer layer : layerList) {
-            layer.setVisible(false);
-        }
-
-        // *** ADD ALL THE LAYERS ***
-
-        String category = getCategoryName();
-
-        if (iLayerManager.getCategory(category) == null) {
-            iLayerManager.addCategory(category);
-        }
-
-        for (Layer layer : aLayers) {
-            iLayerManager.addLayer(category, layer);
-        }
-
-        if (iDeformationGrid != null) {
-            iLayerManager.addLayer(category, iDeformationGrid);
-        }
-
-        if (iLegendLayer != null) {
-            iLayerManager.addLayer(category, iLegendLayer);
-        }
-
-        // *** CREATE A THEMATIC MAP USING THE SIZE ERROR ATTRIBUTE ***
-
-        // Create a color table for the size error attribute.
-
-        BasicStyle style = (BasicStyle) iProjectedMasterLayer
-                .getStyle(BasicStyle.class);
-        style.setFillColor(Color.WHITE);
-
-        SizeErrorStyle errorStyle = new SizeErrorStyle();
-
-        errorStyle.setAttributeName("SizeError");
-
-        errorStyle.addColor(new BasicStyle(new Color(91, 80, 153)));
-        errorStyle.addColor(new BasicStyle(new Color(133, 122, 179)));
-        errorStyle.addColor(new BasicStyle(new Color(177, 170, 208)));
-        errorStyle.addColor(new BasicStyle(new Color(222, 218, 236)));
-        errorStyle.addColor(new BasicStyle(new Color(250, 207, 187)));
-        errorStyle.addColor(new BasicStyle(new Color(242, 153, 121)));
-        errorStyle.addColor(new BasicStyle(new Color(233, 95, 64)));
-
-        errorStyle.addLimit(new Double(70));
-        errorStyle.addLimit(new Double(80));
-        errorStyle.addLimit(new Double(90));
-        errorStyle.addLimit(new Double(100));
-        errorStyle.addLimit(new Double(110));
-        errorStyle.addLimit(new Double(120));
-
-        aLayers[0].addStyle(errorStyle);
-        errorStyle.setEnabled(true);
-        aLayers[0].getStyle(BasicStyle.class).setEnabled(false);
-
-        iStatus.showLegendZoom();
-
-        // *** SHOW THE FINISHED PANEL
-        iStatus.goToFinishedPanel();
-    }
-
-    /**
-     * Sets the layer manager.
-     * 
-     * @param aLayerManager
-     *            the layer manager
-     */
-    public void setLayerManager(LayerManager aLayerManager) {
-        iLayerManager = aLayerManager;
     }
 
     /**
@@ -498,7 +405,7 @@ public class Cartogram {
      * @param aLayer
      *            the master layer
      */
-    public void setMasterLayer(Layer aLayer) {
+    public void setMasterLayer(CartogramLayer aLayer) {
         iMasterLayer = aLayer;
     }
 
@@ -529,7 +436,7 @@ public class Cartogram {
      * @param aSlaveLayers
      *            the slave layers
      */
-    public void setSlaveLayers(AbstractList<Layer> aSlaveLayers) {
+    public void setSlaveLayers(AbstractList<CartogramLayer> aSlaveLayers) {
         iSlaveLayers = aSlaveLayers;
     }
 
@@ -539,7 +446,8 @@ public class Cartogram {
      * @param aLayers
      *            the layers not deformed
      */
-    public void setConstrainedDeformationLayers(AbstractList<Layer> aLayers) {
+    public void setConstrainedDeformationLayers(
+            AbstractList<CartogramLayer> aLayers) {
         iConstrainedDeforamtionLayers = aLayers;
     }
 
@@ -572,24 +480,21 @@ public class Cartogram {
      */
     private void updateEnvelope() {
         // Setting the initial envelope using the master layer.
-        Envelope envelope = iMasterLayer.getFeatureCollectionWrapper()
-                .getEnvelope();
+        Envelope envelope = iMasterLayer.getEnvelope();
         iEnvelope = new Envelope(envelope.getMinX(), envelope.getMaxX(),
                 envelope.getMinY(), envelope.getMaxY());
 
         // Expanding the initial envelope using the slave and
         // constrained deformation layers.
         if (iSlaveLayers != null) {
-            for (Layer layer : iSlaveLayers) {
-                iEnvelope.expandToInclude(layer.getFeatureCollectionWrapper()
-                        .getEnvelope());
+            for (CartogramLayer layer : iSlaveLayers) {
+                iEnvelope.expandToInclude(layer.getEnvelope());
             }
         }
 
         if (iConstrainedDeforamtionLayers != null) {
-            for (Layer layer : iConstrainedDeforamtionLayers) {
-                iEnvelope.expandToInclude(layer.getFeatureCollectionWrapper()
-                        .getEnvelope());
+            for (CartogramLayer layer : iConstrainedDeforamtionLayers) {
+                iEnvelope.expandToInclude(layer.getEnvelope());
             }
         }
 
@@ -627,7 +532,7 @@ public class Cartogram {
      * @throws InterruptedException
      *             when the computation was interrupted
      */
-    private Layer[] projectLayers() throws InterruptedException {
+    private CartogramLayer[] projectLayers() throws InterruptedException {
         // Get the number of layers to project
         // (one master layer and all slave layers).
         int nlyrs = 1;
@@ -636,7 +541,7 @@ public class Cartogram {
         }
 
         // We store the projected layers in an array.
-        Layer[] layers = new Layer[nlyrs];
+        CartogramLayer[] layers = new CartogramLayer[nlyrs];
 
         // Compute the maximum segment length for the layers.
         iMaximumSegmentLength = estimateMaximumSegmentLength();
@@ -644,11 +549,10 @@ public class Cartogram {
         // Project the master layer.
 
         iStatus.updateRunningStatus(750, "Projecting the layers...",
-                "Layer 1 of " + nlyrs);
+                "Layer 1 of %1$s", nlyrs);
 
-        CartogramLayer.regularizeLayer(iMasterLayer, iMaximumSegmentLength);
-        iProjectedMasterLayer = CartogramLayer.projectLayerWithGrid(
-                iMasterLayer, iGrid);
+        iMasterLayer.regularizeLayer(iMaximumSegmentLength);
+        iProjectedMasterLayer = iMasterLayer.projectLayerWithGrid(iGrid);
 
         layers[0] = iProjectedMasterLayer;
 
@@ -658,16 +562,16 @@ public class Cartogram {
                     "Computation has been interrupted by the user.");
         }
 
-        // Project the slave layers.
-        for (int lyrcnt = 0; lyrcnt < nlyrs - 1; lyrcnt++) {
-            iStatus.updateRunningStatus(800 + (lyrcnt + 1) / (nlyrs - 1) * 150,
-                    "Projecting the layers...", "Layer " + (lyrcnt + 2)
-                            + " of " + nlyrs);
+        // Project the slave layers
+        CartogramLayer slaveLayer;
+        for (int i = 0; i < nlyrs - 1; i++) {
+            iStatus.updateRunningStatus(800 + (i + 1) / (nlyrs - 1) * 150,
+                    "Projecting the layers...", "Layer %1$s of %2$s", i + 2,
+                    nlyrs);
 
-            Layer slaveLayer = iSlaveLayers.get(lyrcnt);
-            CartogramLayer.regularizeLayer(slaveLayer, iMaximumSegmentLength);
-            layers[lyrcnt + 1] = CartogramLayer.projectLayerWithGrid(
-                    slaveLayer, iGrid);
+            slaveLayer = iSlaveLayers.get(i);
+            slaveLayer.regularizeLayer(iMaximumSegmentLength);
+            layers[i + 1] = slaveLayer.projectLayerWithGrid(iGrid);
         }
 
         return layers;
@@ -712,30 +616,6 @@ public class Cartogram {
     }
 
     /**
-     * Returns the category name for our cartogram layers.
-     * 
-     * @return the category name
-     */
-    private String getCategoryName() {
-        if (iCategoryName == null) {
-            // Create a new category in the layer manager in order to
-            // properly separate the cartogram layers. We call the new category
-            // «Cartogram x», where x is a serial number.
-
-            int catNumber = 1;
-            String categoryName = "Cartogram " + catNumber;
-            while (iLayerManager.getCategory(categoryName) != null) {
-                catNumber++;
-                categoryName = "Cartogram " + catNumber;
-            }
-
-            iCategoryName = categoryName;
-        }
-
-        return iCategoryName;
-    }
-
-    /**
      * Creates a layer with the deformation grid.
      */
     private void createGridLayer() {
@@ -750,28 +630,24 @@ public class Cartogram {
 
         // CREATE THE NEW LAYER
 
-        // Create a new Feature Schema for the new layer.
-        FeatureSchema schema = new FeatureSchema();
-        schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-        schema.addAttribute("ID", AttributeType.INTEGER);
-
-        // Create a new empty Feature Dataset.
-        FeatureDataset dataset = new FeatureDataset(schema);
+        // Create a new attribute list for the new layer
+        @SuppressWarnings("rawtypes")
+        Map<String, Class> attributes = new HashMap<String, Class>(2);
+        attributes.put("GEOMETRY", Geometry.class);
+        attributes.put("ID", Integer.class);
 
         // Create a Geometry Factory for creating the points.
         GeometryFactory factory = new GeometryFactory();
 
         // CREATE ALL FEATURES AND LINES
         int i = 0;
-
-        BasicFeature feature;
+        List<CartogramFeature> features = new ArrayList<CartogramFeature>(sizeY
+                + sizeX);
+        CartogramFeature feature;
         Coordinate[] coords;
         LineString line;
         // Horizontal lines
         for (int k = 0; k < sizeY; k++) {
-            // Create an empty Feature.
-            feature = new BasicFeature(schema);
-
             // Create the line string and add it to the Feature.
             coords = new Coordinate[sizeX];
             for (int j = 0; j < sizeX; j++) {
@@ -781,24 +657,22 @@ public class Cartogram {
             line = factory.createLineString(coords);
 
             if (line != null) {
-                feature.setGeometry(line);
+                // Create the feature
+                feature = new CartogramFeature(line,
+                        new HashMap<String, Object>(attributes.size()));
 
-                // Add the other attributes.
-                Integer idobj = new Integer(i);
-                feature.setAttribute("ID", idobj);
+                // Add the other attributes
+                feature.setAttribute("ID", i);
                 i++;
 
-                // Add Feature to the Feature Dataset.
-                dataset.add(feature);
+                // Add the feature to the list
+                features.add(feature);
             }
         }
 
         // Vertical lines
         for (int j = 0; j < sizeX; j++) {
-            // Create an empty Feature.
-            feature = new BasicFeature(schema);
-
-            // Create the line string and add it to the Feature.
+            // Create the line string and add it to the feature
             coords = new Coordinate[sizeY];
             for (int k = 0; k < sizeY; k++) {
                 coords[k] = iGrid.projectPointAsCoordinate(iEnvelope.getMinX()
@@ -807,120 +681,101 @@ public class Cartogram {
             line = factory.createLineString(coords);
 
             if (line != null) {
-                feature.setGeometry(line);
+                // Create the feature
+                feature = new CartogramFeature(line,
+                        new HashMap<String, Object>(attributes.size()));
 
-                // Add the other attributes.
-                Integer idobj = new Integer(i);
-                feature.setAttribute("ID", idobj);
+                // Add the other attributes
+                feature.setAttribute("ID", i);
                 i++;
 
-                // Add Feature to the Feature Dataset.
-                dataset.add(feature);
+                // Add Feature to the Feature Dataset
+                features.add(feature);
             }
         }
 
-        // Create the layer.
-        iDeformationGrid = new Layer("Deformation grid", Color.GRAY, dataset,
-                iLayerManager);
+        // Create the layer
+        iDeformationGrid = new CartogramLayer("Deformation grid", Color.GRAY,
+                attributes, features);
     }
 
     /**
      * Creates an optional legend layer.
      */
     private void createLegendLayer() {
-        double distanceBetweenSymbols = iMasterLayer
-                .getFeatureCollectionWrapper().getEnvelope().getWidth() / 10;
+        double distanceBetweenSymbols = iMasterLayer.getEnvelope().getWidth() / 10;
+        double attrMax = iMasterLayer.maxValueForAttribute(iMasterAttribute);
 
-        // Estimate legend values if there are none.
-
-        double attrMax = CartogramLayer.maxValueForAttribute(iMasterLayer,
-                iMasterAttribute);
-
+        // Estimate legend values if there are none
         if (iLegendValues == null) {
-            int nvalues = 3;
-
             double maxLog = Math.floor(Math.log10(attrMax));
-            double maxValue = Math.pow(10, maxLog);
-            double secondValue = Math.pow(10, maxLog - 1);
 
-            iLegendValues = new double[nvalues];
-            iLegendValues[0] = secondValue;
-            iLegendValues[1] = maxValue;
+            iLegendValues = new double[3];
+            iLegendValues[0] = Math.pow(10, maxLog - 1);
+            iLegendValues[1] = Math.pow(10, maxLog);
             iLegendValues[2] = attrMax;
         }
 
-        // CREATE THE NEW LAYER
+        // Create a new attribute list for the new layer
+        @SuppressWarnings("rawtypes")
+        Map<String, Class> attributes = new HashMap<String, Class>(5);
+        attributes.put("GEOMETRY", Geometry.class);
+        attributes.put("ID", Integer.class);
+        attributes.put("VALUE", Double.class);
+        attributes.put("AREA", Double.class);
+        attributes.put("COMMENT", String.class);
 
-        // Create a new Feature Schema for the new layer.
-        FeatureSchema fs = new FeatureSchema();
-        fs.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-        fs.addAttribute("ID", AttributeType.INTEGER);
-        fs.addAttribute("VALUE", AttributeType.DOUBLE);
-        fs.addAttribute("AREA", AttributeType.DOUBLE);
-        fs.addAttribute("COMMENT", AttributeType.STRING);
+        // Create a Geometry Factory for creating the points
+        GeometryFactory factory = new GeometryFactory();
 
-        // Create a new empty Feature Dataset.
-        FeatureDataset fd = new FeatureDataset(fs);
-
-        // Create a Geometry Factory for creating the points.
-        GeometryFactory gf = new GeometryFactory();
-
-        // CREATE THE FEATURES FOR THE LEGEND LAYER.
+        // CREATE THE FEATURES FOR THE LEGEND LAYER
         int nvals = iLegendValues.length;
-        double totalArea = CartogramLayer.totalArea(iMasterLayer);
-        double valuesSum = CartogramLayer.sumForAttribute(iMasterLayer,
-                iMasterAttribute);
+        double totalArea = iMasterLayer.totalArea();
+        double valuesSum = iMasterLayer.sumForAttribute(iMasterAttribute);
         double x = iEnvelope.getMinX();
         double y = iEnvelope.getMinY();
-        int id = 1;
-        int valcnt;
-        for (valcnt = 0; valcnt < nvals; valcnt++) {
-            double valsize = totalArea / valuesSum * iLegendValues[valcnt];
-            double rectsize = Math.sqrt(valsize);
+        List<CartogramFeature> features = new ArrayList<CartogramFeature>(nvals);
+        double valsize;
+        double rectsize;
+        Coordinate[] coords;
+        CartogramFeature feature;
+        for (int i = 0; i < nvals; i++) {
+            valsize = totalArea / valuesSum * iLegendValues[i];
+            rectsize = Math.sqrt(valsize);
 
-            // Create the coordinate points.
-            Coordinate[] coords = new Coordinate[5];
+            // Create the coordinate points
+            coords = new Coordinate[5];
             coords[0] = new Coordinate(x, y);
             coords[1] = new Coordinate(x + rectsize, y);
             coords[2] = new Coordinate(x + rectsize, y - rectsize);
             coords[3] = new Coordinate(x, y - rectsize);
             coords[4] = new Coordinate(x, y);
 
-            // Create geometry.
-            LinearRing lr = gf.createLinearRing(coords);
-            Polygon poly = gf.createPolygon(lr, null);
+            // Create the feature
+            feature = new CartogramFeature(factory.createPolygon(
+                    factory.createLinearRing(coords), null),
+                    new HashMap<String, Object>(attributes.size()));
+            feature.setAttribute("ID", i + 1);
+            feature.setAttribute("VALUE", iLegendValues[i]);
+            feature.setAttribute("AREA", valsize);
 
-            // Create the Feature.
-            BasicFeature feat = new BasicFeature(fs);
-            feat.setAttribute("GEOMETRY", poly);
-            feat.setAttribute("ID", id);
-            feat.setAttribute("VALUE", iLegendValues[valcnt]);
-            feat.setAttribute("AREA", valsize);
-
-            if (valcnt == 0) {
-                feat.setAttribute("COMMENT", "Mean value");
-            } else if (valcnt == 1) {
-                feat.setAttribute("COMMENT", "Rounded value of maximum ("
-                        + attrMax + ")");
+            if (i == 0) {
+                feature.setAttribute("COMMENT", "Mean value");
+            } else if (i == 1) {
+                feature.setAttribute("COMMENT", String.format(
+                        "Rounded value of maximum (%1$s)", attrMax));
             }
 
-            // Add the Feature to the Dataset.
-            fd.add(feat);
+            // Add the feature to the list
+            features.add(feature);
 
-            // Change the coordinates.
+            // Change the coordinates
             x += rectsize + distanceBetweenSymbols;
-
-            id++;
         }
 
-        // Create the layer.
-        iLayerManager.setFiringEvents(false);
-        iLegendLayer = new Layer("Legend", Color.GREEN, fd, iLayerManager);
-        LabelStyle legendLabels = iLegendLayer.getLabelStyle();
-        legendLabels.setAttribute("VALUE");
-        legendLabels.setEnabled(true);
-        legendLabels.setFont(new Font(null, Font.PLAIN, 10));
-        iLayerManager.setFiringEvents(true);
+        // Create the layer
+        iLegendLayer = new CartogramLayer("Legend", Color.GREEN, attributes,
+                features);
     }
 
     /**
@@ -933,9 +788,9 @@ public class Cartogram {
      * @param aConstrainedDeformationLayers
      *            the constrained deformation layers
      */
-    private void produceComputationReport(Layer aProjectedMasterLayer,
-            AbstractList<Layer> aSimultaneousLayers,
-            AbstractList<Layer> aConstrainedDeformationLayers) {
+    private void produceComputationReport(CartogramLayer aProjectedMasterLayer,
+            AbstractList<CartogramLayer> aSimultaneousLayers,
+            AbstractList<CartogramLayer> aConstrainedDeformationLayers) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("CARTOGRAM COMPUTATION REPORT\n\n");
@@ -973,30 +828,26 @@ public class Cartogram {
 
         buffer.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
         buffer.append("Number of features: ");
-        buffer.append(iMasterLayer.getFeatureCollectionWrapper().getFeatures()
-                .size());
+        buffer.append(iMasterLayer.getFeatures().size());
         buffer.append('\n');
 
         buffer.append("Attribute mean value: ");
-        buffer.append(CartogramLayer.meanValueForAttribute(iMasterLayer,
-                iMasterAttribute));
+        buffer.append(iMasterLayer.meanValueForAttribute(iMasterAttribute));
         buffer.append('\n');
 
         buffer.append("Attribute minimum value: ");
-        buffer.append(CartogramLayer.minValueForAttribute(iMasterLayer,
-                iMasterAttribute));
+        buffer.append(iMasterLayer.minValueForAttribute(iMasterAttribute));
         buffer.append('\n');
 
         buffer.append("Attribute maximum value: ");
-        buffer.append(CartogramLayer.maxValueForAttribute(iMasterLayer,
-                iMasterAttribute));
+        buffer.append(iMasterLayer.maxValueForAttribute(iMasterAttribute));
         buffer.append("\n\n");
 
         buffer.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
         if (aSimultaneousLayers == null || aSimultaneousLayers.size() == 0) {
             buffer.append("None\n\n");
         } else {
-            for (Layer layer : aSimultaneousLayers) {
+            for (CartogramLayer layer : aSimultaneousLayers) {
                 buffer.append(layer.getName());
                 buffer.append('\n');
             }
@@ -1008,7 +859,7 @@ public class Cartogram {
                 || aConstrainedDeformationLayers.size() == 0) {
             buffer.append("None\n\n");
         } else {
-            for (Layer layer : aConstrainedDeformationLayers) {
+            for (CartogramLayer layer : aConstrainedDeformationLayers) {
                 buffer.append(layer.getName());
                 buffer.append('\n');
             }
@@ -1016,9 +867,8 @@ public class Cartogram {
         }
 
         // Compute the cartogram error
-        double meanError = CartogramLayer.computeCartogramSizeError(
-                aProjectedMasterLayer, iMasterAttribute, iMasterLayer,
-                "SizeError");
+        double meanError = aProjectedMasterLayer.computeCartogramSizeError(
+                iMasterAttribute, iMasterLayer, "SizeError");
 
         buffer.append("CARTOGRAM ERROR\n");
         buffer.append("The cartogram error is a measure for the quality of the result.\n");
@@ -1026,42 +876,35 @@ public class Cartogram {
         buffer.append(meanError);
         buffer.append('\n');
 
-        double stdDev = CartogramLayer.standardDeviationForAttribute(
-                aProjectedMasterLayer, "SizeError");
+        double stdDev = aProjectedMasterLayer
+                .standardDeviationForAttribute("SizeError");
         buffer.append("Standard deviation: ");
         buffer.append(stdDev);
         buffer.append('\n');
 
         buffer.append("25th percentile: ");
-        buffer.append(CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 25));
+        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
+                25));
         buffer.append('\n');
 
         buffer.append("50th percentile: ");
-        buffer.append(CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 50));
+        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
+                50));
         buffer.append('\n');
 
         buffer.append("75th percentile: ");
-        buffer.append(CartogramLayer.percentileForAttribute(
-                aProjectedMasterLayer, "SizeError", 75));
+        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
+                75));
         buffer.append('\n');
 
         // Compute the number of features between the 25th and 75th
         // percentile and the percentage.
-
-        FeatureCollectionWrapper fcw = aProjectedMasterLayer
-                .getFeatureCollectionWrapper();
-
-        @SuppressWarnings("unchecked")
-        Iterator<Feature> featIter = fcw.iterator();
+        List<CartogramFeature> features = aProjectedMasterLayer.getFeatures();
         int nFeaturesInStdDev = 0;
-        int nFeatures = fcw.size();
+        int nFeatures = features.size();
         double value;
-        while (featIter.hasNext()) {
-            Feature feat = featIter.next();
-
-            value = CartogramFeature.getAttributeAsDouble(feat, "SizeError");
+        for (CartogramFeature feature : features) {
+            value = feature.getAttributeAsDouble("SizeError");
 
             if (value >= meanError - stdDev && value <= meanError + stdDev) {
                 nFeaturesInStdDev++;
@@ -1122,8 +965,7 @@ public class Cartogram {
         // 1/10 of the length per feature is our estimate for the maximum
         // segment length.
         return Math.sqrt(envArea)
-                / Math.sqrt(iMasterLayer.getFeatureCollectionWrapper()
-                        .getFeatures().size()) / 10;
+                / Math.sqrt(iMasterLayer.getFeatures().size()) / 10;
     }
 
     /**
@@ -1132,5 +974,23 @@ public class Cartogram {
      */
     public void setMissingValue(String aValue) {
         iMissingValue = aValue;
+    }
+
+    /**
+     * Returns the cartogram deformation grid.
+     * 
+     * @return the deformation grid
+     */
+    public CartogramLayer getDeformationGrid() {
+        return iDeformationGrid;
+    }
+
+    /**
+     * Returns the cartogram legend layer.
+     * 
+     * @return the legend layer
+     */
+    public CartogramLayer getLegendLayer() {
+        return iLegendLayer;
     }
 }

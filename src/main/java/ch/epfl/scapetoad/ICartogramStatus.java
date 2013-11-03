@@ -16,11 +16,13 @@ public interface ICartogramStatus {
      *            the progress status (integer 0-1000).
      * @param aLabel1
      *            the progress main message.
-     * @param aLabel2
-     *            the progress secondary message.
+     * @param aLabelFormat
+     *            the progress secondary message format
+     * @param aArgs
+     *            the progress secondary message arguments
      */
     public abstract void updateRunningStatus(int aProgress, String aLabel1,
-            String aLabel2);
+            String aLabelFormat, Object... aArgs);
 
     /**
      * Sets a cartogram computation error message for the user.

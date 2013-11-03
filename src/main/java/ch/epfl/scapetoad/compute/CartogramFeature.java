@@ -23,6 +23,8 @@ package ch.epfl.scapetoad.compute;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +39,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jump.feature.AttributeType;
-import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.feature.FeatureSchema;
 
 /**
  * Represents a basic feature from the Jump package, but with a couple of
@@ -56,61 +55,121 @@ public class CartogramFeature {
     private static Log logger = LogFactory.getLog(CartogramFeature.class);
 
     /**
-     * @param aFeature
-     *            the feature
-     * @param aAttrName
-     *            the attribute name
-     * @return the value
+     * The geometry.
      */
-    public static double getAttributeAsDouble(Feature aFeature, String aAttrName) {
-        FeatureSchema schema = aFeature.getSchema();
-        if (schema.hasAttribute(aAttrName)) {
-            AttributeType type = schema.getAttributeType(aAttrName);
-            if (type == AttributeType.DOUBLE) {
-                return (Double) aFeature.getAttribute(aAttrName);
-            } else if (type == AttributeType.INTEGER) {
-                return (Integer) aFeature.getAttribute(aAttrName);
-            }
-        }
+    private Geometry iGeometry;
 
-        return 0.0;
+    /**
+     * The attribute values.
+     */
+    private Map<String, Object> iAttributes;
+
+    /**
+     * Deep clone constructor.
+     * 
+     * @param aFeature
+     *            the feature to clone
+     */
+    private CartogramFeature(CartogramFeature aFeature) {
+        iGeometry = (Geometry) aFeature.iGeometry.clone();
+        iAttributes = new Hashtable<String, Object>(aFeature.iAttributes.size());
+        for (Map.Entry<String, Object> entry : aFeature.iAttributes.entrySet()) {
+            iAttributes.put(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
-     * @param aFeature
-     *            the feature
+     * Constructor.
+     * 
+     * @param aGeometry
+     *            the geometry
+     * @param aAttributes
+     *            the attributes
+     */
+    public CartogramFeature(Geometry aGeometry, Map<String, Object> aAttributes) {
+        iAttributes = aAttributes;
+        setGeometry(aGeometry);
+    }
+
+    /**
+     * Returns the geometry.
+     * 
+     * @return the geometry
+     */
+    public Geometry getGeometry() {
+        return iGeometry;
+    }
+
+    /**
+     * Set the geometry.
+     * 
+     * @param aGeometry
+     *            the geometry
+     */
+    public void setGeometry(Geometry aGeometry) {
+        iGeometry = aGeometry;
+        iAttributes.put("GEOMETRY", aGeometry);
+    }
+
+    /**
+     * Set the attribute value
+     * 
      * @param aAttrName
      *            the attribute name
      * @param aValue
      *            the value
      */
-    public static void setDoubleAttributeValue(Feature aFeature,
-            String aAttrName, double aValue) {
-        AttributeType type = aFeature.getSchema().getAttributeType(aAttrName);
-        if (type == AttributeType.DOUBLE) {
-            aFeature.setAttribute(aAttrName, aValue);
-        } else if (type == AttributeType.INTEGER) {
-            aFeature.setAttribute(aAttrName, (int) Math.round(aValue));
+    public void setAttribute(String aAttrName, Object aValue) {
+        iAttributes.put(aAttrName, aValue);
+    }
+
+    /**
+     * Returns the attribute value.
+     * 
+     * @param aAttrName
+     *            the attribute name
+     * @return the value
+     */
+    public Object getAttribute(String aAttrName) {
+        if (iAttributes.containsKey(aAttrName)) {
+            return iAttributes.get(aAttrName);
         }
+        return null;
+    }
+
+    /**
+     * Returns the attribute value.
+     * 
+     * @param aAttrName
+     *            the attribute name
+     * @return the value
+     */
+    public double getAttributeAsDouble(String aAttrName) {
+        if (iAttributes.containsKey(aAttrName)) {
+            Object value = iAttributes.get(aAttrName);
+            if (value instanceof Double) {
+                return (Double) value;
+            } else if (value instanceof Integer) {
+                return (Integer) value;
+            }
+        }
+        return 0;
     }
 
     /**
      * Projects the provided Feature using the provided cartogram grid.
      * 
-     * @param aFeature
-     *            the feature
      * @param aGrid
      *            the grid
      * @return the projected feature
      */
-    public static Feature projectFeatureWithGrid(Feature aFeature,
-            CartogramGrid aGrid) {
-        Geometry geometry = aFeature.getGeometry();
+    public CartogramFeature projectFeatureWithGrid(CartogramGrid aGrid) {
+        Geometry geometry = getGeometry();
         GeometryFactory factory = geometry.getFactory();
         String type = geometry.getGeometryType();
 
         // Create a copy of the Feature, but without the geometry.
-        Feature feature = aFeature.clone(true);
+        CartogramFeature feature = new CartogramFeature(this);
 
         if (type == "Point") {
             Point point = (Point) geometry;
@@ -204,6 +263,16 @@ public class CartogramFeature {
     }
 
     /**
+     * Regularizes the geometry.
+     * 
+     * @param aMaxLength
+     *            the maximum length
+     */
+    public void regularizeGeometry(double aMaxLength) {
+        setGeometry(CartogramFeature.regularizeGeometry(iGeometry, aMaxLength));
+    }
+
+    /**
      * Regularizes a geometry.
      * 
      * @param aGeometry
@@ -212,7 +281,7 @@ public class CartogramFeature {
      *            the maximum length
      * @return the regularized geometry
      */
-    public static Geometry regularizeGeometry(Geometry aGeometry,
+    private static Geometry regularizeGeometry(Geometry aGeometry,
             double aMaxLength) {
         GeometryFactory factory = aGeometry.getFactory();
         String type = aGeometry.getGeometryType();
@@ -289,8 +358,8 @@ public class CartogramFeature {
      *            the maximum length
      * @return the regularizeds coordinates
      */
-    public static Coordinate[] regularizeCoordinates(Coordinate[] aCoordinates,
-            double aMaxLength) {
+    private static Coordinate[] regularizeCoordinates(
+            Coordinate[] aCoordinates, double aMaxLength) {
         int ncoords = aCoordinates.length;
         if (ncoords < 1) {
             return aCoordinates;
