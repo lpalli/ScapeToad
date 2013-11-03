@@ -1,11 +1,19 @@
 package ch.epfl.scapetoad;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This class is the wizard implementation of the cartogram status interface.
  * 
  * @author luca@palli.ch
  */
 public class CartogramWizardStatus implements ICartogramStatus {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(CartogramWizardStatus.class);
 
     /**
      * The cartogram wizard. We need the wizard reference for updating the
@@ -38,5 +46,16 @@ public class CartogramWizardStatus implements ICartogramStatus {
     @Override
     public void goToFinishedPanel() {
         iWizard.goToFinishedPanel();
+    }
+
+    @Override
+    public void showLegendZoom() {
+        new SizeErrorLegend().setVisible(true);
+
+        try {
+            AppContext.layerViewPanel.getViewport().zoomToFullExtent();
+        } catch (Exception exception) {
+            logger.error("", exception);
+        }
     }
 }

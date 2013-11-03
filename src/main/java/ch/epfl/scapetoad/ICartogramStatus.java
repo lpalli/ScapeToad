@@ -40,4 +40,8 @@ public interface ICartogramStatus {
      */
     public abstract void goToFinishedPanel();
 
+    /**
+     * Show the error legend and zoom to the results.
+     */
+    public void showLegendZoom();
 }

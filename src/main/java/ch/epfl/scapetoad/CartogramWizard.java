@@ -166,12 +166,7 @@ public class CartogramWizard extends JFrame {
     /**
      * 
      */
-    private int iCartogramGridSizeX = 1000;
-
-    /**
-     * 
-     */
-    private int iCartogramGridSizeY = 1000;
+    private int[] iCartogramGridSize = { 1000, 1000 };
 
     /**
      * 
@@ -611,8 +606,8 @@ public class CartogramWizard extends JFrame {
      * 
      * @return the grid X size
      */
-    public int getCartogramGridSizeInX() {
-        return iCartogramGridSizeX;
+    public int[] getCartogramGridSize() {
+        return iCartogramGridSize;
     }
 
     /**
@@ -622,16 +617,7 @@ public class CartogramWizard extends JFrame {
      *            the grid X size
      */
     public void setCartogramGridSizeInX(int gridSizeX) {
-        iCartogramGridSizeX = gridSizeX;
-    }
-
-    /**
-     * Returns the cartogram grid size in y direction.
-     * 
-     * @return the grid Y size
-     */
-    public int getCartogramGridSizeInY() {
-        return iCartogramGridSizeY;
+        iCartogramGridSize[0] = gridSizeX;
     }
 
     /**
@@ -641,7 +627,7 @@ public class CartogramWizard extends JFrame {
      *            the grid Y size
      */
     public void setCartogramGridSizeInY(int gridSizeY) {
-        iCartogramGridSizeY = gridSizeY;
+        iCartogramGridSize[1] = gridSizeY;
     }
 
     /**
@@ -2289,8 +2275,7 @@ class CartogramWizardComputeAction extends AbstractAction {
                 .getAmountOfDeformation());
         cartogram.setAdvancedOptionsEnabled(iCartogramWizard
                 .getAdvancedOptionsEnabled());
-        cartogram.setGridSize(iCartogramWizard.getCartogramGridSizeInX(),
-                iCartogramWizard.getCartogramGridSizeInY());
+        cartogram.setGridSize(iCartogramWizard.getCartogramGridSize());
 
         // Set the parameters for the deformation grid layer
         cartogram.setCreateGridLayer(iCartogramWizard.getCreateGridLayer());
@@ -2522,11 +2507,9 @@ class CartogramWizardOptionsWindow extends JDialog implements
                 .isSelected());
         add(iCartogramGridSizeLabel);
 
-        int cgGridSizeX = AppContext.cartogramWizard.getCartogramGridSizeInX();
-        int cgGridSizeY = AppContext.cartogramWizard.getCartogramGridSizeInY();
-        int cgGridSize = Math.max(cgGridSizeX, cgGridSizeY);
-        String cgGridSizeString = "" + cgGridSize;
-        iCartogramGridSizeTextField = new JTextField(cgGridSizeString);
+        int[] size = AppContext.cartogramWizard.getCartogramGridSize();
+        iCartogramGridSizeTextField = new JTextField(""
+                + Math.max(size[0], size[1]));
         iCartogramGridSizeTextField.setLocation(240, 300);
         iCartogramGridSizeTextField.setSize(50, 26);
         iCartogramGridSizeTextField.setFont(new Font(null, Font.PLAIN, 11));

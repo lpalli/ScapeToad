@@ -35,7 +35,7 @@ public class CartogramNewman {
     /**
      * The size of the diffusion grid.
      */
-    public Size iGridSize = new Size(512, 512);
+    private int[] iGridSize = new int[2];
 
     /**
      * The cartogram bounding box. It is slightly larger than the grid bounding
@@ -135,9 +135,8 @@ public class CartogramNewman {
     public CartogramNewman(CartogramGrid aCartogramGrid) {
         iCartogramGrid = aCartogramGrid;
 
-        iGridSize = aCartogramGrid.getGridSize();
-        iGridSize.setX(iGridSize.getX() - 1);
-        iGridSize.setY(iGridSize.getY() - 1);
+        iGridSize[0] = iCartogramGrid.getGridSize()[0] - 1;
+        iGridSize[1] = iCartogramGrid.getGridSize()[1] - 1;
     }
 
     /**
@@ -191,10 +190,10 @@ public class CartogramNewman {
      */
     private void initializeArrays() throws InterruptedException {
         try {
-            iRhot = new double[5][iGridSize.getX()][iGridSize.getY()];
-            iFftrho = new double[iGridSize.getX()][iGridSize.getY()];
-            iFftexpt = new double[iGridSize.getX()][iGridSize.getY()];
-            iExpky = new double[iGridSize.getY()];
+            iRhot = new double[5][iGridSize[0]][iGridSize[1]];
+            iFftrho = new double[iGridSize[0]][iGridSize[1]];
+            iFftexpt = new double[iGridSize[0]][iGridSize[1]];
+            iExpky = new double[iGridSize[1]];
         } catch (Exception e) {
             logger.error("Out of memory error.");
             throw new InterruptedException(
@@ -210,8 +209,7 @@ public class CartogramNewman {
         readPopulationDensity();
 
         // Transform fftrho.
-        DoubleDCT_2D transform = new DoubleDCT_2D(iGridSize.getX(),
-                iGridSize.getY());
+        DoubleDCT_2D transform = new DoubleDCT_2D(iGridSize[0], iGridSize[1]);
         transform.forward(iFftrho, false);
     }
 
@@ -233,8 +231,8 @@ public class CartogramNewman {
      *            the grid values
      */
     private void fillDiffusionGrid(double[][] aValue) {
-        for (int i = 0; i < iGridSize.getX(); i++) {
-            for (int j = 0; j < iGridSize.getY(); j++) {
+        for (int i = 0; i < iGridSize[0]; i++) {
+            for (int j = 0; j < iGridSize[1]; j++) {
                 iFftrho[i][j] = aValue[i][j];
             }
         }
@@ -245,16 +243,14 @@ public class CartogramNewman {
      * points).
      */
     private void createGridOfPoints() {
-        iGridPointsX = new double[(iGridSize.getX() + 1)
-                * (iGridSize.getY() + 1)];
-        iGridPointsY = new double[(iGridSize.getX() + 1)
-                * (iGridSize.getY() + 1)];
+        iGridPointsX = new double[(iGridSize[0] + 1) * (iGridSize[1] + 1)];
+        iGridPointsY = new double[(iGridSize[0] + 1) * (iGridSize[1] + 1)];
 
         int i = 0;
-        for (int iy = 0; iy <= iGridSize.getY(); iy++) {
-            for (int ix = 0; ix <= iGridSize.getX(); ix++) {
-                iGridPointsX[i] = ix;
-                iGridPointsY[i] = iy;
+        for (int y = 0; y <= iGridSize[1]; y++) {
+            for (int x = 0; x <= iGridSize[0]; x++) {
+                iGridPointsX[i] = x;
+                iGridPointsY[i] = y;
                 i++;
             }
         }
@@ -311,30 +307,31 @@ public class CartogramNewman {
      *            the snapshot
      */
     private void densitySnapshot(double aT, int aS) {
-        double kx, ky;
-        double expkx;
+        double ky;
 
         // Calculate the expky array, to save time in the next part
-        for (int iy = 0; iy < iGridSize.getY(); iy++) {
-            ky = Math.PI * iy / iGridSize.getY();
-            iExpky[iy] = Math.exp(-ky * ky * aT);
+        for (int y = 0; y < iGridSize[1]; y++) {
+            ky = Math.PI * y / iGridSize[1];
+            iExpky[y] = Math.exp(-ky * ky * aT);
         }
 
+        double kx;
+        double expkx;
         // Multiply the FT of the density by the appropriate factors
-        for (int ix = 0; ix < iGridSize.getX(); ix++) {
-            kx = Math.PI * ix / iGridSize.getX();
+        for (int x = 0; x < iGridSize[0]; x++) {
+            kx = Math.PI * x / iGridSize[0];
             expkx = Math.exp(-kx * kx * aT);
-            for (int iy = 0; iy < iGridSize.getY(); iy++) {
-                iFftexpt[ix][iy] = expkx * iExpky[iy] * iFftrho[ix][iy];
+            for (int y = 0; y < iGridSize[1]; y++) {
+                iFftexpt[x][y] = expkx * iExpky[y] * iFftrho[x][y];
 
                 // Save a copy to the rhot[s] array on which we will perform the
                 // DCT back-transform.
-                iRhot[aS][ix][iy] = iFftexpt[ix][iy];
+                iRhot[aS][x][y] = iFftexpt[x][y];
             }
         }
 
         // Perform the back-transform
-        DoubleDCT_2D dct = new DoubleDCT_2D(iGridSize.getX(), iGridSize.getY());
+        DoubleDCT_2D dct = new DoubleDCT_2D(iGridSize[0], iGridSize[1]);
         dct.inverse(iRhot[aS], false);
     }
 
@@ -370,7 +367,7 @@ public class CartogramNewman {
         // Do all three Runga-Kutta steps for each point in turn.
         double esqmax = 0.0;
         double drsqmax = 0.0;
-        int npoints = (iGridSize.getX() + 1) * (iGridSize.getY() + 1);
+        int npoints = (iGridSize[0] + 1) * (iGridSize[1] + 1);
         for (int p = 0; p < npoints; p++) {
             double rx1 = iGridPointsX[p];
             double ry1 = iGridPointsY[p];
@@ -464,14 +461,14 @@ public class CartogramNewman {
 
             if (rx3 < 0) {
                 rx3 = 0;
-            } else if (rx3 > iGridSize.getX()) {
-                rx3 = iGridSize.getX();
+            } else if (rx3 > iGridSize[0]) {
+                rx3 = iGridSize[0];
             }
 
             if (ry3 < 0) {
                 ry3 = 0;
-            } else if (ry3 > iGridSize.getY()) {
-                ry3 = iGridSize.getY();
+            } else if (ry3 > iGridSize[1]) {
+                ry3 = iGridSize[1];
             }
 
             iGridPointsX[p] = rx3;
@@ -511,8 +508,8 @@ public class CartogramNewman {
         int ix = (int) aRx;
         if (ix < 0) {
             ix = 0;
-        } else if (ix >= iGridSize.getX()) {
-            ix = iGridSize.getX() - 1;
+        } else if (ix >= iGridSize[0]) {
+            ix = iGridSize[0] - 1;
         }
 
         int ixm1 = ix - 1;
@@ -520,15 +517,15 @@ public class CartogramNewman {
             ixm1 = 0;
         }
         int ixp1 = ix + 1;
-        if (ixp1 >= iGridSize.getX()) {
-            ixp1 = iGridSize.getX() - 1;
+        if (ixp1 >= iGridSize[0]) {
+            ixp1 = iGridSize[0] - 1;
         }
 
         int iy = (int) aRy;
         if (iy < 0) {
             iy = 0;
-        } else if (iy >= iGridSize.getY()) {
-            iy = iGridSize.getY() - 1;
+        } else if (iy >= iGridSize[1]) {
+            iy = iGridSize[1] - 1;
         }
 
         int iym1 = iy - 1;
@@ -536,8 +533,8 @@ public class CartogramNewman {
             iym1 = 0;
         }
         int iyp1 = iy + 1;
-        if (iyp1 >= iGridSize.getY()) {
-            iyp1 = iGridSize.getY() - 1;
+        if (iyp1 >= iGridSize[1]) {
+            iyp1 = iGridSize[1] - 1;
         }
 
         // Calculate the densities at the nine surrounding grid points
@@ -583,11 +580,9 @@ public class CartogramNewman {
         double w22 = dx * dy;
 
         // Perform the interpolation for x and y components of velocity
-
-        double vxp = w11 * vx11 + w21 * vx21 + w12 * vx12 + w22 * vx22;
-        double vyp = w11 * vy11 + w21 * vy21 + w12 * vy12 + w22 * vy22;
-
-        return new Coordinate(vxp, vyp);
+        return new Coordinate(
+                w11 * vx11 + w21 * vx21 + w12 * vx12 + w22 * vx22, w11 * vy11
+                        + w21 * vy21 + w12 * vy12 + w22 * vy22);
     }
 
     /**
@@ -601,8 +596,8 @@ public class CartogramNewman {
         int gridSizeX = x.length;
         int gridSizeY = x[0].length;
 
-        double cellSizeX = iExtent.getWidth() / iGridSize.getX();
-        double cellSizeY = iExtent.getHeight() / iGridSize.getY();
+        double cellSizeX = iExtent.getWidth() / iGridSize[0];
+        double cellSizeY = iExtent.getHeight() / iGridSize[1];
 
         double minX = iExtent.getMinX();
         double minY = iExtent.getMinY();

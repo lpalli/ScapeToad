@@ -55,11 +55,7 @@ public class CartogramGrid {
     /**
      * The grid size in x and y direction.
      */
-    private int iGridSizeX = 256;
-    /**
-     * 
-     */
-    private int iGridSizeY = 256;
+    private int[] iGridSize = new int[2];
 
     /**
      * The real world initial envelope for the grid. The grid is constructed
@@ -101,11 +97,7 @@ public class CartogramGrid {
      * The size of one cell in x and y direction. This is used for internal
      * purpose only. Do not modify these values directly.
      */
-    private double iCellSizeX;
-    /**
-     * 
-     */
-    private double iCellSizeY;
+    private double[] iCellSize = new double[2];
 
     /**
      * The bias value is a small value bigger than 0 which is added to every
@@ -132,8 +124,8 @@ public class CartogramGrid {
      */
     public CartogramGrid(int aGridSizeX, int aGridSizeY, Envelope aEnvelope) {
         // Store the attributes.
-        iGridSizeX = aGridSizeX;
-        iGridSizeY = aGridSizeY;
+        iGridSize[0] = aGridSizeX;
+        iGridSize[1] = aGridSizeY;
         iEnvelope = aEnvelope;
 
         // Allocate memory for the grid arrays.
@@ -188,8 +180,8 @@ public class CartogramGrid {
      * 
      * @return the grid size
      */
-    public Size getGridSize() {
-        return new Size(iGridSizeX, iGridSizeY);
+    public int[] getGridSize() {
+        return iGridSize;
     }
 
     /**
@@ -198,28 +190,28 @@ public class CartogramGrid {
      */
     private void computeNodeCoordinates() {
         // Verify the grid size.
-        if (iGridSizeX <= 0 || iGridSizeY <= 0) {
+        if (iGridSize[0] <= 0 || iGridSize[1] <= 0) {
             return;
         }
 
         // Compute the size of a cell in x and y.
-        iCellSizeX = iEnvelope.getWidth() / (iGridSizeX - 1);
-        iCellSizeY = iEnvelope.getHeight() / (iGridSizeY - 1);
+        iCellSize[0] = iEnvelope.getWidth() / (iGridSize[0] - 1);
+        iCellSize[1] = iEnvelope.getHeight() / (iGridSize[1] - 1);
 
         double x;
         double y = iEnvelope.getMinY();
 
         // Create all nodes.
-        for (int j = 0; j < iGridSizeY; j++) {
+        for (int j = 0; j < iGridSize[1]; j++) {
             x = iEnvelope.getMinX();
 
-            for (int i = 0; i < iGridSizeX; i++) {
+            for (int i = 0; i < iGridSize[0]; i++) {
                 iNodeX[i][j] = x;
                 iNodeY[i][j] = y;
-                x += iCellSizeX;
+                x += iCellSize[0];
             }
 
-            y += iCellSizeY;
+            y += iCellSize[1];
         }
     }
 
@@ -233,14 +225,17 @@ public class CartogramGrid {
      * @param aAttrIsDensityValue
      *            is true if the master attribute is a density value, and false
      *            if it is a population value.
+     * @param aStatus
+     *            the cartogram status
      * @throws InterruptedException
      *             when was interrupted
      * @throws DataFormatException
      *             when the data format is wrong
      */
     public void computeOriginalDensityValuesWithLayer(Layer aLayer,
-            String aAttrName, boolean aAttrIsDensityValue)
-            throws InterruptedException, DataFormatException {
+            String aAttrName, boolean aAttrIsDensityValue,
+            ICartogramStatus aStatus) throws InterruptedException,
+            DataFormatException {
         // If the attribute is not a density value, we create a new
         // attribute for the computed density value.
         String densityAttrName = aAttrName;
@@ -260,8 +255,8 @@ public class CartogramGrid {
         // all optimal density values. At the same time we set the current
         // density value to the mean density value and the value for constrained
         // deformation to 0.
-        for (int j = 0; j < iGridSizeY - 1; j++) {
-            for (int i = 0; i < iGridSizeX - 1; i++) {
+        for (int j = 0; j < iGridSize[1] - 1; j++) {
+            for (int i = 0; i < iGridSize[0] - 1; i++) {
                 iCellCurrentDensity[i][j] = iMeanDensity;
                 iCellOriginalDensity[i][j] = iMeanDensity;
                 iCellConstrainedDeformation[i][j] = -1;
@@ -285,7 +280,7 @@ public class CartogramGrid {
                         "Computation has been interrupted by the user.");
             }
 
-            AppContext.cartogramWizard.updateRunningStatus(progress,
+            aStatus.updateRunningStatus(progress,
                     "Computing the density for the cartogram grid...",
                     "Treating feature " + (featCnt + 1) + " of " + nFeat);
 
@@ -308,8 +303,8 @@ public class CartogramGrid {
     private void rescaleValues() {
         // Find out the smallest non-zero value in the grid.
         double min = Double.MAX_VALUE;
-        for (int j = 0; j < iGridSizeY - 1; j++) {
-            for (int i = 0; i < iGridSizeX - 1; i++) {
+        for (int j = 0; j < iGridSize[1] - 1; j++) {
+            for (int i = 0; i < iGridSize[0] - 1; i++) {
                 if (iCellCurrentDensity[i][j] > 0.0
                         && iCellCurrentDensity[i][j] < min) {
                     min = iCellCurrentDensity[i][j];
@@ -321,8 +316,8 @@ public class CartogramGrid {
         if (min < Double.MAX_VALUE) {
             double factor = iMinValue / min;
             if (factor > 1) {
-                for (int j = 0; j < iGridSizeY - 1; j++) {
-                    for (int i = 0; i < iGridSizeX - 1; i++) {
+                for (int j = 0; j < iGridSize[1] - 1; j++) {
+                    for (int i = 0; i < iGridSize[0] - 1; i++) {
                         iCellCurrentDensity[i][j] *= factor;
                     }
                 }
@@ -334,8 +329,8 @@ public class CartogramGrid {
      * Adds the bias value to every grid cell.
      */
     private void addBias() {
-        for (int j = 0; j < iGridSizeY - 1; j++) {
-            for (int i = 0; i < iGridSizeX - 1; i++) {
+        for (int j = 0; j < iGridSize[1] - 1; j++) {
+            for (int i = 0; i < iGridSize[0] - 1; i++) {
                 iCellCurrentDensity[i][j] += bias;
             }
         }
@@ -404,8 +399,8 @@ public class CartogramGrid {
                     minX = coordinateXForOriginalCellIndex(i);
                     minY = coordinateYForOriginalCellIndex(j);
 
-                    cellEnv = new Envelope(minX, minX + iCellSizeX, minY, minY
-                            + iCellSizeY);
+                    cellEnv = new Envelope(minX, minX + iCellSize[0], minY,
+                            minY + iCellSize[1]);
                     cellEnvGeom = factory.toGeometry(cellEnv);
                     if (geometry.contains(cellEnvGeom)
                             || geometry.intersects(cellEnvGeom)) {
@@ -445,9 +440,12 @@ public class CartogramGrid {
 
         for (int j = originalCellIndexForCoordinateY(envelope.getMinY()); j <= maxJ; j++) {
             for (int i = originalCellIndexForCoordinateX(envelope.getMinX()); i <= maxI; i++) {
-                if (geometry.contains(factory.createPoint(new Coordinate(
-                        coordinateXForOriginalCellIndex(i) + iCellSizeX / 2,
-                        coordinateYForOriginalCellIndex(j) + iCellSizeY / 2)))) {
+                if (geometry
+                        .contains(factory.createPoint(new Coordinate(
+                                coordinateXForOriginalCellIndex(i)
+                                        + iCellSize[0] / 2,
+                                coordinateYForOriginalCellIndex(j)
+                                        + iCellSize[1] / 2)))) {
                     iCellOriginalDensity[i][j] = densityValue;
                     iCellCurrentDensity[i][j] = densityValue;
                     iCellConstrainedDeformation[i][j] = 0;
@@ -470,23 +468,23 @@ public class CartogramGrid {
         // 5. If yes, move point.
 
         boolean canMove;
-        for (int j = 0; j < iGridSizeY - 1; j++) {
-            for (int i = 0; i < iGridSizeX - 1; i++) {
+        for (int j = 0; j < iGridSize[1] - 1; j++) {
+            for (int i = 0; i < iGridSize[0] - 1; i++) {
                 if (iCellConstrainedDeformation[i][j] == 1) {
                     // Can we move a node ?
                     canMove = false;
 
                     // If there is a corner, we can move.
-                    if (i == 0 && j == 0 || i == 0 && j == iGridSizeY - 2
-                            || i == iGridSizeX - 2 && j == 0
-                            || i == iGridSizeX - 2 && j == iGridSizeY - 1) {
+                    if (i == 0 && j == 0 || i == 0 && j == iGridSize[1] - 2
+                            || i == iGridSize[0] - 2 && j == 0
+                            || i == iGridSize[0] - 2 && j == iGridSize[1] - 1) {
                         canMove = true;
                     }
 
                     // If the cell is on the border but not a corner,
                     // we can move depending on the neighbours.
 
-                    else if (i == 0 || i == iGridSizeX - 2) {
+                    else if (i == 0 || i == iGridSize[0] - 2) {
                         // Left or right border
                         if (iCellConstrainedDeformation[i][j + 1] != 0
                                 || iCellConstrainedDeformation[i][j - 1] != 0) {
@@ -494,7 +492,7 @@ public class CartogramGrid {
                         }
                     }
 
-                    else if (j == 0 || j == iGridSizeY - 2) {
+                    else if (j == 0 || j == iGridSize[1] - 2) {
                         // Lower or upper border
                         if (iCellConstrainedDeformation[i - 1][j] != 0
                                 || iCellConstrainedDeformation[i + 1][j] != 0) {
@@ -507,8 +505,8 @@ public class CartogramGrid {
                     // depends on the exact configuration). We have to test
                     // for each node of the cell whether it can move or not.
 
-                    if (i > 0 && j > 0 && i < iGridSizeX - 2
-                            && j < iGridSizeY - 2) {
+                    if (i > 0 && j > 0 && i < iGridSize[0] - 2
+                            && j < iGridSize[1] - 2) {
                         // Test upper left node.
                         if (iCellConstrainedDeformation[i - 1][j] != 0
                                 && iCellConstrainedDeformation[i - 1][j + 1] != 0
@@ -577,9 +575,9 @@ public class CartogramGrid {
         // Try to move each of the 4 nodes to the new position.
 
         // Upper left node
-        if (aI == 0 && aJ == iGridSizeY - 2 || aI == 0
+        if (aI == 0 && aJ == iGridSize[1] - 2 || aI == 0
                 && iCellConstrainedDeformation[aI][aJ + 1] != 0
-                || aJ == iGridSizeY - 2
+                || aJ == iGridSize[1] - 2
                 && iCellConstrainedDeformation[aI - 1][aJ] != 0
                 || iCellConstrainedDeformation[aI - 1][aJ] != 0
                 && iCellConstrainedDeformation[aI - 1][aJ + 1] != 0
@@ -588,10 +586,10 @@ public class CartogramGrid {
         }
 
         // Upper right node
-        if (aI == iGridSizeX - 2 && aJ == iGridSizeY - 2
-                || aI == iGridSizeX - 2
+        if (aI == iGridSize[0] - 2 && aJ == iGridSize[1] - 2
+                || aI == iGridSize[0] - 2
                 && iCellConstrainedDeformation[aI][aJ + 1] != 0
-                || aJ == iGridSizeY - 2
+                || aJ == iGridSize[1] - 2
                 && iCellConstrainedDeformation[aI + 1][aJ] != 0
                 || iCellConstrainedDeformation[aI + 1][aJ] != 0
                 && iCellConstrainedDeformation[aI + 1][aJ + 1] != 0
@@ -600,7 +598,7 @@ public class CartogramGrid {
         }
 
         // Lower right node
-        if (aI == iGridSizeX - 2 && aJ == 0 || aI == iGridSizeX - 2
+        if (aI == iGridSize[0] - 2 && aJ == 0 || aI == iGridSize[0] - 2
                 && iCellConstrainedDeformation[aI][aJ - 1] != 0 || aJ == 0
                 && iCellConstrainedDeformation[aI + 1][aJ] != 0
                 || iCellConstrainedDeformation[aI + 1][aJ] != 0
@@ -650,8 +648,8 @@ public class CartogramGrid {
 
         // If the distance to move is too big, we compute a new, closer
         // location.
-        if (moveDistance > iCellSizeX / 10) {
-            double newMoveDistance = iCellSizeX / 10;
+        if (moveDistance > iCellSize[0] / 10) {
+            double newMoveDistance = iCellSize[0] / 10;
 
             double moveVectorX = x - iNodeX[aI][aJ];
             double moveVectorY = y - iNodeY[aI][aJ];
@@ -666,7 +664,7 @@ public class CartogramGrid {
         boolean canMove = true;
 
         if (aI > 0) {
-            if (aJ < iGridSizeY - 2 && iNodeX[aI - 1][aJ + 1] >= x) {
+            if (aJ < iGridSize[1] - 2 && iNodeX[aI - 1][aJ + 1] >= x) {
                 canMove = false;
             }
 
@@ -679,8 +677,8 @@ public class CartogramGrid {
             }
         }
 
-        if (aI < iGridSizeX - 2) {
-            if (aJ < iGridSizeY - 2 && iNodeX[aI + 1][aJ + 1] <= x) {
+        if (aI < iGridSize[0] - 2) {
+            if (aJ < iGridSize[1] - 2 && iNodeX[aI + 1][aJ + 1] <= x) {
                 canMove = false;
             }
 
@@ -702,12 +700,12 @@ public class CartogramGrid {
                 canMove = false;
             }
 
-            if (aI < iGridSizeX - 2 && iNodeY[aI + 1][aJ - 1] >= y) {
+            if (aI < iGridSize[0] - 2 && iNodeY[aI + 1][aJ - 1] >= y) {
                 canMove = false;
             }
         }
 
-        if (aJ < iGridSizeY - 2) {
+        if (aJ < iGridSize[1] - 2) {
             if (aI > 0 && iNodeY[aI - 1][aJ + 1] <= y) {
                 canMove = false;
             }
@@ -716,7 +714,7 @@ public class CartogramGrid {
                 canMove = false;
             }
 
-            if (aI < iGridSizeX - 2 && iNodeY[aI + 1][aJ + 1] <= y) {
+            if (aI < iGridSize[0] - 2 && iNodeY[aI + 1][aJ + 1] <= y) {
                 canMove = false;
             }
         }
@@ -744,7 +742,7 @@ public class CartogramGrid {
         }
 
         return (int) Math.round(Math.ceil((aX - iEnvelope.getMinX())
-                / iCellSizeX) - 1);
+                / iCellSize[0]) - 1);
     }
 
     /**
@@ -764,7 +762,7 @@ public class CartogramGrid {
         }
 
         return (int) Math.round(Math.ceil((aY - iEnvelope.getMinY())
-                / iCellSizeY) - 1);
+                / iCellSize[1]) - 1);
     }
 
     /**
@@ -780,7 +778,7 @@ public class CartogramGrid {
             return 0.0;
         }
 
-        return iEnvelope.getMinX() + aI * iCellSizeX;
+        return iEnvelope.getMinX() + aI * iCellSize[0];
     }
 
     /**
@@ -796,7 +794,7 @@ public class CartogramGrid {
             return 0.0;
         }
 
-        return iEnvelope.getMinY() + aJ * iCellSizeY;
+        return iEnvelope.getMinY() + aJ * iCellSize[1];
     }
 
     /**
@@ -839,8 +837,8 @@ public class CartogramGrid {
             }
         }
 
-        for (int i = 0; i < iGridSizeX - 1; i++) {
-            for (int j = 0; j < iGridSizeY - 1; j++) {
+        for (int i = 0; i < iGridSize[0] - 1; i++) {
+            for (int j = 0; j < iGridSize[1] - 1; j++) {
                 // Compute the cell index in which the node is located.
 
                 int llx = (int) Math.round(Math.floor((iNodeX[i][j] - aMinX)
@@ -899,10 +897,10 @@ public class CartogramGrid {
      * @return a double array with the coordinates of the projected point.
      */
     public double[] projectPoint(double aX, double aY) {
-        double p1x = (aX - iEnvelope.getMinX()) * iGridSizeX
+        double p1x = (aX - iEnvelope.getMinX()) * iGridSize[0]
                 / iEnvelope.getWidth();
 
-        double p1y = (aY - iEnvelope.getMinY()) * iGridSizeY
+        double p1y = (aY - iEnvelope.getMinY()) * iGridSize[1]
                 / iEnvelope.getHeight();
 
         int i = (int) Math.round(Math.floor(p1x));
@@ -911,14 +909,14 @@ public class CartogramGrid {
         if (i < 0) {
             i = 0;
         }
-        if (i >= iGridSizeX - 1) {
-            i = iGridSizeX - 2;
+        if (i >= iGridSize[0] - 1) {
+            i = iGridSize[0] - 2;
         }
         if (j < 0) {
             j = 0;
         }
-        if (j >= iGridSizeY - 1) {
-            j = iGridSizeY - 2;
+        if (j >= iGridSize[1] - 1) {
+            j = iGridSize[1] - 2;
         }
 
         double ti = p1x - i;
@@ -965,10 +963,10 @@ public class CartogramGrid {
     private Coordinate[] projectLineSegment(Coordinate aCoordinate1,
             Coordinate aCoordinate2) {
         // Compute the index of the grid cells for each coordinate.
-        double d1x = (aCoordinate1.x - iEnvelope.getMinX()) / iCellSizeX;
-        double d1y = (aCoordinate1.y - iEnvelope.getMinY()) / iCellSizeY;
-        double d2x = (aCoordinate2.x - iEnvelope.getMinX()) / iCellSizeX;
-        double d2y = (aCoordinate2.y - iEnvelope.getMinY()) / iCellSizeY;
+        double d1x = (aCoordinate1.x - iEnvelope.getMinX()) / iCellSize[0];
+        double d1y = (aCoordinate1.y - iEnvelope.getMinY()) / iCellSize[1];
+        double d2x = (aCoordinate2.x - iEnvelope.getMinX()) / iCellSize[0];
+        double d2y = (aCoordinate2.y - iEnvelope.getMinY()) / iCellSize[1];
 
         int i1x = (int) Math.round(Math.floor(d1x));
         int i1y = (int) Math.round(Math.floor(d1y));

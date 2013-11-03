@@ -120,14 +120,9 @@ public class Cartogram {
     private Envelope iEnvelope = new Envelope(0.0, 1.0, 0.0, 1.0);
 
     /**
-     * The X size of the cartogram grid.
+     * The size of the cartogram grid.
      */
-    private int iGridSizeX = 1000;
-
-    /**
-     * The X size of the cartogram grid.
-     */
-    private int iGridSizeY = 1000;
+    private int[] iGridSize = { 1000, 1000 };
 
     /**
      * All the deformation is done on this cartogram grid.
@@ -228,8 +223,8 @@ public class Cartogram {
                 // deformation slider.
                 // The deformation slider modifies only the grid size between
                 // 500 (quality 0) and 3000 (quality 100).
-                iGridSizeX = iAmountOfDeformation * 15 + 250;
-                iGridSizeY = iGridSizeX;
+                iGridSize[0] = iAmountOfDeformation * 15 + 250;
+                iGridSize[1] = iGridSize[0];
             }
 
             // User information.
@@ -245,14 +240,14 @@ public class Cartogram {
             // to the envelope.
             adjustGridSizeToEnvelope();
             logger.debug(String.format("Adjusted grid size: %1$sx%2$s",
-                    iGridSizeX, iGridSizeY));
+                    iGridSize[0], iGridSize[1]));
 
             iStatus.updateRunningStatus(20,
                     "Preparing the cartogram computation...",
                     "Creating the cartogram grid");
 
             // Create the cartogram grid.
-            iGrid = new CartogramGrid(iGridSizeX, iGridSizeY, iEnvelope);
+            iGrid = new CartogramGrid(iGridSize[0], iGridSize[1], iEnvelope);
 
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -286,7 +281,7 @@ public class Cartogram {
                     "Computing the density for the cartogram grid...", "");
 
             iGrid.computeOriginalDensityValuesWithLayer(masterLayer,
-                    iMasterAttribute, iMasterAttributeIsDensityValue);
+                    iMasterAttribute, iMasterAttributeIsDensityValue, iStatus);
 
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -480,13 +475,7 @@ public class Cartogram {
         errorStyle.setEnabled(true);
         aLayers[0].getStyle(BasicStyle.class).setEnabled(false);
 
-        new SizeErrorLegend().setVisible(true);
-
-        try {
-            AppContext.layerViewPanel.getViewport().zoomToFullExtent();
-        } catch (Exception exception) {
-            logger.error("", exception);
-        }
+        iStatus.showLegendZoom();
 
         // *** SHOW THE FINISHED PANEL
         iStatus.goToFinishedPanel();
@@ -556,14 +545,12 @@ public class Cartogram {
     /**
      * Defines the grid size in x and y dimensions.
      * 
-     * @param aX
-     *            the X grid size
-     * @param aY
-     *            the Y grid size
+     * @param aSize
+     *            the grid size
      */
-    public void setGridSize(int aX, int aY) {
-        iGridSizeX = aX;
-        iGridSizeY = aY;
+    public void setGridSize(int[] aSize) {
+        iGridSize[0] = aSize[0];
+        iGridSize[1] = aSize[1];
     }
 
     /**
@@ -625,10 +612,10 @@ public class Cartogram {
 
         if (width < height) {
             // Adjust the x grid size.
-            iGridSizeX = (int) Math.round(iGridSizeY * width / height);
+            iGridSize[0] = (int) Math.round(iGridSize[1] * width / height);
         } else if (width > height) {
             // Adjust the y grid size.
-            iGridSizeY = (int) Math.round(iGridSizeX * height / width);
+            iGridSize[1] = (int) Math.round(iGridSize[0] * height / width);
         }
     }
 
@@ -982,9 +969,9 @@ public class Cartogram {
         buffer.append('\n');
 
         buffer.append("Cartogram grid size: ");
-        buffer.append(iGridSizeX);
+        buffer.append(iGridSize[0]);
         buffer.append(" x ");
-        buffer.append(iGridSizeY);
+        buffer.append(iGridSize[1]);
         buffer.append("\n\n");
 
         buffer.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
