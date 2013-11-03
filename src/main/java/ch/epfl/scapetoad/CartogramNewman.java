@@ -104,28 +104,27 @@ public class CartogramNewman {
     private double iDrp;
 
     /**
-     * The Cartogram Wizard is used to update the running status. If NULL, no
-     * running status update is done.
+     * The cartogram status.
      */
-    public CartogramWizard iRunningStatusWizard;
+    private ICartogramStatus iStatus;
 
     /**
      * The value of the running status at the begin of the cartogram
      * computation.
      */
-    public int iRunningStatusMinimumValue;
+    private int iMinimumStatus;
 
     /**
      * The value of the running statut at the end of the cartogram computation.
      */
-    public int iRunningStatusMaximumValue;
+    private int iMaximumStatus;
 
     /**
      * The main string of the running status which is set by the caller. This
      * string will be displayed in the first line of the running status wizard.
      * The second line is freely used by this class.
      */
-    public String iRunningStatusMainString;
+    private String iStatusMessage;
 
     /**
      * Constructor for the CartogramNewman class.
@@ -135,9 +134,30 @@ public class CartogramNewman {
      */
     public CartogramNewman(CartogramGrid aCartogramGrid) {
         iCartogramGrid = aCartogramGrid;
+
         iGridSize = aCartogramGrid.getGridSize();
         iGridSize.setX(iGridSize.getX() - 1);
         iGridSize.setY(iGridSize.getY() - 1);
+    }
+
+    /**
+     * 
+     * 
+     * @param aStatus
+     *            the cartogram status
+     * @param aMinimumStatus
+     *            the minimum status value
+     * @param aMaximumStatus
+     *            the maximum status value
+     * @param aStatusMessage
+     *            the status message
+     */
+    public void initializeStatus(ICartogramStatus aStatus, int aMinimumStatus,
+            int aMaximumStatus, String aStatusMessage) {
+        iStatus = aStatus;
+        iMinimumStatus = aMinimumStatus;
+        iMaximumStatus = aMaximumStatus;
+        iStatusMessage = aStatusMessage;
     }
 
     /**
@@ -601,23 +621,21 @@ public class CartogramNewman {
      * Estimates the computation progress in percentages and displays the value
      * in the wizard. Works only if a wizard is defined, does nothing otherwise.
      * 
-     * @param t
+     * @param time
      *            current time from the makeCartogram method.
      */
-    private void updateRunningStatus(double t) {
-        if (iRunningStatusWizard != null) {
-            int perc = (int) Math.round(100.0 * Math.log(t / INITH)
+    private void updateRunningStatus(double time) {
+        if (iStatus != null) {
+            int perc = (int) Math.round(100.0 * Math.log(time / INITH)
                     / Math.log(EXPECTEDTIME / INITH));
             if (perc > 100) {
                 perc = 100;
             }
 
-            int res = (iRunningStatusMaximumValue - iRunningStatusMinimumValue)
-                    * perc / 100;
-            res += iRunningStatusMinimumValue;
-            iRunningStatusWizard.updateRunningStatus(res,
-                    iRunningStatusMainString, "Diffusion process: " + perc
-                            + "% done");
+            int res = (iMaximumStatus - iMinimumStatus) * perc / 100;
+            res += iMinimumStatus;
+            iStatus.updateRunningStatus(res, iStatusMessage,
+                    "Diffusion process: " + perc + "% done");
         }
     }
 }

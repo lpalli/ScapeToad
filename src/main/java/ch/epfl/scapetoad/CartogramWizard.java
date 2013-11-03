@@ -124,9 +124,9 @@ public class CartogramWizard extends JFrame {
     private CartogramWizardPanelFour iPanelFour = null;
 
     /**
-     * 
+     * The cartogram worker process object.
      */
-    private Cartogram iCartogram = null;
+    private CartogramWorker iWorker = null;
 
     /**
      * The panel shown during cartogram computation.
@@ -417,22 +417,22 @@ public class CartogramWizard extends JFrame {
     }
 
     /**
-     * Returns the cartogram computation process.
+     * Returns the cartogram worker computation process.
      * 
-     * @return the cartogram
+     * @return the cartogram worker
      */
-    public Cartogram getCartogram() {
-        return iCartogram;
+    public CartogramWorker getWorker() {
+        return iWorker;
     }
 
     /**
-     * Sets the cartogram computation process.
+     * Sets the cartogram worker computation process.
      * 
-     * @param cg
-     *            the cartogram
+     * @param aWorker
+     *            the cartogram worker
      */
-    public void setCartogram(Cartogram cg) {
-        iCartogram = cg;
+    public void setCartogram(CartogramWorker aWorker) {
+        iWorker = aWorker;
     }
 
     /**
@@ -2094,7 +2094,7 @@ class CartogramWizardFinishedPanel extends JPanel {
                 add(finishedMessage);
 
                 JTextArea finishedReport = new JTextArea(
-                        AppContext.cartogramWizard.getCartogram()
+                        AppContext.cartogramWizard.getWorker().getCartogram()
                                 .getComputationReport());
 
                 finishedReport.setFont(new Font(null, Font.PLAIN, 11));
@@ -2209,11 +2209,11 @@ class CartogramWizardCloseAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Cartogram cg = AppContext.cartogramWizard.getCartogram();
+        CartogramWorker cg = AppContext.cartogramWizard.getWorker();
         if (cg != null) {
             boolean cgRunning = cg.isRunning();
             if (cgRunning) {
-                AppContext.cartogramWizard.getCartogram().interrupt();
+                AppContext.cartogramWizard.getWorker().interrupt();
             }
         }
 
@@ -2274,7 +2274,8 @@ class CartogramWizardComputeAction extends AbstractAction {
                 .getMissingValue());
 
         // Create a new cartogram instance and set the parameters
-        Cartogram cartogram = new Cartogram(iCartogramWizard);
+        CartogramWorker worker = new CartogramWorker(iCartogramWizard);
+        Cartogram cartogram = worker.getCartogram();
         cartogram.setLayerManager(AppContext.layerManager);
         cartogram.setMasterLayer(iCartogramWizard.getCartogramLayerName());
         cartogram.setMasterAttribute(iCartogramWizard
@@ -2297,16 +2298,12 @@ class CartogramWizardComputeAction extends AbstractAction {
 
         // Set the parameters for the legend layer
         // We have to estimate the legend values
-        if (isDensityValue) {
-            cartogram.setCreateLegendLayer(false);
-        } else {
-            cartogram.setCreateLegendLayer(true);
-        }
+        cartogram.setCreateLegendLayer(!isDensityValue);
 
-        iCartogramWizard.setCartogram(cartogram);
+        iCartogramWizard.setCartogram(worker);
 
         // Start the cartogram computation.
-        cartogram.start();
+        worker.start();
     }
 }
 
@@ -3325,7 +3322,7 @@ class CartogramWizardSaveReportAction extends AbstractAction {
         // Write the report to the file.
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(path));
-            out.write(AppContext.cartogramWizard.getCartogram()
+            out.write(AppContext.cartogramWizard.getWorker().getCartogram()
                     .getComputationReport());
             out.close();
         } catch (IOException exc) {

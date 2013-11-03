@@ -55,19 +55,17 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
  * @author christian@swisscarto.ch
  * @version v1.0.0, 2007-11-30
  */
-public class Cartogram extends SwingWorker {
+public class Cartogram {
 
     /**
      * The logger
      */
-    @SuppressWarnings("hiding")
     private static Log logger = LogFactory.getLog(Cartogram.class);
 
     /**
-     * The cartogram wizard. We need the wizard reference for updating the
-     * progress status informations.
+     * The cartogram status.
      */
-    private CartogramWizard iCartogramWizard = null;
+    private ICartogramStatus iStatus;
 
     /**
      * The layer manager used for cartogram computation.
@@ -209,20 +207,19 @@ public class Cartogram extends SwingWorker {
     /**
      * The constructor for the cartogram class.
      * 
-     * @param aCartogramWizard
-     *            the cartogram wizard
+     * @param aStatus
+     *            the cartogram status
      */
-    public Cartogram(CartogramWizard aCartogramWizard) {
-        // Storing the cartogram wizard reference.
-        iCartogramWizard = aCartogramWizard;
+    public Cartogram(ICartogramStatus aStatus) {
+        iStatus = aStatus;
     }
 
     /**
-     * The construct method is an overridden method from SwingWorker which does
-     * initiate the computation process.
+     * Compute the cartogram layers.
+     * 
+     * @return the projected layers
      */
-    @Override
-    public Object construct() {
+    public Layer[] compute() {
         try {
             iComputationStartTime = System.nanoTime();
 
@@ -236,7 +233,7 @@ public class Cartogram extends SwingWorker {
             }
 
             // User information.
-            iCartogramWizard.updateRunningStatus(0,
+            iStatus.updateRunningStatus(0,
                     "Preparing the cartogram computation...",
                     "Computing the cartogram bounding box");
 
@@ -250,7 +247,7 @@ public class Cartogram extends SwingWorker {
             logger.debug(String.format("Adjusted grid size: %1$sx%2$s",
                     iGridSizeX, iGridSizeY));
 
-            iCartogramWizard.updateRunningStatus(20,
+            iStatus.updateRunningStatus(20,
                     "Preparing the cartogram computation...",
                     "Creating the cartogram grid");
 
@@ -265,7 +262,7 @@ public class Cartogram extends SwingWorker {
 
             // Check the master attribute for invalid values.
 
-            iCartogramWizard.updateRunningStatus(50,
+            iStatus.updateRunningStatus(50,
                     "Check the cartogram attribute values...", "");
 
             Layer masterLayer = AppContext.layerManager.getLayer(iMasterLayer);
@@ -285,7 +282,7 @@ public class Cartogram extends SwingWorker {
             // Compute the density values for the cartogram grid using
             // the master layer and the master attribute.
 
-            iCartogramWizard.updateRunningStatus(100,
+            iStatus.updateRunningStatus(100,
                     "Computing the density for the cartogram grid...", "");
 
             iGrid.computeOriginalDensityValuesWithLayer(masterLayer,
@@ -300,7 +297,7 @@ public class Cartogram extends SwingWorker {
             // *** PREPARE THE GRID FOR THE CONSTRAINED DEFORMATION ***
 
             if (iConstrainedDeforamtionLayers != null) {
-                iCartogramWizard.updateRunningStatus(300,
+                iStatus.updateRunningStatus(300,
                         "Prepare constrained deformation...", "");
 
                 iGrid.prepareGridForConstrainedDeformation(iConstrainedDeforamtionLayers);
@@ -314,16 +311,14 @@ public class Cartogram extends SwingWorker {
 
             // *** COMPUTE THE CARTOGRAM USING THE DIFFUSION ALGORITHM ***
 
-            iCartogramWizard.updateRunningStatus(350,
+            iStatus.updateRunningStatus(350,
                     "Computing cartogram diffusion...",
                     "Starting the diffusion process");
             CartogramNewman cnewm = new CartogramNewman(iGrid);
 
             // Enable the CartogramNewman instance to update the running status.
-            cnewm.iRunningStatusWizard = iCartogramWizard;
-            cnewm.iRunningStatusMinimumValue = 350;
-            cnewm.iRunningStatusMaximumValue = 700;
-            cnewm.iRunningStatusMainString = "Computing cartogram diffusion...";
+            cnewm.initializeStatus(iStatus, 350, 750,
+                    "Computing cartogram diffusion...");
 
             // Let's go!
             cnewm.compute();
@@ -336,7 +331,7 @@ public class Cartogram extends SwingWorker {
 
             // *** CONSTRAINED DEFORMATION ***
             if (iConstrainedDeforamtionLayers != null) {
-                iCartogramWizard.updateRunningStatus(700,
+                iStatus.updateRunningStatus(700,
                         "Applying the constrained deformation layers", "");
 
                 iGrid.conformToConstrainedDeformation();
@@ -350,8 +345,7 @@ public class Cartogram extends SwingWorker {
 
             // *** PROJECTION OF ALL LAYERS ***
 
-            iCartogramWizard.updateRunningStatus(750,
-                    "Projecting the layers...", "");
+            iStatus.updateRunningStatus(750, "Projecting the layers...", "");
 
             Layer[] layers = projectLayers();
 
@@ -371,7 +365,7 @@ public class Cartogram extends SwingWorker {
                 createLegendLayer();
             }
 
-            iCartogramWizard.updateRunningStatus(950,
+            iStatus.updateRunningStatus(950,
                     "Producing the computation report...", "");
 
             return layers;
@@ -380,49 +374,47 @@ public class Cartogram extends SwingWorker {
             String exceptionType = exception.getClass().getName();
 
             if (exceptionType == "java.lang.InterruptedException") {
-                iCartogramWizard
-                        .setComputationError(
-                                "The cartogram computation has been cancelled.",
-                                "", "");
+                iStatus.setComputationError(
+                        "The cartogram computation has been cancelled.", "", "");
                 iErrorOccured = true;
             } else if (exceptionType == "java.util.zip.DataFormatException") {
                 // Retrieve the complete stack trace and display.
-                iCartogramWizard
-                        .setComputationError(
-                                "An error occured during cartogram computation!",
-                                "All attribute values are zero",
-                                exception.getMessage());
+                iStatus.setComputationError(
+                        "An error occured during cartogram computation!",
+                        "All attribute values are zero", exception.getMessage());
                 iErrorOccured = true;
             }
 
-            iCartogramWizard.goToFinishedPanel();
+            iStatus.goToFinishedPanel();
             return null;
         }
     }
 
     /**
-     * This method is called once the construct method has finished. It
-     * terminates the computation, adds all layers and produces the computation
+     * Finish the computation: adds all layers and produces the computation
      * report.
+     * 
+     * @param aLayers
+     *            the projected layers
+     * @param aSimultaneousLayers
+     *            the simultaneous layers
+     * @param aConstrainedDeformationLayers
+     *            the constrained deformation layers
      */
-    @Override
-    public void finished() {
+    public void finish(Layer[] aLayers,
+            AbstractList<Layer> aSimultaneousLayers,
+            AbstractList<Layer> aConstrainedDeformationLayers) {
         // If there was an error, stop here.
         if (iErrorOccured) {
             return;
         }
 
-        // *** GET THE PROJECTED LAYERS ***
-
-        Layer[] layers = (Layer[]) get();
-
-        if (layers == null) {
-            iCartogramWizard
-                    .setComputationError(
-                            "An error occured during cartogram computation!",
-                            "",
-                            "An unknown error has occured.\n\nThere may be unsufficient memory resources available. Try to:\n\n1.\tUse a smaller cartogram grid (through the transformation\n\tquality slider at the wizard step 5, or through the\n\t\"Advanced options...\" button, also at step 5.\n\n2.\tYou also may to want to increase the memory available\n\tto ScapeToad. To do so, you need the cross platform\n\tJAR file and \n\tlaunch ScapeToad from the command\n\tline, using the -Xmx flag of \n\tyour Java Virtual\n\tMachine. By default, ScapeToad has 1024 Mo of memory.\n\tDepending on your system, there may be less available.\n\n3.\tIf you think there is a bug in ScapeToad, you can file\n\ta bug \n\ton Sourceforge \n\t(http://sourceforge.net/projects/scapetoad).\n\tPlease describe in detail your problem and provide all\n\tnecessary \n\tdata for reproducing your error.\n\n");
-            iCartogramWizard.goToFinishedPanel();
+        if (aLayers == null) {
+            iStatus.setComputationError(
+                    "An error occured during cartogram computation!",
+                    "",
+                    "An unknown error has occured.\n\nThere may be unsufficient memory resources available. Try to:\n\n1.\tUse a smaller cartogram grid (through the transformation\n\tquality slider at the wizard step 5, or through the\n\t\"Advanced options...\" button, also at step 5.\n\n2.\tYou also may to want to increase the memory available\n\tto ScapeToad. To do so, you need the cross platform\n\tJAR file and \n\tlaunch ScapeToad from the command\n\tline, using the -Xmx flag of \n\tyour Java Virtual\n\tMachine. By default, ScapeToad has 1024 Mo of memory.\n\tDepending on your system, there may be less available.\n\n3.\tIf you think there is a bug in ScapeToad, you can file\n\ta bug \n\ton Sourceforge \n\t(http://sourceforge.net/projects/scapetoad).\n\tPlease describe in detail your problem and provide all\n\tnecessary \n\tdata for reproducing your error.\n\n");
+            iStatus.goToFinishedPanel();
             return;
         }
 
@@ -441,7 +433,7 @@ public class Cartogram extends SwingWorker {
             iLayerManager.addCategory(category);
         }
 
-        for (Layer layer : layers) {
+        for (Layer layer : aLayers) {
             iLayerManager.addLayer(category, layer);
         }
 
@@ -454,7 +446,8 @@ public class Cartogram extends SwingWorker {
         }
 
         // *** PRODUCE THE COMPUTATION REPORT ***
-        produceComputationReport(iProjectedMasterLayer);
+        produceComputationReport(iProjectedMasterLayer, aSimultaneousLayers,
+                aConstrainedDeformationLayers);
 
         // *** CREATE A THEMATIC MAP USING THE SIZE ERROR ATTRIBUTE ***
 
@@ -483,9 +476,9 @@ public class Cartogram extends SwingWorker {
         errorStyle.addLimit(new Double(110));
         errorStyle.addLimit(new Double(120));
 
-        layers[0].addStyle(errorStyle);
+        aLayers[0].addStyle(errorStyle);
         errorStyle.setEnabled(true);
-        layers[0].getStyle(BasicStyle.class).setEnabled(false);
+        aLayers[0].getStyle(BasicStyle.class).setEnabled(false);
 
         new SizeErrorLegend().setVisible(true);
 
@@ -496,7 +489,7 @@ public class Cartogram extends SwingWorker {
         }
 
         // *** SHOW THE FINISHED PANEL
-        iCartogramWizard.goToFinishedPanel();
+        iStatus.goToFinishedPanel();
     }
 
     /**
@@ -662,7 +655,7 @@ public class Cartogram extends SwingWorker {
 
         // Project the master layer.
 
-        iCartogramWizard.updateRunningStatus(750, "Projecting the layers...",
+        iStatus.updateRunningStatus(750, "Projecting the layers...",
                 "Layer 1 of " + nlyrs);
 
         Layer masterLayer = iLayerManager.getLayer(iMasterLayer);
@@ -680,9 +673,9 @@ public class Cartogram extends SwingWorker {
 
         // Project the slave layers.
         for (int lyrcnt = 0; lyrcnt < nlyrs - 1; lyrcnt++) {
-            iCartogramWizard.updateRunningStatus(800 + (lyrcnt + 1)
-                    / (nlyrs - 1) * 150, "Projecting the layers...", "Layer "
-                    + (lyrcnt + 2) + " of " + nlyrs);
+            iStatus.updateRunningStatus(800 + (lyrcnt + 1) / (nlyrs - 1) * 150,
+                    "Projecting the layers...", "Layer " + (lyrcnt + 2)
+                            + " of " + nlyrs);
 
             Layer slaveLayer = iSlaveLayers.get(lyrcnt);
             CartogramLayer.regularizeLayer(slaveLayer, iMaximumSegmentLength);
@@ -951,8 +944,14 @@ public class Cartogram extends SwingWorker {
      * 
      * @param aProjectedMasterLayer
      *            the projected master layer
+     * @param aSimultaneousLayers
+     *            the simultaneous layers
+     * @param aConstrainedDeformationLayers
+     *            the constrained deformation layers
      */
-    private void produceComputationReport(Layer aProjectedMasterLayer) {
+    private void produceComputationReport(Layer aProjectedMasterLayer,
+            AbstractList<Layer> aSimultaneousLayers,
+            AbstractList<Layer> aConstrainedDeformationLayers) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("CARTOGRAM COMPUTATION REPORT\n\n");
@@ -1011,12 +1010,10 @@ public class Cartogram extends SwingWorker {
         buffer.append("\n\n");
 
         buffer.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
-        AbstractList<Layer> simLayers = iCartogramWizard
-                .getSimultaneousLayers();
-        if (simLayers == null || simLayers.size() == 0) {
+        if (aSimultaneousLayers == null || aSimultaneousLayers.size() == 0) {
             buffer.append("None\n\n");
         } else {
-            for (Layer layer : simLayers) {
+            for (Layer layer : aSimultaneousLayers) {
                 buffer.append(layer.getName());
                 buffer.append('\n');
             }
@@ -1024,12 +1021,11 @@ public class Cartogram extends SwingWorker {
         }
 
         buffer.append("CONSTRAINED DEFORMATION LAYERS:\n");
-        AbstractList<Layer> constLayers = iCartogramWizard
-                .getConstrainedDeformationLayers();
-        if (constLayers == null || constLayers.size() == 0) {
+        if (aConstrainedDeformationLayers == null
+                || aConstrainedDeformationLayers.size() == 0) {
             buffer.append("None\n\n");
         } else {
-            for (Layer layer : constLayers) {
+            for (Layer layer : aConstrainedDeformationLayers) {
                 buffer.append(layer.getName());
                 buffer.append('\n');
             }
