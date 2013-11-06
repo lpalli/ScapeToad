@@ -14,7 +14,6 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
 
 import ch.epfl.scapetoad.compute.Cartogram;
 import ch.epfl.scapetoad.compute.CartogramLayer;
-import ch.epfl.scapetoad.compute.SizeErrorStyle;
 
 /**
  * The cartogram worker class is the computation manager class. It is a subclass
