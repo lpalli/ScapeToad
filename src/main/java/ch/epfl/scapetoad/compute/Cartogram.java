@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -338,25 +339,22 @@ public class Cartogram {
                     "Producing the computation report...", "");
 
             return layers;
-        } catch (Exception exception) {
-            logger.error("", exception);
-            String exceptionType = exception.getClass().getName();
-
-            if (exceptionType == "java.lang.InterruptedException") {
-                iStatus.setComputationError(
-                        "The cartogram computation has been cancelled.", "", "");
-                iErrorOccured = true;
-            } else if (exceptionType == "java.util.zip.DataFormatException") {
-                // Retrieve the complete stack trace and display.
-                iStatus.setComputationError(
-                        "An error occured during cartogram computation!",
-                        "All attribute values are zero", exception.getMessage());
-                iErrorOccured = true;
-            }
-
+        } catch (InterruptedException exception) {
+            logger.error("Computation cancelled", exception);
+            iStatus.setComputationError(
+                    "The cartogram computation has been cancelled.", "", "");
+            iErrorOccured = true;
             iStatus.goToFinishedPanel();
-            return null;
+        } catch (DataFormatException exception) {
+            logger.error("All attribute values are zero", exception);
+            // Retrieve the complete stack trace and display.
+            iStatus.setComputationError(
+                    "An error occured during cartogram computation!",
+                    "All attribute values are zero", exception.getMessage());
+            iErrorOccured = true;
+            iStatus.goToFinishedPanel();
         }
+        return null;
     }
 
     /**
