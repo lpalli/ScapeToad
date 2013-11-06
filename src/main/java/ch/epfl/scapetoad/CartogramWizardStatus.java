@@ -1,6 +1,5 @@
 package ch.epfl.scapetoad;
 
-
 /**
  * This class is the wizard implementation of the cartogram status interface.
  * 
@@ -38,7 +37,7 @@ public class CartogramWizardStatus implements ICartogramStatus {
     }
 
     @Override
-    public void goToFinishedPanel() {
+    public void finished() {
         iWizard.goToFinishedPanel();
     }
 }

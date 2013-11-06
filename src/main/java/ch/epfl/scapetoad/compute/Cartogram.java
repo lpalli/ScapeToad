@@ -344,7 +344,7 @@ public class Cartogram {
             iStatus.setComputationError(
                     "The cartogram computation has been cancelled.", "", "");
             iErrorOccured = true;
-            iStatus.goToFinishedPanel();
+            iStatus.finished();
         } catch (DataFormatException exception) {
             logger.error("All attribute values are zero", exception);
             // Retrieve the complete stack trace and display.
@@ -352,7 +352,7 @@ public class Cartogram {
                     "An error occured during cartogram computation!",
                     "All attribute values are zero", exception.getMessage());
             iErrorOccured = true;
-            iStatus.goToFinishedPanel();
+            iStatus.finished();
         }
         return null;
     }
@@ -381,7 +381,7 @@ public class Cartogram {
                     "An error occured during cartogram computation!",
                     "",
                     "An unknown error has occured.\n\nThere may be unsufficient memory resources available. Try to:\n\n1.\tUse a smaller cartogram grid (through the transformation\n\tquality slider at the wizard step 5, or through the\n\t\"Advanced options...\" button, also at step 5.\n\n2.\tYou also may to want to increase the memory available\n\tto ScapeToad. To do so, you need the cross platform\n\tJAR file and \n\tlaunch ScapeToad from the command\n\tline, using the -Xmx flag of \n\tyour Java Virtual\n\tMachine. By default, ScapeToad has 1024 Mo of memory.\n\tDepending on your system, there may be less available.\n\n3.\tIf you think there is a bug in ScapeToad, you can file\n\ta bug \n\ton Sourceforge \n\t(http://sourceforge.net/projects/scapetoad).\n\tPlease describe in detail your problem and provide all\n\tnecessary \n\tdata for reproducing your error.\n\n");
-            iStatus.goToFinishedPanel();
+            iStatus.finished();
             return;
         }
 

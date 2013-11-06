@@ -178,7 +178,7 @@ public class CartogramWorker extends SwingWorker {
         }
 
         CartogramWorker.showLegendZoom();
-        iStatus.goToFinishedPanel();
+        iStatus.finished();
     }
 
     /**

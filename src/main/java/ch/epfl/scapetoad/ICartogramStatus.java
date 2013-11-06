@@ -38,7 +38,8 @@ public interface ICartogramStatus {
             String stackTrace);
 
     /**
-     * Shows the finished panel.
+     * Notify the finish of the compute process. Don't specify if successfully
+     * or not.
      */
-    public abstract void goToFinishedPanel();
+    public abstract void finished();
 }
