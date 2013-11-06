@@ -1,4 +1,4 @@
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 /**
  * The cartogram status interface allow the exchange of messages during the

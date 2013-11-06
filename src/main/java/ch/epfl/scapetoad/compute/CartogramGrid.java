@@ -34,8 +34,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import ch.epfl.scapetoad.ICartogramStatus;
-
 /**
  * The cartogram grid class represents the grid which is overlaid on all the
  * layers and which is used for the deformation computation. The grid has nodes

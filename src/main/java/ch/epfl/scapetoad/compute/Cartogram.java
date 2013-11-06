@@ -37,8 +37,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
-import ch.epfl.scapetoad.ICartogramStatus;
-
 /**
  * The cartogram class is the main computation class. It is a subclass of the
  * SwingWorker class. It has methods for setting all the parameters and for

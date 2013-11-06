@@ -1,5 +1,7 @@
 package ch.epfl.scapetoad;
 
+import ch.epfl.scapetoad.compute.ICartogramStatus;
+
 /**
  * This class is the wizard implementation of the cartogram status interface.
  * 
