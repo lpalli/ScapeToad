@@ -50,7 +50,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CartogramFeature {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(CartogramFeature.class);
 

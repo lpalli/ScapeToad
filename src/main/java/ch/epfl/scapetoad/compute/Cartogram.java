@@ -50,7 +50,7 @@ import ch.epfl.scapetoad.ICartogramStatus;
 public class Cartogram {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(Cartogram.class);
 
@@ -62,12 +62,12 @@ public class Cartogram {
     /**
      * The name of the master layer.
      */
-    private CartogramLayer iMasterLayer = null;
+    private CartogramLayer iMasterLayer;
 
     /**
      * The name of the master attribute.
      */
-    private String iMasterAttribute = null;
+    private String iMasterAttribute;
 
     /**
      * Is the master attribute already a density value, or must the value be
@@ -76,7 +76,7 @@ public class Cartogram {
     private boolean iMasterAttributeIsDensityValue = true;
 
     /**
-     * 
+     * The missing value to be replaced with the mean value.
      */
     private String iMissingValue = "";
 
@@ -84,22 +84,22 @@ public class Cartogram {
      * The projected master layer. We store this in order to make the
      * computation report after the projection.
      */
-    private CartogramLayer iProjectedMasterLayer = null;
+    private CartogramLayer iProjectedMasterLayer;
 
     /**
      * The layers to deform simultaneously.
      */
-    private List<CartogramLayer> iSlaveLayers = null;
+    private List<CartogramLayer> iSlaveLayers;
 
     /**
      * The layers used for the constrained deformation.
      */
-    private List<CartogramLayer> iConstrainedDeforamtionLayers = null;
+    private List<CartogramLayer> iConstrainedDeforamtionLayers;
 
     /**
      * The initial envelope for all layers.
      */
-    private Envelope iEnvelope = new Envelope(0.0, 1.0, 0.0, 1.0);
+    private Envelope iEnvelope;
 
     /**
      * The size of the cartogram grid.
@@ -109,7 +109,7 @@ public class Cartogram {
     /**
      * All the deformation is done on this cartogram grid.
      */
-    private CartogramGrid iGrid = null;
+    private CartogramGrid iGrid;
 
     /**
      * The amount of deformation is a simple stopping criterion. It is an
@@ -122,7 +122,7 @@ public class Cartogram {
      * Are the advanced options enabled or should the parameters be estimated
      * automatically by the program?
      */
-    private boolean iAdvancedOptionsEnabled = false;
+    private boolean iAdvancedOptionsEnabled;
 
     /**
      * The maximum length of one line segment. In the projection process, a
@@ -131,7 +131,7 @@ public class Cartogram {
      * This parameter can be controlled manually or estimated using the
      * maximumSegmentLength heuristic.
      */
-    private double iMaximumSegmentLength = 500;
+    private double iMaximumSegmentLength;
 
     /**
      * The size of the grid which can be added as a deformation grid.
@@ -141,33 +141,33 @@ public class Cartogram {
     /**
      * The layer containing the deformation grid.
      */
-    private CartogramLayer iDeformationGrid = null;
+    private CartogramLayer iDeformationGrid;
 
     /**
      * An array containing the legend values which should be represented in the
      * legend layer.
      */
-    private double[] iLegendValues = null;
+    private double[] iLegendValues;
 
     /**
      * The layer containing the cartogram legend.
      */
-    private CartogramLayer iLegendLayer = null;
+    private CartogramLayer iLegendLayer;
 
     /**
      * The computation report.
      */
-    private String iComputationReport = "";
+    private String iComputationReport;
 
     /**
      * Used for storing the start time of computation. The computation duration
      * is computed based on this value which is set before starting the
-     * compuation.
+     * computation.
      */
-    private long iComputationStartTime = 0;
+    private long iComputationStartTime;
 
     /**
-     * 
+     * <code>true</code> if an error occurred during the computation.
      */
     private boolean iErrorOccured = false;
 
@@ -242,13 +242,9 @@ public class Cartogram {
 
             // Replace the missing values with the layer mean value.
             if (iMissingValue != "" && iMissingValue != null) {
-                double mean = iMasterLayer
-                        .meanValueForAttribute(iMasterAttribute);
-
-                Double missVal = new Double(iMissingValue);
-
-                iMasterLayer.replaceAttributeValue(iMasterAttribute, missVal,
-                        mean);
+                iMasterLayer.replaceAttributeValue(iMasterAttribute,
+                        Double.parseDouble(iMissingValue),
+                        iMasterLayer.meanValueForAttribute(iMasterAttribute));
             }
 
             // Compute the density values for the cartogram grid using
@@ -470,9 +466,7 @@ public class Cartogram {
      */
     private void updateEnvelope() {
         // Setting the initial envelope using the master layer.
-        Envelope envelope = iMasterLayer.getEnvelope();
-        iEnvelope = new Envelope(envelope.getMinX(), envelope.getMaxX(),
-                envelope.getMinY(), envelope.getMaxY());
+        iEnvelope = iMasterLayer.getEnvelope();
 
         // Expanding the initial envelope using the slave and
         // constrained deformation layers.
@@ -597,8 +591,6 @@ public class Cartogram {
         int sizeY = (int) Math.round(Math.floor(iEnvelope.getHeight()
                 / resolution)) - 1;
 
-        // CREATE THE NEW LAYER
-
         // Create a new attribute list for the new layer
         @SuppressWarnings("rawtypes")
         Map<String, Class> attributes = new HashMap<String, Class>(2);
@@ -608,7 +600,7 @@ public class Cartogram {
         // Create a Geometry Factory for creating the points.
         GeometryFactory factory = new GeometryFactory();
 
-        // CREATE ALL FEATURES AND LINES
+        // Crate the features and lines
         int i = 0;
         List<CartogramFeature> features = new ArrayList<CartogramFeature>(sizeY
                 + sizeX);
@@ -617,7 +609,7 @@ public class Cartogram {
         LineString line;
         // Horizontal lines
         for (int k = 0; k < sizeY; k++) {
-            // Create the line string and add it to the Feature.
+            // Create the line string and add it to the feature
             coords = new Coordinate[sizeX];
             for (int j = 0; j < sizeX; j++) {
                 coords[j] = iGrid.projectPointAsCoordinate(iEnvelope.getMinX()
@@ -915,7 +907,7 @@ public class Cartogram {
      * 
      * @return the estimated maximum segment length
      */
-    public double estimateMaximumSegmentLength() {
+    private double estimateMaximumSegmentLength() {
         // Check the input variables. Otherwise, return a default value.
         if (iEnvelope == null) {
             return 500.0;

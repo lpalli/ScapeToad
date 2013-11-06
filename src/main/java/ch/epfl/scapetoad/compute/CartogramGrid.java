@@ -47,7 +47,7 @@ import ch.epfl.scapetoad.ICartogramStatus;
 public class CartogramGrid {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(Cartogram.class);
 
@@ -63,27 +63,27 @@ public class CartogramGrid {
     private Envelope iEnvelope = null;
 
     /**
-     * The arrays for storing the nodes and the cells.
+     * The X arrays for storing the nodes and the cells.
      */
     private double[][] iNodeX;
 
     /**
-     * 
+     * The Y arrays for storing the nodes and the cells.
      */
     private double[][] iNodeY;
 
     /**
-     * 
+     * The array of original density.
      */
     private double[][] iCellOriginalDensity;
 
     /**
-     * 
+     * The array of current density.
      */
     private double[][] iCellCurrentDensity;
 
     /**
-     * 
+     * The array of deformation.
      */
     private short[][] iCellConstrainedDeformation;
 
@@ -105,11 +105,6 @@ public class CartogramGrid {
      * value of 10 at least.
      */
     private double bias = 0.00001;
-
-    /**
-     * 
-     */
-    private double iMinValue = 10;
 
     /**
      * The constructor for the cartogram grid.
@@ -143,7 +138,7 @@ public class CartogramGrid {
      * 
      * @return an Envelope representing the bounding box.
      */
-    public Envelope envelope() {
+    public Envelope getEnvelope() {
         return iEnvelope;
     }
 
@@ -302,7 +297,7 @@ public class CartogramGrid {
 
         // Compute the scaling factor
         if (min < Double.MAX_VALUE) {
-            double factor = iMinValue / min;
+            double factor = 10 / min;
             if (factor > 1) {
                 for (int j = 0; j < iGridSize[1] - 1; j++) {
                     for (int i = 0; i < iGridSize[0] - 1; i++) {

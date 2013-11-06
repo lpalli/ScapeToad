@@ -25,7 +25,7 @@ import edu.emory.mathcs.jtransforms.dct.DoubleDCT_2D;
 public class CartogramNewman {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(CartogramNewman.class);
 
@@ -46,46 +46,47 @@ public class CartogramNewman {
     private Envelope iExtent;
 
     /**
-     * Pop density at time t (five snaps needed)
+     * Pop density at time t (five snaps needed).
      */
     private double[][][] iRhot;
 
     /**
-     * FT of initial density
+     * FT of initial density.
      */
     private double[][] iFftrho;
 
     /**
-     * FT of density at time t
+     * FT of density at time t.
      */
     private double[][] iFftexpt;
 
     /**
-     * Array needed for the Gaussian convolution
+     * Array needed for the Gaussian convolution.
      */
     private double[] iExpky;
 
     /**
-     * Array for storing the grid points
+     * Array for storing the X grid points.
      */
     private double[] iGridPointsX;
+
     /**
-     * 
+     * Array for storing the Y grid points.
      */
     private double[] iGridPointsY;
 
     /**
-     * Initial size of a time step
+     * Initial size of a time step.
      */
     private static double INITH = 0.001;
 
     /**
-     * Desired accuracy per step in pixels
+     * Desired accuracy per step in pixels.
      */
     private static double TARGETERROR = 0.01;
 
     /**
-     * Max ratio to increase step size by
+     * Max ratio to increase step size by.
      */
     private static double MAXRATIO = 4.0;
 
@@ -117,7 +118,7 @@ public class CartogramNewman {
     private int iMinimumStatus;
 
     /**
-     * The value of the running statut at the end of the cartogram computation.
+     * The value of the running status at the end of the cartogram computation.
      */
     private int iMaximumStatus;
 
@@ -220,7 +221,7 @@ public class CartogramNewman {
      */
     private void readPopulationDensity() {
         // Copy the cartogram bounding box.
-        iExtent = iCartogramGrid.envelope();
+        iExtent = iCartogramGrid.getEnvelope();
 
         // Fill the diffusion grid using the cartogram grid values.
         fillDiffusionGrid(iCartogramGrid.getCurrentDensityArray());
