@@ -191,7 +191,7 @@ public class Cartogram {
      * 
      * @return the projected layers
      */
-    public CartogramLayer[] compute(boolean aCreateGridLayer,
+    public List<CartogramLayer> compute(boolean aCreateGridLayer,
             boolean aCreateLegendLayer) {
         try {
             iComputationStartTime = System.nanoTime();
@@ -317,7 +317,7 @@ public class Cartogram {
 
             // Project all the layers
             iStatus.updateRunningStatus(750, "Projecting the layers...", "");
-            CartogramLayer[] layers = projectLayers();
+            List<CartogramLayer> layers = projectLayers();
 
             if (Thread.interrupted()) {
                 // Raise an InterruptedException.
@@ -368,7 +368,7 @@ public class Cartogram {
      * @param aConstrainedDeformationLayers
      *            the constrained deformation layers
      */
-    public void finish(CartogramLayer[] aLayers,
+    public void finish(List<CartogramLayer> aLayers,
             List<CartogramLayer> aSimultaneousLayers,
             List<CartogramLayer> aConstrainedDeformationLayers) {
         // If there was an error, stop here.
@@ -518,33 +518,30 @@ public class Cartogram {
     /**
      * Projects all layers. Creates a new layer for each projected layer.
      * 
-     * @return the project layers
+     * @return the projected layers
      * @throws InterruptedException
      *             when the computation was interrupted
      */
-    private CartogramLayer[] projectLayers() throws InterruptedException {
-        // Get the number of layers to project
-        // (one master layer and all slave layers).
-        int nlyrs = 1;
+    private List<CartogramLayer> projectLayers() throws InterruptedException {
+        // Get the number of layers to project (one master layer and all slave
+        // layers)
+        int size = 1;
         if (iSlaveLayers != null) {
-            nlyrs += iSlaveLayers.size();
+            size += iSlaveLayers.size();
         }
 
-        // We store the projected layers in an array.
-        CartogramLayer[] layers = new CartogramLayer[nlyrs];
+        // We store the projected layers in an array
+        List<CartogramLayer> layers = new ArrayList<CartogramLayer>(size);
 
-        // Compute the maximum segment length for the layers.
+        // Compute the maximum segment length for the layers
         iMaximumSegmentLength = estimateMaximumSegmentLength();
 
-        // Project the master layer.
-
+        // Project the master layer
         iStatus.updateRunningStatus(750, "Projecting the layers...",
-                "Layer 1 of %1$s", nlyrs);
-
+                "Layer 1 of %1$s", size);
         iMasterLayer.regularizeLayer(iMaximumSegmentLength);
         iProjectedMasterLayer = iMasterLayer.projectLayerWithGrid(iGrid);
-
-        layers[0] = iProjectedMasterLayer;
+        layers.add(iProjectedMasterLayer);
 
         if (Thread.interrupted()) {
             // Raise an InterruptedException.
@@ -553,15 +550,17 @@ public class Cartogram {
         }
 
         // Project the slave layers
-        CartogramLayer slaveLayer;
-        for (int i = 0; i < nlyrs - 1; i++) {
-            iStatus.updateRunningStatus(800 + (i + 1) / (nlyrs - 1) * 150,
-                    "Projecting the layers...", "Layer %1$s of %2$s", i + 2,
-                    nlyrs);
+        if (iSlaveLayers != null) {
+            int count = 1;
+            for (CartogramLayer slaveLayer : iSlaveLayers) {
+                iStatus.updateRunningStatus(800 + count / (size - 1) * 150,
+                        "Projecting the layers...", "Layer %1$s of %2$s",
+                        count + 1, size);
 
-            slaveLayer = iSlaveLayers.get(i);
-            slaveLayer.regularizeLayer(iMaximumSegmentLength);
-            layers[i + 1] = slaveLayer.projectLayerWithGrid(iGrid);
+                slaveLayer.regularizeLayer(iMaximumSegmentLength);
+                layers.add(slaveLayer.projectLayerWithGrid(iGrid));
+                count++;
+            }
         }
 
         return layers;

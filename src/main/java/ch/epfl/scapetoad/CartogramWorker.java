@@ -98,34 +98,26 @@ public class CartogramWorker extends SwingWorker {
     @Override
     protected void finished() {
         // Get the projected layers and finish the computation
-        CartogramLayer[] layers = (CartogramLayer[]) get();
+        @SuppressWarnings("unchecked")
+        List<CartogramLayer> layers = (List<CartogramLayer>) get();
         iCartogram.finish(layers, iWizard.getSimultaneousLayers(),
                 iWizard.getConstrainedDeformationLayers());
 
-        // // Create the layer.
-        // iLayerManager.setFiringEvents(false);
-        // @SuppressWarnings("unchecked")
-        // List<Feature> features = dataset.getFeatures();
-        // iLegendLayer = new CartogramLayer("Legend", Color.GREEN,
-        // Utils.convert(schema), Utils.convert(features));
-        // iLayerManager.setFiringEvents(true);
-
-        // *** HIDE ALL LAYERS ALREADY PRESENT ***
+        // Hide all the already present layers
         @SuppressWarnings("unchecked")
         List<Layer> layerList = iLayerManager.getLayers();
         for (Layer layer : layerList) {
             layer.setVisible(false);
         }
 
-        // *** ADD ALL THE LAYERS ***
-
+        // Add the new layers category
         String category = getCategoryName();
-
         if (iLayerManager.getCategory(category) == null) {
             iLayerManager.addCategory(category);
         }
 
-        Layer projectedMasterLayer = null;
+        // Add all the new layers
+        Layer projectedMasterLayer = null; // The master layer
         Layer layer;
         for (CartogramLayer cartogramLayer : layers) {
             layer = iLayerManager.addLayer(category,
@@ -136,12 +128,14 @@ public class CartogramWorker extends SwingWorker {
             }
         }
 
+        // Add the deformation grid layer
         CartogramLayer deformationGrid = iCartogram.getDeformationGrid();
         if (deformationGrid != null) {
             iLayerManager.addLayer(category,
                     Utils.convert(deformationGrid, iLayerManager));
         }
 
+        // Add the legend layer
         CartogramLayer iLegendLayer = iCartogram.getLegendLayer();
         if (iLegendLayer != null) {
             layer = iLayerManager.addLayer(category,
@@ -153,7 +147,7 @@ public class CartogramWorker extends SwingWorker {
             legendLabels.setFont(new Font(null, Font.PLAIN, 10));
         }
 
-        // *** CREATE A THEMATIC MAP USING THE SIZE ERROR ATTRIBUTE ***
+        // Create the size error style for the master layer
         if (projectedMasterLayer != null) {
             // Create a color table for the size error attribute
             BasicStyle style = (BasicStyle) projectedMasterLayer
