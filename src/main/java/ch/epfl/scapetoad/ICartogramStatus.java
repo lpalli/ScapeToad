@@ -41,9 +41,4 @@ public interface ICartogramStatus {
      * Shows the finished panel.
      */
     public abstract void goToFinishedPanel();
-
-    /**
-     * Show the error legend and zoom to the results.
-     */
-    public void showLegendZoom();
 }

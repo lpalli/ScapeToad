@@ -27,7 +27,7 @@ public class CartogramWorker extends SwingWorker {
     /**
      * The logger
      */
-    @SuppressWarnings({ "hiding", "unused" })
+    @SuppressWarnings({ "hiding" })
     private static Log logger = LogFactory.getLog(CartogramWorker.class);
 
     /**
@@ -177,9 +177,7 @@ public class CartogramWorker extends SwingWorker {
             projectedMasterLayer.getStyle(BasicStyle.class).setEnabled(false);
         }
 
-        iStatus.showLegendZoom();
-
-        // *** SHOW THE FINISHED PANEL
+        CartogramWorker.showLegendZoom();
         iStatus.goToFinishedPanel();
     }
 
@@ -205,6 +203,19 @@ public class CartogramWorker extends SwingWorker {
         }
 
         return iCategoryName;
+    }
+
+    /**
+     * Show the error legend and zoom to the results.
+     */
+    private static void showLegendZoom() {
+        new SizeErrorLegend().setVisible(true);
+
+        try {
+            AppContext.layerViewPanel.getViewport().zoomToFullExtent();
+        } catch (Exception exception) {
+            logger.error("", exception);
+        }
     }
 
     /**
