@@ -22,7 +22,6 @@
 package ch.epfl.scapetoad.compute;
 
 import java.awt.Color;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -346,7 +345,7 @@ public class CartogramLayer {
         int nfeat = set.size();
 
         // Create a Vector from the TreeSet
-        AbstractList<Double> attrVector = new ArrayList<Double>(set);
+        List<Double> attrVector = new ArrayList<Double>(set);
 
         // Get the indexes of the bounding features
         double dblIndex = dblN / 100 * nfeat;

@@ -22,7 +22,6 @@
 package ch.epfl.scapetoad.compute;
 
 import java.awt.Color;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,12 +88,12 @@ public class Cartogram {
     /**
      * The layers to deform simultaneously.
      */
-    private AbstractList<CartogramLayer> iSlaveLayers = null;
+    private List<CartogramLayer> iSlaveLayers = null;
 
     /**
      * The layers used for the constrained deformation.
      */
-    private AbstractList<CartogramLayer> iConstrainedDeforamtionLayers = null;
+    private List<CartogramLayer> iConstrainedDeforamtionLayers = null;
 
     /**
      * The initial envelope for all layers.
@@ -378,8 +377,8 @@ public class Cartogram {
      *            the constrained deformation layers
      */
     public void finish(CartogramLayer[] aLayers,
-            AbstractList<CartogramLayer> aSimultaneousLayers,
-            AbstractList<CartogramLayer> aConstrainedDeformationLayers) {
+            List<CartogramLayer> aSimultaneousLayers,
+            List<CartogramLayer> aConstrainedDeformationLayers) {
         // If there was an error, stop here.
         if (iErrorOccured) {
             return;
@@ -436,7 +435,7 @@ public class Cartogram {
      * @param aSlaveLayers
      *            the slave layers
      */
-    public void setSlaveLayers(AbstractList<CartogramLayer> aSlaveLayers) {
+    public void setSlaveLayers(List<CartogramLayer> aSlaveLayers) {
         iSlaveLayers = aSlaveLayers;
     }
 
@@ -446,8 +445,7 @@ public class Cartogram {
      * @param aLayers
      *            the layers not deformed
      */
-    public void setConstrainedDeformationLayers(
-            AbstractList<CartogramLayer> aLayers) {
+    public void setConstrainedDeformationLayers(List<CartogramLayer> aLayers) {
         iConstrainedDeforamtionLayers = aLayers;
     }
 
@@ -789,8 +787,8 @@ public class Cartogram {
      *            the constrained deformation layers
      */
     private void produceComputationReport(CartogramLayer aProjectedMasterLayer,
-            AbstractList<CartogramLayer> aSimultaneousLayers,
-            AbstractList<CartogramLayer> aConstrainedDeformationLayers) {
+            List<CartogramLayer> aSimultaneousLayers,
+            List<CartogramLayer> aConstrainedDeformationLayers) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("CARTOGRAM COMPUTATION REPORT\n\n");

@@ -21,9 +21,9 @@
 
 package ch.epfl.scapetoad.compute;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.apache.commons.logging.Log;
@@ -335,7 +335,7 @@ public class CartogramGrid {
      *            a Vector containing the constrained layer names.
      */
     public void prepareGridForConstrainedDeformation(
-            AbstractList<CartogramLayer> aLayers) {
+            List<CartogramLayer> aLayers) {
         if (aLayers == null) {
             return;
         }
@@ -1067,7 +1067,7 @@ public class CartogramGrid {
      */
     public Coordinate[] projectCoordinates(Coordinate[] aCoordinates) {
         int ncoords = aCoordinates.length;
-        AbstractList<Coordinate> projCoords = new ArrayList<Coordinate>();
+        List<Coordinate> projCoords = new ArrayList<Coordinate>();
 
         // Project each line segment in the coordinate sequence.
         int i, j, nProjCoords = 0;
