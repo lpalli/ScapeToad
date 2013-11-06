@@ -57,17 +57,34 @@ public class CartogramWorker extends SwingWorker {
     private String iCategoryName = null;
 
     /**
+     * Should we create a grid layer ?
+     */
+    private boolean iCreateGridLayer = true;
+
+    /**
+     * Should we create a legend layer ?
+     */
+    private boolean iCreateLegendLayer = true;
+
+    /**
      * Constructor
      * 
      * @param aCartogramWizard
      *            the cartogram wizard
      * @param aLayerManager
      *            the layer manager
+     * @param aCreateGridLayer
+     *            <code>true</code> to create the grid layer
+     * @param aCreateLegendLayer
+     *            <code>true</code> to create the legend layer
      */
     public CartogramWorker(CartogramWizard aCartogramWizard,
-            LayerManager aLayerManager) {
+            LayerManager aLayerManager, boolean aCreateGridLayer,
+            boolean aCreateLegendLayer) {
         iWizard = aCartogramWizard;
         iLayerManager = aLayerManager;
+        iCreateGridLayer = aCreateGridLayer;
+        iCreateLegendLayer = aCreateLegendLayer;
 
         iStatus = new CartogramWizardStatus(iWizard);
         iCartogram = new Cartogram(iStatus);
@@ -75,7 +92,7 @@ public class CartogramWorker extends SwingWorker {
 
     @Override
     protected Object construct() {
-        return iCartogram.compute();
+        return iCartogram.compute(iCreateGridLayer, iCreateLegendLayer);
     }
 
     @Override

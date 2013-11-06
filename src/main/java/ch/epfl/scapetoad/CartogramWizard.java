@@ -2264,7 +2264,8 @@ class CartogramWizardComputeAction extends AbstractAction {
 
         // Create a new cartogram instance and set the parameters
         CartogramWorker worker = new CartogramWorker(iCartogramWizard,
-                AppContext.layerManager);
+                AppContext.layerManager, iCartogramWizard.getCreateGridLayer(),
+                !isDensityValue);
         Cartogram cartogram = worker.getCartogram();
         cartogram.setMasterLayer(Utils.convert(AppContext.layerManager
                 .getLayer(iCartogramWizard.getCartogramLayerName())));
@@ -2282,12 +2283,7 @@ class CartogramWizardComputeAction extends AbstractAction {
         cartogram.setGridSize(iCartogramWizard.getCartogramGridSize());
 
         // Set the parameters for the deformation grid layer
-        cartogram.setCreateGridLayer(iCartogramWizard.getCreateGridLayer());
         cartogram.setGridLayerSize(iCartogramWizard.getDeformationGridSize());
-
-        // Set the parameters for the legend layer
-        // We have to estimate the legend values
-        cartogram.setCreateLegendLayer(!isDensityValue);
 
         iCartogramWizard.setCartogram(worker);
 

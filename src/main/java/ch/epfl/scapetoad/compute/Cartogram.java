@@ -133,11 +133,6 @@ public class Cartogram {
     private double iMaximumSegmentLength = 500;
 
     /**
-     * Should we create a grid layer ?
-     */
-    private boolean iCreateGridLayer = true;
-
-    /**
      * The size of the grid which can be added as a deformation grid.
      */
     private int iGridLayerSize = 100;
@@ -146,11 +141,6 @@ public class Cartogram {
      * The layer containing the deformation grid.
      */
     private CartogramLayer iDeformationGrid = null;
-
-    /**
-     * Should we create a legend layer ?
-     */
-    private boolean iCreateLegendLayer = true;
 
     /**
      * An array containing the legend values which should be represented in the
@@ -193,9 +183,15 @@ public class Cartogram {
     /**
      * Compute the cartogram layers.
      * 
+     * @param aCreateGridLayer
+     *            <code>true</code> to create the grid layer
+     * @param aCreateLegendLayer
+     *            <code>true</code> to create the legend layer
+     * 
      * @return the projected layers
      */
-    public CartogramLayer[] compute() {
+    public CartogramLayer[] compute(boolean aCreateGridLayer,
+            boolean aCreateLegendLayer) {
         try {
             iComputationStartTime = System.nanoTime();
 
@@ -318,10 +314,8 @@ public class Cartogram {
                         "Computation has been interrupted by the user.");
             }
 
-            // *** PROJECTION OF ALL LAYERS ***
-
+            // Project all the layers
             iStatus.updateRunningStatus(750, "Projecting the layers...", "");
-
             CartogramLayer[] layers = projectLayers();
 
             if (Thread.interrupted()) {
@@ -330,13 +324,13 @@ public class Cartogram {
                         "Computation has been interrupted by the user.");
             }
 
-            // *** CREATE THE DEFORMATION GRID LAYER ***
-            if (iCreateGridLayer) {
+            // Create the deformation grid layer
+            if (aCreateGridLayer) {
                 createGridLayer();
             }
 
-            // *** CREATE THE LEGEND LAYER ***
-            if (iCreateLegendLayer) {
+            // Create the legend layer
+            if (aCreateLegendLayer) {
                 createLegendLayer();
             }
 
@@ -576,16 +570,6 @@ public class Cartogram {
     }
 
     /**
-     * Sets the flag for creating or not a grid layer.
-     * 
-     * @param aCreateGridLayer
-     *            <code>true</code> to create a grid layer
-     */
-    public void setCreateGridLayer(boolean aCreateGridLayer) {
-        iCreateGridLayer = aCreateGridLayer;
-    }
-
-    /**
      * Changes the size of the grid layer to produce.
      * 
      * @param aGridLayerSize
@@ -593,16 +577,6 @@ public class Cartogram {
      */
     public void setGridLayerSize(int aGridLayerSize) {
         iGridLayerSize = aGridLayerSize;
-    }
-
-    /**
-     * Sets the flag which says whether to create a legend layer or not.
-     * 
-     * @param aCreateLegendLayer
-     *            <code>true</code> to create the legend layer
-     */
-    public void setCreateLegendLayer(boolean aCreateLegendLayer) {
-        iCreateLegendLayer = aCreateLegendLayer;
     }
 
     /**
