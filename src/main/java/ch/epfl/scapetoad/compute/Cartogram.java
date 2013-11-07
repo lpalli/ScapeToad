@@ -750,111 +750,111 @@ public class Cartogram {
     private void produceComputationReport(CartogramLayer aProjectedMasterLayer,
             List<CartogramLayer> aSimultaneousLayers,
             List<CartogramLayer> aConstrainedDeformationLayers) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
 
-        buffer.append("CARTOGRAM COMPUTATION REPORT\n\n");
+        builder.append("CARTOGRAM COMPUTATION REPORT\n\n");
 
-        buffer.append("CARTOGRAM PARAMETERS:\n");
-        buffer.append("Cartogram layer: ");
-        buffer.append(iMasterLayer.getName());
-        buffer.append('\n');
-        buffer.append("Cartogram attribute: ");
-        buffer.append(iMasterAttribute);
-        buffer.append('\n');
+        builder.append("CARTOGRAM PARAMETERS:\n");
+        builder.append("Cartogram layer: ");
+        builder.append(iMasterLayer.getName());
+        builder.append('\n');
+        builder.append("Cartogram attribute: ");
+        builder.append(iMasterAttribute);
+        builder.append('\n');
 
-        buffer.append("Attribute type: ");
+        builder.append("Attribute type: ");
         if (iMasterAttributeIsDensityValue) {
-            buffer.append("Density value");
+            builder.append("Density value");
         } else {
-            buffer.append("Population value");
+            builder.append("Population value");
         }
-        buffer.append('\n');
+        builder.append('\n');
 
-        buffer.append("Transformation quality: ");
+        builder.append("Transformation quality: ");
         if (iAdvancedOptionsEnabled) {
-            buffer.append("disabled");
+            builder.append("disabled");
         } else {
-            buffer.append(iAmountOfDeformation);
-            buffer.append(" of 100");
+            builder.append(iAmountOfDeformation);
+            builder.append(" of 100");
         }
-        buffer.append('\n');
+        builder.append('\n');
 
-        buffer.append("Cartogram grid size: ");
-        buffer.append(iGridSize[0]);
-        buffer.append(" x ");
-        buffer.append(iGridSize[1]);
-        buffer.append("\n\n");
+        builder.append("Cartogram grid size: ");
+        builder.append(iGridSize[0]);
+        builder.append(" x ");
+        builder.append(iGridSize[1]);
+        builder.append("\n\n");
 
-        buffer.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
-        buffer.append("Number of features: ");
-        buffer.append(iMasterLayer.getFeatures().size());
-        buffer.append('\n');
+        builder.append("CARTOGRAM LAYER & ATTRIBUTE STATISTICS:\n");
+        builder.append("Number of features: ");
+        builder.append(iMasterLayer.getFeatures().size());
+        builder.append('\n');
 
-        buffer.append("Attribute mean value: ");
-        buffer.append(iMasterLayer.meanValueForAttribute(iMasterAttribute));
-        buffer.append('\n');
+        builder.append("Attribute mean value: ");
+        builder.append(iMasterLayer.meanValueForAttribute(iMasterAttribute));
+        builder.append('\n');
 
-        buffer.append("Attribute minimum value: ");
-        buffer.append(iMasterLayer.minValueForAttribute(iMasterAttribute));
-        buffer.append('\n');
+        builder.append("Attribute minimum value: ");
+        builder.append(iMasterLayer.minValueForAttribute(iMasterAttribute));
+        builder.append('\n');
 
-        buffer.append("Attribute maximum value: ");
-        buffer.append(iMasterLayer.maxValueForAttribute(iMasterAttribute));
-        buffer.append("\n\n");
+        builder.append("Attribute maximum value: ");
+        builder.append(iMasterLayer.maxValueForAttribute(iMasterAttribute));
+        builder.append("\n\n");
 
-        buffer.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
+        builder.append("SIMULTANEOUSLY TRANSFORMED LAYERS:\n");
         if (aSimultaneousLayers == null || aSimultaneousLayers.size() == 0) {
-            buffer.append("None\n\n");
+            builder.append("None\n\n");
         } else {
             for (CartogramLayer layer : aSimultaneousLayers) {
-                buffer.append(layer.getName());
-                buffer.append('\n');
+                builder.append(layer.getName());
+                builder.append('\n');
             }
-            buffer.append('\n');
+            builder.append('\n');
         }
 
-        buffer.append("CONSTRAINED DEFORMATION LAYERS:\n");
+        builder.append("CONSTRAINED DEFORMATION LAYERS:\n");
         if (aConstrainedDeformationLayers == null
                 || aConstrainedDeformationLayers.size() == 0) {
-            buffer.append("None\n\n");
+            builder.append("None\n\n");
         } else {
             for (CartogramLayer layer : aConstrainedDeformationLayers) {
-                buffer.append(layer.getName());
-                buffer.append('\n');
+                builder.append(layer.getName());
+                builder.append('\n');
             }
-            buffer.append('\n');
+            builder.append('\n');
         }
 
         // Compute the cartogram error
         double meanError = aProjectedMasterLayer.computeCartogramSizeError(
                 iMasterAttribute, iMasterLayer, "SizeError");
 
-        buffer.append("CARTOGRAM ERROR\n");
-        buffer.append("The cartogram error is a measure for the quality of the result.\n");
-        buffer.append("Mean cartogram error: ");
-        buffer.append(meanError);
-        buffer.append('\n');
+        builder.append("CARTOGRAM ERROR\n");
+        builder.append("The cartogram error is a measure for the quality of the result.\n");
+        builder.append("Mean cartogram error: ");
+        builder.append(meanError);
+        builder.append('\n');
 
         double stdDev = aProjectedMasterLayer
                 .standardDeviationForAttribute("SizeError");
-        buffer.append("Standard deviation: ");
-        buffer.append(stdDev);
-        buffer.append('\n');
+        builder.append("Standard deviation: ");
+        builder.append(stdDev);
+        builder.append('\n');
 
-        buffer.append("25th percentile: ");
-        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
-                25));
-        buffer.append('\n');
+        builder.append("25th percentile: ");
+        builder.append(aProjectedMasterLayer.percentileForAttribute(
+                "SizeError", 25));
+        builder.append('\n');
 
-        buffer.append("50th percentile: ");
-        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
-                50));
-        buffer.append('\n');
+        builder.append("50th percentile: ");
+        builder.append(aProjectedMasterLayer.percentileForAttribute(
+                "SizeError", 50));
+        builder.append('\n');
 
-        buffer.append("75th percentile: ");
-        buffer.append(aProjectedMasterLayer.percentileForAttribute("SizeError",
-                75));
-        buffer.append('\n');
+        builder.append("75th percentile: ");
+        builder.append(aProjectedMasterLayer.percentileForAttribute(
+                "SizeError", 75));
+        builder.append('\n');
 
         // Compute the number of features between the 25th and 75th
         // percentile and the percentage.
@@ -870,20 +870,20 @@ public class Cartogram {
             }
         }
 
-        buffer.append("Features with mean error +/- 1 standard deviation: ");
-        buffer.append(nFeaturesInStdDev);
-        buffer.append(" of ");
-        buffer.append(nFeatures);
-        buffer.append(" (");
-        buffer.append((int) Math.round((double) nFeaturesInStdDev
+        builder.append("Features with mean error +/- 1 standard deviation: ");
+        builder.append(nFeaturesInStdDev);
+        builder.append(" of ");
+        builder.append(nFeatures);
+        builder.append(" (");
+        builder.append((int) Math.round((double) nFeaturesInStdDev
                 / (double) nFeatures * 100));
-        buffer.append("%)\n\n");
+        builder.append("%)\n\n");
 
-        buffer.append("Computation time: ");
-        buffer.append((System.nanoTime() - iComputationStartTime) / 1000000000);
-        buffer.append(" seconds\n");
+        builder.append("Computation time: ");
+        builder.append((System.nanoTime() - iComputationStartTime) / 1000000000);
+        builder.append(" seconds\n");
 
-        iComputationReport = buffer.toString();
+        iComputationReport = builder.toString();
     }
 
     /**

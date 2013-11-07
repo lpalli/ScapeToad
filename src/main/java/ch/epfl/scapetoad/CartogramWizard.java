@@ -67,7 +67,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.Ostermiller.util.Browser;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
@@ -87,7 +86,7 @@ import ch.epfl.scapetoad.compute.CartogramLayer;
 public class CartogramWizard extends JFrame {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(CartogramWizard.class);
 
@@ -97,32 +96,32 @@ public class CartogramWizard extends JFrame {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * The current step.
      */
     private int iCurrentStep = -1;
 
     /**
-     * 
+     * The 0 panel.
      */
     private CartogramWizardPanelZero iPanelZero = null;
 
     /**
-     * 
+     * The 1 panel.
      */
     private CartogramWizardPanelOne iPanelOne = null;
 
     /**
-     * 
+     * The 2 panel.
      */
     private CartogramWizardPanelTwo iPanelTwo = null;
 
     /**
-     * 
+     * The 3 panel.
      */
     private CartogramWizardPanelThree iPanelThree = null;
 
     /**
-     * 
+     * The 4 panel.
      */
     private CartogramWizardPanelFour iPanelFour = null;
 
@@ -157,22 +156,22 @@ public class CartogramWizard extends JFrame {
     private List<CartogramLayer> iSimultaneousLayers = null;
 
     /**
-     * 
+     * The list of constrained deformation layer.
      */
     private List<CartogramLayer> iConstrainedDeformationLayers = null;
 
     /**
-     * 
+     * The amount of deformation.
      */
     private int iAmountOfDeformation = 50;
 
     /**
-     * 
+     * The grid size.
      */
     private int[] iCartogramGridSize = { 1000, 1000 };
 
     /**
-     * 
+     * <code>true</code> if the advanced options are enabled.
      */
     private boolean iAdvancedOptionsEnabled = false;
 
@@ -198,12 +197,12 @@ public class CartogramWizard extends JFrame {
     private WizardStepIconPanel iWizardStepIconPanel = null;
 
     /**
-     * 
+     * The cancel button.
      */
     private JButton iCancelButton = null;
 
     /**
-     * 
+     * The missing value.
      */
     private String iMissingValue = "";
 
@@ -222,7 +221,7 @@ public class CartogramWizard extends JFrame {
         setLocation(30, 40);
         setResizable(false);
         setLayout(null);
-        // this.setModal(true);
+        // setModal(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new CartogramWizardWindowListener());
 
@@ -785,42 +784,42 @@ class WizardStepIconPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * The icon label.
      */
     private JLabel iIconLabel;
 
     /**
-     * 
+     * The icon 1.
      */
     private ImageIcon iIcon1;
 
     /**
-     * 
+     * The icon 2.
      */
     private ImageIcon iIcon2;
 
     /**
-     * 
+     * The icon 3.
      */
     private ImageIcon iIcon3;
 
     /**
-     * 
+     * The icon 4.
      */
     private ImageIcon iIcon4;
 
     /**
-     * 
+     * The icon 5.
      */
     private ImageIcon iIcon5;
 
     /**
-     * 
+     * The icon 6.
      */
     private ImageIcon iIcon6;
 
     /**
-     * 
+     * The icon 7.
      */
     private ImageIcon iIcon7;
 
@@ -833,14 +832,14 @@ class WizardStepIconPanel extends JPanel {
         setLayout(null);
 
         // Loading the step icons from the resources.
-        ClassLoader cldr = this.getClass().getClassLoader();
-        iIcon1 = new ImageIcon(cldr.getResource("resources/WizardStep1.png"));
-        iIcon2 = new ImageIcon(cldr.getResource("resources/WizardStep2.png"));
-        iIcon3 = new ImageIcon(cldr.getResource("resources/WizardStep3.png"));
-        iIcon4 = new ImageIcon(cldr.getResource("resources/WizardStep4.png"));
-        iIcon5 = new ImageIcon(cldr.getResource("resources/WizardStep5.png"));
-        iIcon6 = new ImageIcon(cldr.getResource("resources/WizardStep6.png"));
-        iIcon7 = new ImageIcon(cldr.getResource("resources/WizardStep7.png"));
+        ClassLoader loader = getClass().getClassLoader();
+        iIcon1 = new ImageIcon(loader.getResource("resources/WizardStep1.png"));
+        iIcon2 = new ImageIcon(loader.getResource("resources/WizardStep2.png"));
+        iIcon3 = new ImageIcon(loader.getResource("resources/WizardStep3.png"));
+        iIcon4 = new ImageIcon(loader.getResource("resources/WizardStep4.png"));
+        iIcon5 = new ImageIcon(loader.getResource("resources/WizardStep5.png"));
+        iIcon6 = new ImageIcon(loader.getResource("resources/WizardStep6.png"));
+        iIcon7 = new ImageIcon(loader.getResource("resources/WizardStep7.png"));
 
         // Create a new label containing the icon.
         iIconLabel = new JLabel(iIcon1);
@@ -855,6 +854,8 @@ class WizardStepIconPanel extends JPanel {
     }
 
     /**
+     * Set the step icon.
+     * 
      * @param step
      *            the number of steps
      */
@@ -929,22 +930,22 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
         JTextPane text = new JTextPane();
 
         // Get the wizard content from a text file.
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL wizardStepZeroURL = cldr
+        ClassLoader loader = getClass().getClassLoader();
+        URL wizardStepZeroURL = loader
                 .getResource("resources/WizardIntroduction.html");
 
         // Get the content from the text file.
         String wizardStepZeroContent = null;
         try {
-            InputStream inStream = wizardStepZeroURL.openStream();
+            InputStream stream = wizardStepZeroURL.openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
 
-            while ((c = inStream.read()) != -1) {
+            while ((c = stream.read()) != -1) {
                 inBuffer.append((char) c);
             }
 
-            inStream.close();
+            stream.close();
 
             wizardStepZeroContent = inBuffer.toString();
         } catch (Exception e) {
@@ -961,7 +962,7 @@ class CartogramWizardPanelZero extends JPanel implements HyperlinkListener {
         add(text);
 
         // Add the help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
+        java.net.URL imageURL = loader.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
 
         JButton helpButton = new JButton(helpIcon);
@@ -1010,32 +1011,29 @@ class CartogramWizardPanelOne extends JPanel {
     /**
      * 
      */
-    CartogramWizard iCartogramWizard = null;
+    private CartogramWizard iCartogramWizard = null;
 
     /**
      * 
      */
-    JComboBox iLayerMenu = null;
+    private JComboBox iLayerMenu = null;
 
     /**
      * The "Next" button.
      */
-    JButton iNextButton = null;
+    private JButton iNextButton = null;
 
     /**
      * The default constructor for the panel.
      * 
-     * @param contentFrame
+     * @param aContentFrame
      *            the content frame
      */
-    CartogramWizardPanelOne(JFrame contentFrame) {
-        iCartogramWizard = (CartogramWizard) contentFrame;
-
-        int width = 440;
-        int height = 340;
+    protected CartogramWizardPanelOne(CartogramWizard aContentFrame) {
+        iCartogramWizard = aContentFrame;
 
         setLocation(160, 90);
-        setSize(width, height);
+        setSize(440, 340);
         setLayout(null);
 
         // Add the Next button
@@ -1043,121 +1041,108 @@ class CartogramWizardPanelOne extends JPanel {
         iNextButton.setLocation(320, 314);
         iNextButton.setSize(120, 26);
         iNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
-
         iNextButton.addActionListener(new CartogramWizardGoToStepAction(
                 iCartogramWizard, 2));
         add(iNextButton);
 
         // Add the Back button
-        JButton backButton = new JButton("< Back");
-        backButton.setLocation(195, 314);
-        backButton.setSize(120, 26);
-        backButton.addActionListener(new CartogramWizardGoToStepAction(
+        JButton button = new JButton("< Back");
+        button.setLocation(195, 314);
+        button.setSize(120, 26);
+        button.addActionListener(new CartogramWizardGoToStepAction(
                 iCartogramWizard, 0));
-        add(backButton);
+        add(button);
 
-        // Add a pop-up menu with the list of available layers.
-        JLabel layerMenuLabel = new JLabel("Spatial coverage:");
-        layerMenuLabel.setFont(new Font(null, Font.PLAIN, 11));
-        layerMenuLabel.setBounds(0, 0, 190, 14);
-        add(layerMenuLabel);
+        // Add a pop-up menu with the list of available layers
+        JLabel label = new JLabel("Spatial coverage:");
+        label.setFont(new Font(null, Font.PLAIN, 11));
+        label.setBounds(0, 0, 190, 14);
+        add(label);
 
         iLayerMenu = new JComboBox();
         iLayerMenu.setBounds(0, 20, 190, 26);
         iLayerMenu.setFont(new Font(null, Font.PLAIN, 11));
         iLayerMenu.setMaximumRowCount(20);
-
-        // Add all polygon layers to the list.
+        // Add all polygon layers to the list
         int nlayers = AppContext.layerManager.size();
-
-        // Check for each layer whether it is a polygon layer or not.
-        for (int lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
-            Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
-            FeatureCollectionWrapper fcw = lyr.getFeatureCollectionWrapper();
-            int nfeat = fcw.size();
+        // Check for each layer whether it is a polygon layer or not
+        Layer layer;
+        FeatureCollectionWrapper wrapper;
+        for (int i = 0; i < nlayers; i++) {
+            layer = AppContext.layerManager.getLayer(i);
+            wrapper = layer.getFeatureCollectionWrapper();
+            int nfeat = wrapper.size();
             if (nfeat > 0) {
-                Feature feat = (Feature) fcw.getFeatures().get(0);
-                Geometry geom = feat.getGeometry();
-                if (geom.getArea() != 0.0) {
-                    iLayerMenu.addItem(lyr.getName());
+                if (((Feature) wrapper.getFeatures().get(0)).getGeometry()
+                        .getArea() != 0.0) {
+                    iLayerMenu.addItem(layer.getName());
                 }
             }
-
         }
-
-        // If there is no layer for the cartogram deformation,
-        // add a menu item "<none>" and disable the "Next" button.
+        // If there is no layer for the cartogram deformation, add a menu item
+        // "<none>" and disable the "Next" button
         if (iLayerMenu.getItemCount() == 0) {
             iLayerMenu.addItem("<none>");
             iNextButton.setEnabled(false);
         } else {
             iNextButton.setEnabled(true);
         }
-
         add(iLayerMenu);
 
-        // Adding the polygon image
-        ClassLoader cldr = this.getClass().getClassLoader();
-        URL iconURL = cldr.getResource("resources/Topology.png");
-        ImageIcon topologyImage = new ImageIcon(iconURL);
+        ClassLoader loader = getClass().getClassLoader();
 
-        // Create a new label containing the image.
-        JLabel iconLabel = new JLabel(topologyImage);
-
+        // Create a new label containing the image
+        label = new JLabel(new ImageIcon(
+                loader.getResource("resources/Topology.png")));
         // Setting the label parameters.
-        iconLabel.setLayout(null);
-        iconLabel.setSize(192, 239);
-        iconLabel.setLocation(240, 30);
+        label.setLayout(null);
+        label.setSize(192, 239);
+        label.setLocation(240, 30);
+        // Add the icon label to this panel
+        add(label);
 
-        // Add the icon label to this panel.
-        add(iconLabel);
-
-        // Adding the explanatory text.
-        // The message itself is read from a RTF file.
-        JTextPane layerMenuTextPane = new JTextPane();
-
-        // Get the content from the text file.
+        // Adding the explanatory text
+        // The message itself is read from a RTF file
+        JTextPane textPane = new JTextPane();
+        // Get the content from the text file
         String layerMenuText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/LayerMenuText.rtf").openStream();
 
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
 
-            inStream.close();
-            layerMenuText = inBuffer.toString();
+            stream.close();
+            layerMenuText = builder.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        layerMenuTextPane.setContentType("text/rtf");
-        layerMenuTextPane.setText(layerMenuText);
-        layerMenuTextPane.setEditable(false);
-        layerMenuTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        layerMenuTextPane.setBackground(null);
-        layerMenuTextPane.setLocation(0, 60);
-        layerMenuTextPane.setSize(220, 240);
-        add(layerMenuTextPane);
+        textPane.setContentType("text/rtf");
+        textPane.setText(layerMenuText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(0, 60);
+        textPane.setSize(220, 240);
+        add(textPane);
 
         // Add the Help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
-        ImageIcon helpIcon = new ImageIcon(imageURL);
-        JButton helpButton = new JButton(helpIcon);
-        helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        helpButton.setSize(30, 30);
-        helpButton.setLocation(0, 312);
-        helpButton.setFocusable(false);
-        helpButton.setContentAreaFilled(false);
-        helpButton.setBorderPainted(false);
-        helpButton
-                .addActionListener(new CartogramWizardShowURL(
-                        "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-layer"));
-        add(helpButton);
+        button = new JButton(new ImageIcon(
+                loader.getResource("resources/help-22.png")));
+        button.setVerticalTextPosition(SwingConstants.BOTTOM);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setSize(30, 30);
+        button.setLocation(0, 312);
+        button.setFocusable(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.addActionListener(new CartogramWizardShowURL(
+                "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-layer"));
+        add(button);
     }
 
     /**
@@ -1170,8 +1155,8 @@ class CartogramWizardPanelOne extends JPanel {
         if (visible) {
             updateLayerList();
 
-            // If there is no layer for the cartogram deformation,
-            // add a menu item "<none>" and disable the "Next" button.
+            // If there is no layer for the cartogram deformation, add a menu
+            // item "<none>" and disable the "Next" button
             if (iLayerMenu.getItemCount() == 0) {
                 iLayerMenu.addItem("<none>");
                 iNextButton.setEnabled(false);
@@ -1199,19 +1184,20 @@ class CartogramWizardPanelOne extends JPanel {
 
         iLayerMenu.removeAllItems();
 
-        // Add all polygon layers to the list.
+        // Add all polygon layers to the list
         int nlayers = AppContext.layerManager.size();
 
-        // Check for each layer whether it is a polygon layer or not.
-        for (int lyrcnt = 0; lyrcnt < nlayers; lyrcnt++) {
-            Layer lyr = AppContext.layerManager.getLayer(lyrcnt);
-            FeatureCollectionWrapper fcw = lyr.getFeatureCollectionWrapper();
-            int nfeat = fcw.size();
-            if (nfeat > 0) {
-                Feature feat = (Feature) fcw.getFeatures().get(0);
-                Geometry geom = feat.getGeometry();
-                if (geom.getArea() != 0.0) {
-                    String layerName = lyr.getName();
+        // Check for each layer whether it is a polygon layer or not
+        Layer layer;
+        FeatureCollectionWrapper wrapper;
+        String layerName;
+        for (int i = 0; i < nlayers; i++) {
+            layer = AppContext.layerManager.getLayer(i);
+            wrapper = layer.getFeatureCollectionWrapper();
+            if (wrapper.size() > 0) {
+                if (((Feature) wrapper.getFeatures().get(0)).getGeometry()
+                        .getArea() != 0.0) {
+                    layerName = layer.getName();
                     iLayerMenu.addItem(layerName);
                     if (layerName == selectedLayer) {
                         iLayerMenu.setSelectedItem(layerName);
@@ -1232,19 +1218,28 @@ class CartogramWizardPanelOne extends JPanel {
 class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 
     /**
+     * The logger.
+     */
+    private static Log logger = LogFactory
+            .getLog(CartogramWizardPanelTwo.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
+
     /**
-     * 
+     * The cartogram wizard.
      */
     private CartogramWizard iCartogramWizard = null;
+
     /**
-     * 
+     * The attribute menu.
      */
     private JComboBox iAttributeMenu = null;
+
     /**
-     * 
+     * The current cartogram layer.
      */
     private String iCurrentCartogramLayer = null;
 
@@ -1257,26 +1252,28 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * The attribute type radio button.
      */
     private ButtonGroup iAttributeTypeButtonGroup = null;
+
     /**
-     * 
+     * The attribute type density button.
      */
     private JRadioButton iAttributeTypeDensityButton = null;
+
     /**
-     * 
+     * The attribute type population button.
      */
     private JRadioButton iAttributeTypePopulationButton = null;
 
     /**
      * The default constructor for the panel.
      * 
-     * @param contentFrame
+     * @param aContentFrame
      *            the content frame
      */
-    CartogramWizardPanelTwo(JFrame contentFrame) {
-        iCartogramWizard = (CartogramWizard) contentFrame;
+    protected CartogramWizardPanelTwo(CartogramWizard aContentFrame) {
+        iCartogramWizard = aContentFrame;
 
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
         // Add the Next button
@@ -1285,53 +1282,47 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         iNextButton.setSize(120, 26);
         iNextButton.setMnemonic(KeyEvent.VK_ACCEPT);
         iNextButton.addActionListener(new CartogramWizardGoToStepAction(
-                (CartogramWizard) contentFrame, 3));
+                aContentFrame, 3));
         add(iNextButton);
 
         // Add the Back button
-        JButton backButton = new JButton("< Back");
-        backButton.setLocation(195, 314);
-        backButton.setSize(120, 26);
-        backButton.addActionListener(new CartogramWizardGoToStepAction(
-                (CartogramWizard) contentFrame, 1));
-        add(backButton);
+        JButton button = new JButton("< Back");
+        button.setLocation(195, 314);
+        button.setSize(120, 26);
+        button.addActionListener(new CartogramWizardGoToStepAction(
+                aContentFrame, 1));
+        add(button);
 
         // Create the attribute label
-        JLabel attributeLabel = new JLabel("Cartogram attribute:");
-        attributeLabel.setFont(new Font(null, Font.PLAIN, 11));
-        attributeLabel.setBounds(0, 0, 190, 14);
-        add(attributeLabel);
+        JLabel label = new JLabel("Cartogram attribute:");
+        label.setFont(new Font(null, Font.PLAIN, 11));
+        label.setBounds(0, 0, 190, 14);
+        add(label);
 
         // Create the attribute pop-up menu
         iAttributeMenu = new JComboBox();
         iAttributeMenu.setBounds(0, 20, 190, 26);
         iAttributeMenu.setFont(new Font(null, Font.PLAIN, 11));
         iAttributeMenu.setMaximumRowCount(20);
-
         // Find out the current cartogram layer name.
         iCurrentCartogramLayer = iCartogramWizard.getCartogramLayerName();
-
         // Get the numerical attributes of the current cartogram layer.
         if (iCurrentCartogramLayer != null && iCurrentCartogramLayer != ""
                 && iCurrentCartogramLayer != "<none>") {
-            Layer lyr = AppContext.layerManager
+            Layer layer = AppContext.layerManager
                     .getLayer(iCurrentCartogramLayer);
-
-            FeatureSchema fs = lyr.getFeatureCollectionWrapper()
+            FeatureSchema schema = layer.getFeatureCollectionWrapper()
                     .getFeatureSchema();
-
-            int nattrs = fs.getAttributeCount();
-
-            for (int attrcnt = 0; attrcnt < nattrs; attrcnt++) {
-
-                AttributeType attrtype = fs.getAttributeType(attrcnt);
+            int nattrs = schema.getAttributeCount();
+            AttributeType attrtype;
+            for (int i = 0; i < nattrs; i++) {
+                attrtype = schema.getAttributeType(i);
                 if (attrtype == AttributeType.DOUBLE
                         || attrtype == AttributeType.INTEGER) {
-                    iAttributeMenu.addItem(fs.getAttributeName(attrcnt));
+                    iAttributeMenu.addItem(schema.getAttributeName(i));
                 }
             }
         }
-
         if (iAttributeMenu.getItemCount() == 0) {
             iAttributeMenu.addItem("<none>");
             iNextButton.setEnabled(false);
@@ -1340,16 +1331,17 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         }
 
         // Create the attribute type label
-        JLabel attributeTypeLabel = new JLabel("Attribute type:");
-        attributeTypeLabel.setFont(new Font(null, Font.PLAIN, 11));
-        attributeTypeLabel.setBounds(220, 0, 190, 14);
-        add(attributeTypeLabel);
+        label = new JLabel("Attribute type:");
+        label.setFont(new Font(null, Font.PLAIN, 11));
+        label.setBounds(220, 0, 190, 14);
+        add(label);
 
-        // Create the attribute type radio buttons.
+        // Create the attribute type radio buttons
         iAttributeTypePopulationButton = new JRadioButton("Mass");
         iAttributeTypePopulationButton.setSelected(true);
         iAttributeTypePopulationButton.setFont(new Font(null, Font.PLAIN, 11));
         iAttributeTypePopulationButton.setBounds(220, 20, 190, 20);
+        add(iAttributeTypePopulationButton);
 
         iAttributeTypeDensityButton = new JRadioButton("Density");
         iAttributeTypeDensityButton.setSelected(false);
@@ -1359,96 +1351,80 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
         iAttributeTypeButtonGroup = new ButtonGroup();
         iAttributeTypeButtonGroup.add(iAttributeTypePopulationButton);
         iAttributeTypeButtonGroup.add(iAttributeTypeDensityButton);
-
-        add(iAttributeTypePopulationButton);
         add(iAttributeTypeDensityButton);
 
         add(iAttributeMenu);
 
-        // Create the text pane which displays the attribute message.
-        // The message itself is read from a RTF file.
-
-        JTextPane attributeMenuTextPane = new JTextPane();
-
         // Get the wizard content from a text file.
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader loader = getClass().getClassLoader();
 
-        // Get the content from the text file.
+        // Create the text pane which displays the attribute message
+        // The message itself is read from a RTF file
+        JTextPane textPane = new JTextPane();
+        // Get the content from the text file
         String attributeMenuText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/AttributeMenuText.rtf").openStream();
-
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-
-            inStream.close();
-            attributeMenuText = inBuffer.toString();
+            stream.close();
+            attributeMenuText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
+        textPane.setContentType("text/rtf");
+        textPane.setText(attributeMenuText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(0, 80);
+        textPane.setSize(190, 100);
+        add(textPane);
 
-        attributeMenuTextPane.setContentType("text/rtf");
-        attributeMenuTextPane.setText(attributeMenuText);
-        attributeMenuTextPane.setEditable(false);
-        attributeMenuTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        attributeMenuTextPane.setBackground(null);
-        attributeMenuTextPane.setLocation(0, 80);
-        attributeMenuTextPane.setSize(190, 100);
-        this.add(attributeMenuTextPane);
-
-        // Create the text pane which displays the attribute type message.
-        // The message itself is read from a RTF file.
-
-        JTextPane attributeTypeTextPane = new JTextPane();
-
-        // Get the content from the text file.
+        // Create the text pane which displays the attribute type message
+        // The message itself is read from a RTF file
+        textPane = new JTextPane();
+        // Get the content from the text file
         String attributeTypeText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/AttributeTypeText.html").openStream();
-
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-
-            inStream.close();
-            attributeTypeText = inBuffer.toString();
+            stream.close();
+            attributeTypeText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
-
-        attributeTypeTextPane.setContentType("text/html");
-        attributeTypeTextPane.setText(attributeTypeText);
-        attributeTypeTextPane.setEditable(false);
-        attributeTypeTextPane.addHyperlinkListener(this);
-        attributeTypeTextPane.setBackground(null);
-        attributeTypeTextPane.setLocation(220, 80);
-        attributeTypeTextPane.setSize(190, 200);
-        add(attributeTypeTextPane);
+        textPane.setContentType("text/html");
+        textPane.setText(attributeTypeText);
+        textPane.setEditable(false);
+        textPane.addHyperlinkListener(this);
+        textPane.setBackground(null);
+        textPane.setLocation(220, 80);
+        textPane.setSize(190, 200);
+        add(textPane);
 
         // Add the Help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
-        ImageIcon helpIcon = new ImageIcon(imageURL);
-        JButton helpButton = new JButton(helpIcon);
-        helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        helpButton.setSize(30, 30);
-        helpButton.setLocation(0, 312);
-        helpButton.setFocusable(false);
-        helpButton.setContentAreaFilled(false);
-        helpButton.setBorderPainted(false);
-        helpButton
-                .addActionListener(new CartogramWizardShowURL(
-                        "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-attribute"));
-        add(helpButton);
+        button = new JButton(new ImageIcon(
+                loader.getResource("resources/help-22.png")));
+        button.setVerticalTextPosition(SwingConstants.BOTTOM);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setSize(30, 30);
+        button.setLocation(0, 312);
+        button.setFocusable(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.addActionListener(new CartogramWizardShowURL(
+                "http://scapetoad.choros.ch/help/a-cartogram-creation.php#cartogram-attribute"));
+        add(button);
     }
 
     @Override
@@ -1467,39 +1443,37 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
      * 
      */
     public void updateAttributeName() {
-        // Find out the current layer name.
+        // Find out the current layer name
         String layerName = iCartogramWizard.getCartogramLayerName();
 
         if (iCurrentCartogramLayer != layerName) {
-            // Change the layer name attribute.
+            // Change the layer name attribute
             iCurrentCartogramLayer = layerName;
 
-            // Remove all existing items.
+            // Remove all existing items
             iAttributeMenu.removeAllItems();
 
-            // Get the numerical attributes of the current cartogram layer.
+            // Get the numerical attributes of the current cartogram layer
             if (iCurrentCartogramLayer != null && iCurrentCartogramLayer != ""
                     && iCurrentCartogramLayer != "<none>") {
-                Layer lyr = AppContext.layerManager
-                        .getLayer(iCurrentCartogramLayer);
+                FeatureSchema schema = AppContext.layerManager
+                        .getLayer(iCurrentCartogramLayer)
+                        .getFeatureCollectionWrapper().getFeatureSchema();
 
-                FeatureSchema fs = lyr.getFeatureCollectionWrapper()
-                        .getFeatureSchema();
+                int nattrs = schema.getAttributeCount();
 
-                int nattrs = fs.getAttributeCount();
-
-                for (int attrcnt = 0; attrcnt < nattrs; attrcnt++) {
-
-                    AttributeType attrtype = fs.getAttributeType(attrcnt);
+                AttributeType attrtype;
+                for (int i = 0; i < nattrs; i++) {
+                    attrtype = schema.getAttributeType(i);
                     if (attrtype == AttributeType.DOUBLE
                             || attrtype == AttributeType.INTEGER) {
-                        iAttributeMenu.addItem(fs.getAttributeName(attrcnt));
+                        iAttributeMenu.addItem(schema.getAttributeName(i));
                     }
                 }
             }
 
-            // If there is no attribute we can select,
-            // add an item "<none>" and disable the "Next" button.
+            // If there is no attribute we can select, add an item "<none>" and
+            // disable the "Next" button.
             if (iAttributeMenu.getItemCount() == 0) {
                 iAttributeMenu.addItem("<none>");
                 iNextButton.setEnabled(false);
@@ -1526,7 +1500,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
                 Browser.displayURL(e.getURL().toString());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("", ex);
         }
     }
 
@@ -1536,8 +1510,7 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
     public static String getMissingValue() {
         return "";
     }
-
-} // CartogramWizardPanelTwo
+}
 
 /**
  * This class represents the panel for the selection of the layers for
@@ -1547,6 +1520,12 @@ class CartogramWizardPanelTwo extends JPanel implements HyperlinkListener {
 class CartogramWizardPanelThree extends JPanel {
 
     /**
+     * The logger.
+     */
+    private static Log logger = LogFactory
+            .getLog(CartogramWizardPanelThree.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
@@ -1554,116 +1533,113 @@ class CartogramWizardPanelThree extends JPanel {
     /**
      * The default constructor for the panel.
      * 
-     * @param contentFrame
+     * @param aContentFrame
      *            the content frame
      */
-    CartogramWizardPanelThree(JFrame contentFrame) {
-        this.setLocation(160, 90);
-        this.setSize(440, 340);
+    protected CartogramWizardPanelThree(CartogramWizard aContentFrame) {
+        setLocation(160, 90);
+        setSize(440, 340);
         setLayout(null);
 
         // Button for simultanous layers.
-        JButton simLayerButton = new JButton("Layers to transform...");
-        simLayerButton.setLocation(0, 0);
-        simLayerButton.setSize(240, 26);
-        simLayerButton
-                .addActionListener(new CartogramWizardSimulaneousLayerAction(
-                        "showDialog", null));
-        add(simLayerButton);
+        JButton button = new JButton("Layers to transform...");
+        button.setLocation(0, 0);
+        button.setSize(240, 26);
+        button.addActionListener(new CartogramWizardSimulaneousLayerAction(
+                "showDialog", null));
+        add(button);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
-        JTextPane simLayerTextPane = new JTextPane();
-        ClassLoader cldr = this.getClass().getClassLoader();
+        JTextPane textPane = new JTextPane();
+        ClassLoader loader = getClass().getClassLoader();
         String simLayerText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/SimLayersText.rtf").openStream();
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-            inStream.close();
-            simLayerText = inBuffer.toString();
+            stream.close();
+            simLayerText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
-        simLayerTextPane.setContentType("text/rtf");
-        simLayerTextPane.setText(simLayerText);
-        simLayerTextPane.setEditable(false);
-        simLayerTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        simLayerTextPane.setBackground(null);
-        simLayerTextPane.setLocation(40, 35);
-        simLayerTextPane.setSize(400, 80);
-        add(simLayerTextPane);
+        textPane.setContentType("text/rtf");
+        textPane.setText(simLayerText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(40, 35);
+        textPane.setSize(400, 80);
+        add(textPane);
 
         // Button for constrained layers.
-        JButton constLayersButton = new JButton("Constrained transformation...");
-        constLayersButton.setLocation(0, 140);
-        constLayersButton.setSize(240, 26);
-        constLayersButton
-                .addActionListener(new CartogramWizardConstrainedLayerAction(
-                        "showDialog", null));
-        add(constLayersButton);
+        button = new JButton("Constrained transformation...");
+        button.setLocation(0, 140);
+        button.setSize(240, 26);
+        button.addActionListener(new CartogramWizardConstrainedLayerAction(
+                "showDialog", null));
+        add(button);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
-        JTextPane constLayerTextPane = new JTextPane();
+        textPane = new JTextPane();
         String constLayerText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/ConstLayersText.rtf").openStream();
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-            inStream.close();
-            constLayerText = inBuffer.toString();
+            stream.close();
+            constLayerText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
-        constLayerTextPane.setContentType("text/rtf");
-        constLayerTextPane.setText(constLayerText);
-        constLayerTextPane.setEditable(false);
-        constLayerTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        constLayerTextPane.setBackground(null);
-        constLayerTextPane.setLocation(40, 175);
-        constLayerTextPane.setSize(400, 60);
-        add(constLayerTextPane);
+        textPane.setContentType("text/rtf");
+        textPane.setText(constLayerText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(40, 175);
+        textPane.setSize(400, 60);
+        add(textPane);
 
         // Add the Next button
-        JButton computeButton = new JButton("Next >");
-        computeButton.setLocation(320, 314);
-        computeButton.setSize(120, 26);
-        computeButton.setMnemonic(KeyEvent.VK_ENTER);
-        computeButton.addActionListener(new CartogramWizardGoToStepAction(
-                (CartogramWizard) contentFrame, 4));
-        add(computeButton);
+        button = new JButton("Next >");
+        button.setLocation(320, 314);
+        button.setSize(120, 26);
+        button.setMnemonic(KeyEvent.VK_ENTER);
+        button.addActionListener(new CartogramWizardGoToStepAction(
+                aContentFrame, 4));
+        add(button);
 
         // Add the Back button
-        JButton backButton = new JButton("< Back");
-        backButton.setLocation(195, 314);
-        backButton.setSize(120, 26);
-        backButton.addActionListener(new CartogramWizardGoToStepAction(
-                (CartogramWizard) contentFrame, 2));
-        add(backButton);
+        button = new JButton("< Back");
+        button.setLocation(195, 314);
+        button.setSize(120, 26);
+        button.addActionListener(new CartogramWizardGoToStepAction(
+                aContentFrame, 2));
+        add(button);
 
         // Add the Help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
-        ImageIcon helpIcon = new ImageIcon(imageURL);
-        JButton helpButton = new JButton(helpIcon);
-        helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        helpButton.setSize(30, 30);
-        helpButton.setLocation(0, 312);
-        helpButton.setFocusable(false);
-        helpButton.setContentAreaFilled(false);
-        helpButton.setBorderPainted(false);
-        helpButton.addActionListener(new CartogramWizardShowURL(
+        button = new JButton(new ImageIcon(
+                loader.getResource("resources/help-22.png")));
+        button.setVerticalTextPosition(SwingConstants.BOTTOM);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setSize(30, 30);
+        button.setLocation(0, 312);
+        button.setFocusable(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.addActionListener(new CartogramWizardShowURL(
                 "http://scapetoad.choros.ch/help/b-other-layers.php"));
-        add(helpButton);
+        add(button);
     }
 }
 
@@ -1674,12 +1650,18 @@ class CartogramWizardPanelThree extends JPanel {
 class CartogramWizardPanelFour extends JPanel {
 
     /**
+     * The logger.
+     */
+    private static Log logger = LogFactory
+            .getLog(CartogramWizardPanelFour.class);
+
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * The cartogram wizard.
      */
     private CartogramWizard iCartogramWizard = null;
 
@@ -1695,142 +1677,139 @@ class CartogramWizardPanelFour extends JPanel {
      * @param contentFrame
      *            the content frame
      */
-    CartogramWizardPanelFour(JFrame contentFrame) {
+    protected CartogramWizardPanelFour(JFrame contentFrame) {
         iCartogramWizard = (CartogramWizard) contentFrame;
 
         setLocation(160, 90);
         setSize(440, 340);
         setLayout(null);
 
-        ClassLoader cldr = this.getClass().getClassLoader();
+        ClassLoader loader = getClass().getClassLoader();
 
         // Add the slider for the amount of deformation.
-        Font smallFont = new Font(null, Font.PLAIN, 11);
+        Font font = new Font(null, Font.PLAIN, 11);
         iDeformationSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
         iDeformationSlider.setMajorTickSpacing(25);
         iDeformationSlider.setMinorTickSpacing(5);
         iDeformationSlider.setPaintTicks(true);
-        iDeformationSlider.setFont(smallFont);
+        iDeformationSlider.setFont(font);
         iDeformationSlider.setSize(440, 40);
         iDeformationSlider.setLocation(0, 20);
 
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        JLabel sliderLabel = new JLabel("Low");
-        sliderLabel.setFont(smallFont);
-        labelTable.put(new Integer(0), sliderLabel);
-        sliderLabel = new JLabel("Medium");
-        sliderLabel.setFont(smallFont);
-        labelTable.put(new Integer(50), sliderLabel);
-        sliderLabel = new JLabel("High");
-        sliderLabel.setFont(smallFont);
-        labelTable.put(new Integer(100), sliderLabel);
+        JLabel label = new JLabel("Low");
+        label.setFont(font);
+        labelTable.put(new Integer(0), label);
+        label = new JLabel("Medium");
+        label.setFont(font);
+        labelTable.put(new Integer(50), label);
+        label = new JLabel("High");
+        label.setFont(font);
+        labelTable.put(new Integer(100), label);
 
         iDeformationSlider.setLabelTable(labelTable);
         iDeformationSlider.setPaintLabels(true);
         add(iDeformationSlider);
 
         // Add the label for the amount of deformation.
-        JLabel deformationLabel = new JLabel("Transformation quality:");
-        deformationLabel.setSize(440, 14);
-        deformationLabel.setFont(new Font(null, Font.BOLD, 11));
-        deformationLabel.setLocation(0, 0);
-        add(deformationLabel);
+        label = new JLabel("Transformation quality:");
+        label.setSize(440, 14);
+        label.setFont(new Font(null, Font.BOLD, 11));
+        label.setLocation(0, 0);
+        add(label);
 
         // Create the text pane which displays the help text for the
         // amount of deformation.
-        JTextPane deformationTextPane = new JTextPane();
+        JTextPane textPane = new JTextPane();
         String deformationText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/AmountOfDeformationText.rtf").openStream();
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-            inStream.close();
-            deformationText = inBuffer.toString();
+            stream.close();
+            deformationText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
-        deformationTextPane.setContentType("text/rtf");
-        deformationTextPane.setText(deformationText);
-        deformationTextPane.setEditable(false);
-        deformationTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        deformationTextPane.setBackground(null);
-        deformationTextPane.setLocation(40, 70);
-        deformationTextPane.setSize(400, 70);
-        add(deformationTextPane);
+        textPane.setContentType("text/rtf");
+        textPane.setText(deformationText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(40, 70);
+        textPane.setSize(400, 70);
+        add(textPane);
 
         // ADVANCED OPTIONS
 
         // A button and an explanatory text for the advanced options.
-        JButton advancedButton = new JButton("Advanced options...");
-        advancedButton.setLocation(0, 170);
-        advancedButton.setSize(240, 26);
-        advancedButton
-                .addActionListener(new CartogramWizardAdvancedOptionsAction(
-                        "showDialog", null));
-        add(advancedButton);
+        JButton button = new JButton("Advanced options...");
+        button.setLocation(0, 170);
+        button.setSize(240, 26);
+        button.addActionListener(new CartogramWizardAdvancedOptionsAction(
+                "showDialog", null));
+        add(button);
 
         // Create the text pane which displays the help text for the
         // simultaneous layers.
-        JTextPane advancedTextPane = new JTextPane();
+        textPane = new JTextPane();
         String advancedText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream stream = loader.getResource(
                     "resources/AdvancedOptionsText.rtf").openStream();
-            StringBuffer inBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             int c;
-            while ((c = inStream.read()) != -1) {
-                inBuffer.append((char) c);
+            while ((c = stream.read()) != -1) {
+                builder.append((char) c);
             }
-            inStream.close();
-            advancedText = inBuffer.toString();
+            stream.close();
+            advancedText = builder.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
-        advancedTextPane.setContentType("text/rtf");
-        advancedTextPane.setText(advancedText);
-        advancedTextPane.setEditable(false);
-        advancedTextPane.setFont(new Font(null, Font.PLAIN, 11));
-        advancedTextPane.setBackground(null);
-        advancedTextPane.setLocation(40, 205);
-        advancedTextPane.setSize(400, 60);
-        add(advancedTextPane);
+        textPane.setContentType("text/rtf");
+        textPane.setText(advancedText);
+        textPane.setEditable(false);
+        textPane.setFont(new Font(null, Font.PLAIN, 11));
+        textPane.setBackground(null);
+        textPane.setLocation(40, 205);
+        textPane.setSize(400, 60);
+        add(textPane);
 
         // Add the Compute button
-        JButton computeButton = new JButton("Compute");
-        computeButton.setLocation(320, 314);
-        computeButton.setSize(120, 26);
-        computeButton.setMnemonic(KeyEvent.VK_ENTER);
-        computeButton.addActionListener(new CartogramWizardComputeAction(
+        button = new JButton("Compute");
+        button.setLocation(320, 314);
+        button.setSize(120, 26);
+        button.setMnemonic(KeyEvent.VK_ENTER);
+        button.addActionListener(new CartogramWizardComputeAction(
                 (CartogramWizard) contentFrame));
-        add(computeButton);
+        add(button);
 
         // Add the Back button
-        JButton backButton = new JButton("< Back");
-        backButton.setLocation(195, 314);
-        backButton.setSize(120, 26);
-        backButton.addActionListener(new CartogramWizardGoToStepAction(
+        button = new JButton("< Back");
+        button.setLocation(195, 314);
+        button.setSize(120, 26);
+        button.addActionListener(new CartogramWizardGoToStepAction(
                 (CartogramWizard) contentFrame, 3));
-        add(backButton);
+        add(button);
 
         // Add the Help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
-        ImageIcon helpIcon = new ImageIcon(imageURL);
-        JButton helpButton = new JButton(helpIcon);
-        helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        helpButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        helpButton.setSize(30, 30);
-        helpButton.setLocation(0, 312);
-        helpButton.setFocusable(false);
-        helpButton.setContentAreaFilled(false);
-        helpButton.setBorderPainted(false);
-        helpButton
-                .addActionListener(new CartogramWizardShowURL(
-                        "http://scapetoad.choros.ch/help/c-transformation-parameters.php"));
-        add(helpButton);
+        button = new JButton(new ImageIcon(
+                loader.getResource("resources/help-22.png")));
+        button.setVerticalTextPosition(SwingConstants.BOTTOM);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setSize(30, 30);
+        button.setLocation(0, 312);
+        button.setFocusable(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.addActionListener(new CartogramWizardShowURL(
+                "http://scapetoad.choros.ch/help/c-transformation-parameters.php"));
+        add(button);
     }
 
     /**
@@ -1839,8 +1818,8 @@ class CartogramWizardPanelFour extends JPanel {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            // this.updateLayerList();
-            // this.updateConstrainedLayerList();
+            // updateLayerList();
+            // updateConstrainedLayerList();
         } else {
             // Update the amount of deformation.
             iCartogramWizard.setAmountOfDeformation(iDeformationSlider
@@ -1879,19 +1858,20 @@ class CartogramWizardRunningPanel extends JPanel {
     private JProgressBar iProgressBar = null;
 
     /**
-     * The progress labels. The label 1 is for the current task name. In a
-     * lengthy task, the label 2 may be used for more detailed user information.
+     * The progress labels. The label 1 is for the current task name.
      */
     private JLabel iProgressLabel1 = null;
+
     /**
-     * 
+     * The progress labels. In a lengthy task, the label 2 may be used for more
+     * detailed user information.
      */
     private JLabel iProgressLabel2 = null;
 
     /**
      * The default constructor.
      */
-    CartogramWizardRunningPanel() {
+    protected CartogramWizardRunningPanel() {
         setLocation(160, 90);
         setSize(440, 340);
         setLayout(null);
@@ -2010,16 +1990,14 @@ class CartogramWizardFinishedPanel extends JPanel {
     /**
      * Initializes the new panel.
      */
-    CartogramWizardFinishedPanel() {
+    protected CartogramWizardFinishedPanel() {
         setLocation(160, 90);
         setSize(440, 340);
         setLayout(null);
 
         // Add the Help button
-        ClassLoader cldr = this.getClass().getClassLoader();
-
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
-        ImageIcon helpIcon = new ImageIcon(imageURL);
+        ImageIcon helpIcon = new ImageIcon(getClass().getClassLoader()
+                .getResource("resources/help-22.png"));
 
         iHelpButton = new JButton(helpIcon);
         iHelpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -2046,22 +2024,22 @@ class CartogramWizardFinishedPanel extends JPanel {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            JButton cancelButton = AppContext.cartogramWizard.getCancelButton();
-            cancelButton.setText("End");
+            JButton button = AppContext.cartogramWizard.getCancelButton();
+            button.setText("End");
 
             // Remove all elements in this pane.
             removeAll();
 
             if (iErrorOccured) {
-                JLabel errorTitle = new JLabel(iErrorTitle);
-                errorTitle.setFont(new Font(null, Font.BOLD, 11));
-                errorTitle.setBounds(0, 0, 400, 14);
-                add(errorTitle);
+                JLabel label = new JLabel(iErrorTitle);
+                label.setFont(new Font(null, Font.BOLD, 11));
+                label.setBounds(0, 0, 400, 14);
+                add(label);
 
-                JLabel finishedMessage = new JLabel(iErrorMessage);
-                finishedMessage.setFont(new Font(null, Font.PLAIN, 11));
-                finishedMessage.setBounds(0, 22, 400, 14);
-                add(finishedMessage);
+                label = new JLabel(iErrorMessage);
+                label.setFont(new Font(null, Font.PLAIN, 11));
+                label.setBounds(0, 22, 400, 14);
+                add(label);
 
                 JTextArea finishedReport = new JTextArea(iStackTrace);
                 finishedReport.setFont(new Font(null, Font.PLAIN, 11));
@@ -2071,16 +2049,16 @@ class CartogramWizardFinishedPanel extends JPanel {
                 scrollPane.setBounds(0, 45, 430, 250);
                 add(scrollPane);
             } else {
-                JLabel finishedTitle = new JLabel(
+                JLabel label = new JLabel(
                         "Cartogram computation successfully terminated");
-                finishedTitle.setFont(new Font(null, Font.BOLD, 11));
-                finishedTitle.setBounds(0, 0, 400, 14);
-                add(finishedTitle);
+                label.setFont(new Font(null, Font.BOLD, 11));
+                label.setBounds(0, 0, 400, 14);
+                add(label);
 
-                JLabel finishedMessage = new JLabel(iShortMessage);
-                finishedMessage.setFont(new Font(null, Font.PLAIN, 11));
-                finishedMessage.setBounds(0, 22, 400, 14);
-                add(finishedMessage);
+                label = new JLabel(iShortMessage);
+                label.setFont(new Font(null, Font.PLAIN, 11));
+                label.setBounds(0, 22, 400, 14);
+                add(label);
 
                 JTextArea finishedReport = new JTextArea(
                         AppContext.cartogramWizard.getWorker().getCartogram()
@@ -2155,12 +2133,12 @@ class CartogramWizardGoToStepAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * The cartogram wizard.
      */
     private CartogramWizard iWizard = null;
 
     /**
-     * 
+     * The step.
      */
     private int iStep = -1;
 
@@ -2172,7 +2150,7 @@ class CartogramWizardGoToStepAction extends AbstractAction {
      * @param step
      *            the number of steps
      */
-    CartogramWizardGoToStepAction(CartogramWizard wizard, int step) {
+    protected CartogramWizardGoToStepAction(CartogramWizard wizard, int step) {
         iWizard = wizard;
         iStep = step;
     }
@@ -2198,12 +2176,9 @@ class CartogramWizardCloseAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        CartogramWorker cg = AppContext.cartogramWizard.getWorker();
-        if (cg != null) {
-            boolean cgRunning = cg.isRunning();
-            if (cgRunning) {
-                AppContext.cartogramWizard.getWorker().interrupt();
-            }
+        CartogramWorker worker = AppContext.cartogramWizard.getWorker();
+        if (worker != null && worker.isRunning()) {
+            AppContext.cartogramWizard.getWorker().interrupt();
         }
 
         AppContext.cartogramWizard.setVisible(false);
@@ -2237,7 +2212,7 @@ class CartogramWizardComputeAction extends AbstractAction {
      * @param cartogramWizard
      *            the cartogram wizard
      */
-    CartogramWizardComputeAction(CartogramWizard cartogramWizard) {
+    protected CartogramWizardComputeAction(CartogramWizard cartogramWizard) {
         iCartogramWizard = cartogramWizard;
     }
 
@@ -2311,7 +2286,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * The advanced options check box.
      */
     private JCheckBox iAdvancedOptionsCheckBox = null;
 
@@ -2326,44 +2301,45 @@ class CartogramWizardOptionsWindow extends JDialog implements
     private JTextField iGridSizeTextField = null;
 
     /**
+     * The grid size field.
      * 
      */
     private JTextField iCartogramGridSizeTextField = null;
 
     /**
-     * 
+     * The manual parameters pane.
      */
     private JTextPane iManualParametersPane = null;
 
     /**
-     * 
+     * The grid pane.
      */
     private JTextPane iGrid1Pane = null;
 
     /**
-     * 
+     * The cartogram grid size label.
      */
     private JLabel iCartogramGridSizeLabel = null;
 
     /**
-     * 
+     * The bias pane.
      */
     private JTextPane iBiasPane = null;
 
     /**
-     * 
+     * The bias label.
      */
     private JLabel iBiasLabel = null;
 
     /**
-     * 
+     * The bias text field.
      */
     private JTextField iBiasTextField = null;
 
     /**
      * Constructor for the options window.
      */
-    CartogramWizardOptionsWindow() {
+    protected CartogramWizardOptionsWindow() {
         // Set the window parameters.
         setTitle("Advanced options");
 
@@ -2382,14 +2358,13 @@ class CartogramWizardOptionsWindow extends JDialog implements
         iGridLayerCheckBox.setSize(300, 26);
         add(iGridLayerCheckBox);
 
-        // DEFORMATION GRID LAYER HELP TEXT
-
-        ClassLoader cldr = getClass().getClassLoader();
+        // Deformation grid layer help text
+        ClassLoader loader = getClass().getClassLoader();
 
         JTextPane deformationGridPane = new JTextPane();
         String deformationText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream inStream = loader.getResource(
                     "resources/DeformationGridLayerText.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -2449,7 +2424,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         iManualParametersPane = new JTextPane();
         String manualParametersText = null;
         try {
-            InputStream inStream = cldr.getResource(
+            InputStream inStream = loader.getResource(
                     "resources/ManualParametersText.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
@@ -2475,8 +2450,8 @@ class CartogramWizardOptionsWindow extends JDialog implements
         iGrid1Pane = new JTextPane();
         String grid1Text = null;
         try {
-            InputStream inStream = cldr.getResource("resources/Grid1Text.html")
-                    .openStream();
+            InputStream inStream = loader.getResource(
+                    "resources/Grid1Text.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -2523,8 +2498,8 @@ class CartogramWizardOptionsWindow extends JDialog implements
         iBiasPane = new JTextPane();
         String biasText = null;
         try {
-            InputStream inStream = cldr.getResource("resources/BiasText.html")
-                    .openStream();
+            InputStream inStream = loader
+                    .getResource("resources/BiasText.html").openStream();
             StringBuffer inBuffer = new StringBuffer();
             int c;
             while ((c = inStream.read()) != -1) {
@@ -2581,7 +2556,7 @@ class CartogramWizardOptionsWindow extends JDialog implements
         add(okButton);
 
         // Add the Help button
-        java.net.URL imageURL = cldr.getResource("resources/help-22.png");
+        java.net.URL imageURL = loader.getResource("resources/help-22.png");
         ImageIcon helpIcon = new ImageIcon(imageURL);
         JButton helpButton = new JButton(helpIcon);
         helpButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -2697,7 +2672,7 @@ class CartogramWizardAdvancedOptionsAction extends AbstractAction {
      *            a reference to the dialog or null if it does not yet exist
      *            (for the showDialog action).
      */
-    CartogramWizardAdvancedOptionsAction(String actionToPerform,
+    protected CartogramWizardAdvancedOptionsAction(String actionToPerform,
             CartogramWizardOptionsWindow dialog) {
         iActionToPerform = actionToPerform;
         iDialog = dialog;
@@ -2744,7 +2719,7 @@ class CartogramWizardShowURL extends AbstractAction {
      * @param url
      *            the URL to show.
      */
-    CartogramWizardShowURL(String url) {
+    protected CartogramWizardShowURL(String url) {
         iUrl = url;
     }
 
@@ -2858,7 +2833,7 @@ class CartogramWizardSimulaneousLayerWindow extends JDialog {
     /**
      * Constructor for the simultaneous layer window.
      */
-    CartogramWizardSimulaneousLayerWindow() {
+    protected CartogramWizardSimulaneousLayerWindow() {
         // Set the window parameters.
         setTitle("Simultaneous transformation layers");
 
@@ -3019,7 +2994,7 @@ class CartogramWizardSimulaneousLayerAction extends AbstractAction {
      *            a reference to the dialog or null if it does not yet exist
      *            (for the showDialog action).
      */
-    CartogramWizardSimulaneousLayerAction(String actionToPerform,
+    protected CartogramWizardSimulaneousLayerAction(String actionToPerform,
             CartogramWizardSimulaneousLayerWindow dialog) {
         iActionToPerform = actionToPerform;
         iDialog = dialog;
@@ -3086,7 +3061,7 @@ class CartogramWizardConstrainedLayerWindow extends JDialog {
     /**
      * Constructor for the constrained layer window.
      */
-    CartogramWizardConstrainedLayerWindow() {
+    protected CartogramWizardConstrainedLayerWindow() {
         // Set the window parameters.
         setTitle("ScapeToad _ Cartogram Wizard _ Constrained transformation layers");
         setSize(300, 400);
@@ -3245,7 +3220,7 @@ class CartogramWizardConstrainedLayerAction extends AbstractAction {
      *            a reference to the dialog or null if it does not yet exist
      *            (for the showDialog action).
      */
-    CartogramWizardConstrainedLayerAction(String actionToPerform,
+    protected CartogramWizardConstrainedLayerAction(String actionToPerform,
             CartogramWizardConstrainedLayerWindow dialog) {
         iActionToPerform = actionToPerform;
         iDialog = dialog;
@@ -3286,29 +3261,29 @@ class CartogramWizardSaveReportAction extends AbstractAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Create the File Save dialog.
-        FileDialog fd = new FileDialog(AppContext.cartogramWizard,
+        // Create the File Save dialog
+        FileDialog dialog = new FileDialog(AppContext.cartogramWizard,
                 "Save Computation Report As...", FileDialog.SAVE);
-        fd.setModal(true);
-        fd.setBounds(20, 30, 150, 200);
-        fd.setVisible(true);
+        dialog.setModal(true);
+        dialog.setBounds(20, 30, 150, 200);
+        dialog.setVisible(true);
 
-        // Get the selected File name.
-        if (fd.getFile() == null) {
+        // Get the selected File name
+        if (dialog.getFile() == null) {
             return;
         }
 
-        String path = fd.getDirectory() + fd.getFile();
+        String path = dialog.getDirectory() + dialog.getFile();
         if (path.endsWith(".txt") == false) {
             path = path + ".txt";
         }
 
-        // Write the report to the file.
+        // Write the report to the file
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(path));
-            out.write(AppContext.cartogramWizard.getWorker().getCartogram()
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+            writer.write(AppContext.cartogramWizard.getWorker().getCartogram()
                     .getComputationReport());
-            out.close();
+            writer.close();
         } catch (IOException exc) {
             // Nothing to do
         }

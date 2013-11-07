@@ -22,6 +22,7 @@
 package ch.epfl.scapetoad;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.NoninvertibleTransformException;
@@ -42,29 +43,39 @@ import com.vividsolutions.jump.workbench.ui.renderer.style.StyleUtil;
 public class SizeErrorStyle implements Style {
 
     /**
-     * 
+     * <code>true</code> if the style is enabled.
      */
     private boolean iEnabled = false;
 
     /**
-     * 
+     * The attribute name used to set the style.
      */
-    private String iAttrName;
+    private String iAttributeName;
 
     /**
-     * 
+     * The style value limits.
      */
     private List<Double> iLimits = new ArrayList<Double>();
 
     /**
-     * 
+     * the style colors.
      */
     private List<BasicStyle> iColors = new ArrayList<BasicStyle>();
 
     /**
-     * 
+     * The style fill stroke.
      */
     private Stroke iFillStroke = new BasicStroke(1);
+
+    /**
+     * Constructor.
+     * 
+     * @param aAttributeName
+     *            the attribute name used to set the style
+     */
+    public SizeErrorStyle(String aAttributeName) {
+        iAttributeName = aAttributeName;
+    }
 
     @Override
     public Object clone() {
@@ -98,48 +109,45 @@ public class SizeErrorStyle implements Style {
     }
 
     /**
+     * Add a color.
+     * 
      * @param aColor
      *            the color
      */
-    public void addColor(BasicStyle aColor) {
-        iColors.add(aColor);
+    public void addColor(Color aColor) {
+        iColors.add(new BasicStyle(aColor));
     }
 
     /**
+     * add a limit.
+     * 
      * @param aLimit
      *            the limit
      */
-    public void addLimit(Double aLimit) {
+    public void addLimit(double aLimit) {
         iLimits.add(aLimit);
     }
 
     /**
-     * @param aAttrName
-     *            the attribute name
-     */
-    public void setAttributeName(String aAttrName) {
-        iAttrName = aAttrName;
-    }
-
-    /**
+     * Returns the style for a JUMP feature.
+     * 
      * @param aFeature
      *            the feature
      * @return the style
      */
     private BasicStyle getStyleForFeature(Feature aFeature) {
         // Get the attribute value.
-        Double value = (Double) aFeature.getAttribute(iAttrName);
+        double value = (Double) aFeature.getAttribute(iAttributeName);
 
-        boolean valueFound = false;
-        int limitIndex = 0;
-        while (valueFound == false && limitIndex < iLimits.size()) {
-            Double limit = iLimits.get(limitIndex);
-            if (value.doubleValue() <= limit.doubleValue()) {
-                valueFound = true;
+        boolean founded = false;
+        int index = 0;
+        while (founded == false && index < iLimits.size()) {
+            if (value <= iLimits.get(index)) {
+                founded = true;
             }
-            limitIndex++;
+            index++;
         }
 
-        return iColors.get(limitIndex);
+        return iColors.get(index);
     }
 }

@@ -155,23 +155,22 @@ public class CartogramWorker extends SwingWorker {
                     .getStyle(BasicStyle.class);
             style.setFillColor(Color.WHITE);
 
-            SizeErrorStyle errorStyle = new SizeErrorStyle();
-            errorStyle.setAttributeName("SizeError");
+            SizeErrorStyle errorStyle = new SizeErrorStyle("SizeError");
 
-            errorStyle.addColor(new BasicStyle(new Color(91, 80, 153)));
-            errorStyle.addColor(new BasicStyle(new Color(133, 122, 179)));
-            errorStyle.addColor(new BasicStyle(new Color(177, 170, 208)));
-            errorStyle.addColor(new BasicStyle(new Color(222, 218, 236)));
-            errorStyle.addColor(new BasicStyle(new Color(250, 207, 187)));
-            errorStyle.addColor(new BasicStyle(new Color(242, 153, 121)));
-            errorStyle.addColor(new BasicStyle(new Color(233, 95, 64)));
+            errorStyle.addColor(new Color(91, 80, 153));
+            errorStyle.addColor(new Color(133, 122, 179));
+            errorStyle.addColor(new Color(177, 170, 208));
+            errorStyle.addColor(new Color(222, 218, 236));
+            errorStyle.addColor(new Color(250, 207, 187));
+            errorStyle.addColor(new Color(242, 153, 121));
+            errorStyle.addColor(new Color(233, 95, 64));
 
-            errorStyle.addLimit(new Double(70));
-            errorStyle.addLimit(new Double(80));
-            errorStyle.addLimit(new Double(90));
-            errorStyle.addLimit(new Double(100));
-            errorStyle.addLimit(new Double(110));
-            errorStyle.addLimit(new Double(120));
+            errorStyle.addLimit(70);
+            errorStyle.addLimit(80);
+            errorStyle.addLimit(90);
+            errorStyle.addLimit(100);
+            errorStyle.addLimit(110);
+            errorStyle.addLimit(120);
 
             projectedMasterLayer.addStyle(errorStyle);
             errorStyle.setEnabled(true);

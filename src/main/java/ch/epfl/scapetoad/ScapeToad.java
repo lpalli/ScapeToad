@@ -1,23 +1,24 @@
 package ch.epfl.scapetoad;
+
 /*
 
-	Copyright 2007 91NORD
+ Copyright 2007 91NORD
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as
-	published by the Free Software Foundation; either version 2 of the
-	License, or (at your option) any later version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License, or (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful, but
-	WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	General Public License for more details.
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-	02110-1301, USA.
-	
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ 02110-1301, USA.
+
  */
 
 import java.lang.reflect.InvocationTargetException;
@@ -99,27 +100,24 @@ public class ScapeToad {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                 "ScapeToad");
 
-        // Create a new JUMP workbench.
-        ImageIcon icon = new ImageIcon("resources/scapetoad-icon-small.gif");
-        JWindow window = new JWindow();
-        DummyTaskMonitor tm = new DummyTaskMonitor();
-
-        // An exception might be thrown when creating a new workbench.
+        // Create a new JUMP workbench, an exception might be thrown when
+        // creating a new workbench
         try {
             @SuppressWarnings("unused")
-            JUMPWorkbench jump = new JUMPWorkbench("ScapeToad", aArgs, icon,
-                    window, tm);
+            JUMPWorkbench jump = new JUMPWorkbench("ScapeToad", aArgs,
+                    new ImageIcon("resources/scapetoad-icon-small.gif"),
+                    new JWindow(), new DummyTaskMonitor());
         } catch (Exception e) {
             logger.error("Exception creating JUMP Workbench", e);
             System.exit(-1);
             return;
         }
 
-        // Create a new layer manager.
+        // Create a new layer manager
         AppContext.layerManager = new LayerManager();
         AppContext.layerManager.addCategory("Original layers");
 
-        // Create the main window and display it.
+        // Create the main window and display it
         AppContext.mainWindow = new MainWindow();
         AppContext.mainWindow.setVisible(true);
     }

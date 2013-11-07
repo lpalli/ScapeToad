@@ -48,7 +48,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureCollection;
-import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
 import com.vividsolutions.jump.io.DriverProperties;
 import com.vividsolutions.jump.io.IllegalParametersException;
 import com.vividsolutions.jump.io.ShapefileReader;
@@ -76,30 +75,30 @@ public class IOManager {
      */
     public static Layer openShapefile() {
         // Open the file dialog
-        FileDialog fileDialog = new FileDialog(AppContext.mainWindow,
+        FileDialog dialog = new FileDialog(AppContext.mainWindow,
                 "Add Layer...", FileDialog.LOAD);
-        fileDialog.setFilenameFilter(new ShapeFilenameFilter());
-        fileDialog.setModal(true);
-        fileDialog.setBounds(20, 30, 150, 200);
-        fileDialog.setVisible(true);
+        dialog.setFilenameFilter(new ShapeFilenameFilter());
+        dialog.setModal(true);
+        dialog.setBounds(20, 30, 150, 200);
+        dialog.setVisible(true);
 
         // Get the selected file name
-        if (fileDialog.getFile() == null) {
+        if (dialog.getFile() == null) {
             // User has cancelled
             return null;
         }
 
         // Check the file type
-        if (fileDialog.getFile().toUpperCase().endsWith(".SHP") == false) {
+        if (dialog.getFile().toUpperCase().endsWith(".SHP") == false) {
             OpenLayerErrorDialog errorDialog = new OpenLayerErrorDialog();
             errorDialog.setModal(true);
             errorDialog.setVisible(true);
         }
 
+        // Read the shape file
         try {
-            // Read the shape file
-            return IOManager.readShapefile(fileDialog.getDirectory()
-                    + fileDialog.getFile());
+            return IOManager.readShapefile(dialog.getDirectory()
+                    + dialog.getFile());
         } catch (Exception e) {
             logger.error("Error reading the shape file", e);
         }
@@ -170,26 +169,26 @@ public class IOManager {
      */
     public static void saveShapefile(FeatureCollection aFeatures) {
         // Create the File Save dialog
-        FileDialog fileDialog = new FileDialog(AppContext.mainWindow,
+        FileDialog dialog = new FileDialog(AppContext.mainWindow,
                 "Save Layer As...", FileDialog.SAVE);
-        fileDialog.setFilenameFilter(new ShapeFilenameFilter());
-        fileDialog.setModal(true);
-        fileDialog.setBounds(20, 30, 150, 200);
-        fileDialog.setVisible(true);
+        dialog.setFilenameFilter(new ShapeFilenameFilter());
+        dialog.setModal(true);
+        dialog.setBounds(20, 30, 150, 200);
+        dialog.setVisible(true);
 
         // Get the selected File name
-        if (fileDialog.getFile() == null) {
+        if (dialog.getFile() == null) {
             AppContext.mainWindow
                     .setStatusMessage("[Save layer...] User has cancelled the action.");
             return;
         }
 
-        String shpPath = fileDialog.getDirectory() + fileDialog.getFile();
-        if (shpPath.endsWith(".shp") == false) {
-            shpPath = shpPath + ".shp";
+        String path = dialog.getDirectory() + dialog.getFile();
+        if (path.endsWith(".shp") == false) {
+            path += ".shp";
         }
 
-        IOManager.writeShapefile(aFeatures, shpPath);
+        IOManager.writeShapefile(aFeatures, path);
     }
 
     /**
@@ -218,28 +217,28 @@ public class IOManager {
      * @param aLayers
      *            an array with the layers to include in the SVG file
      */
-    public static void saveSvg(Layer[] aLayers) {
+    public static void saveSVG(Layer[] aLayers) {
         // Create the File Save dialog
-        FileDialog fileDialog = new FileDialog(AppContext.mainWindow,
+        FileDialog dialog = new FileDialog(AppContext.mainWindow,
                 "Save Layer As...", FileDialog.SAVE);
-        fileDialog.setFilenameFilter(new SVGFilenameFilter());
-        fileDialog.setModal(true);
-        fileDialog.setBounds(20, 30, 150, 200);
-        fileDialog.setVisible(true);
+        dialog.setFilenameFilter(new SVGFilenameFilter());
+        dialog.setModal(true);
+        dialog.setBounds(20, 30, 150, 200);
+        dialog.setVisible(true);
 
         // Get the selected File name
-        if (fileDialog.getFile() == null) {
+        if (dialog.getFile() == null) {
             AppContext.mainWindow
                     .setStatusMessage("[Export as SVG...] User has cancelled the action.");
             return;
         }
 
-        String svgPath = fileDialog.getDirectory() + fileDialog.getFile();
-        if (svgPath.endsWith(".svg") == false) {
-            svgPath = svgPath + ".svg";
+        String path = dialog.getDirectory() + dialog.getFile();
+        if (path.endsWith(".svg") == false) {
+            path += ".svg";
         }
 
-        IOManager.writeSvg(aLayers, svgPath);
+        IOManager.writeSVG(aLayers, path);
     }
 
     /**
@@ -250,9 +249,7 @@ public class IOManager {
      * @param aPath
      *            the location of the SVG file to create.
      */
-    private static void writeSvg(Layer[] aLayers, String aPath) {
-        int lyrcnt = 0;
-
+    private static void writeSVG(Layer[] aLayers, String aPath) {
         int nlyrs = aLayers.length;
         if (nlyrs < 1) {
             logger.warn("No layer available");
@@ -260,14 +257,11 @@ public class IOManager {
         }
 
         // Find the extent of all layers
-        Layer lyr = aLayers[0];
-        FeatureCollectionWrapper fcw = lyr.getFeatureCollectionWrapper();
-        Envelope extent = new Envelope(fcw.getEnvelope());
-
-        for (lyrcnt = 1; lyrcnt < nlyrs; lyrcnt++) {
-            lyr = aLayers[lyrcnt];
-            Envelope lyrEnv = lyr.getFeatureCollectionWrapper().getEnvelope();
-            extent.expandToInclude(lyrEnv);
+        Envelope extent = new Envelope(aLayers[0].getFeatureCollectionWrapper()
+                .getEnvelope());
+        for (int i = 1; i < nlyrs; i++) {
+            extent.expandToInclude(aLayers[i].getFeatureCollectionWrapper()
+                    .getEnvelope());
         }
 
         // Find the dimensions of the output SVG file. We suppose a A4 document
@@ -286,158 +280,157 @@ public class IOManager {
         int svgMarginBottom = 30;
 
         // Compute the scaling factor for the coordinate conversion
-
         double scaleFactorX = (svgWidth - svgMarginLeft - svgMarginRight)
                 / extent.getWidth();
         double scaleFactorY = (svgHeight - svgMarginTop - svgMarginBottom)
                 / extent.getHeight();
         double sclfact = Math.min(scaleFactorX, scaleFactorY);
 
-        PrintWriter out = null;
+        PrintWriter writer = null;
         try {
             // Open the file to write out
-            out = new PrintWriter(new FileWriter(aPath));
+            writer = new PrintWriter(new FileWriter(aPath));
 
             // Write the XML header
-            out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            out.println("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"");
-            out.println(" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
+            writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            writer.println("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"");
+            writer.println(" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
 
             // Write the SVG header
-            out.println("<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"");
-            out.println("     x=\"0px\" y=\"0px\" width=\"" + svgWidth
+            writer.println("<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"");
+            writer.println("     x=\"0px\" y=\"0px\" width=\"" + svgWidth
                     + "px\" height=\"" + svgHeight + "px\" viewBox=\"0 0 "
                     + svgWidth + " " + svgHeight + "\">");
-            out.println("");
+            writer.println("");
 
             // Write layer by layer
-            for (lyrcnt = nlyrs - 1; lyrcnt >= 0; lyrcnt--) {
-                Layer layer = aLayers[lyrcnt];
-
+            Geometry geometry;
+            String type;
+            String fillColorString;
+            StringBuilder builder;
+            double x;
+            double y;
+            LabelStyle style;
+            String attrName;
+            Feature feature;
+            Point center;
+            for (int j = nlyrs - 1; j >= 0; j--) {
                 // Create a group for every layer
-                out.println("	<g id=\"" + layer.getName() + "\">");
+                writer.println("	<g id=\"" + aLayers[j].getName() + "\">");
 
                 // Get the colors and transparency for this layer
-                Color fillColor = layer.getBasicStyle().getFillColor();
-                Color strokeColor = layer.getBasicStyle().getLineColor();
+                Color fillColor = aLayers[j].getBasicStyle().getFillColor();
+                Color strokeColor = aLayers[j].getBasicStyle().getLineColor();
 
                 // Output every Feature
-                FeatureCollection fc = layer.getFeatureCollectionWrapper();
+                FeatureCollection fc = aLayers[j].getFeatureCollectionWrapper();
                 @SuppressWarnings("unchecked")
-                Iterator<Feature> featIter = fc.iterator();
-                while (featIter.hasNext()) {
-                    Feature feat = featIter.next();
+                Iterator<Feature> iterator = fc.iterator();
+                while (iterator.hasNext()) {
+                    // If it is a point, we output a small rectangle, otherwise
+                    // we output a path
+                    geometry = iterator.next().getGeometry();
+                    type = geometry.getGeometryType();
 
-                    // If it is a point, we output a small rectangle
-                    // Otherwise we output a path
-                    Geometry geom = feat.getGeometry();
-                    String geomType = geom.getGeometryType();
-
-                    if (geomType == "Point" || geomType == "MultiPoint") {
-                        Coordinate[] coords = geom.getCoordinates();
-
-                        String fillColorString = "rgb(" + fillColor.getRed()
-                                + "," + fillColor.getGreen() + ","
-                                + fillColor.getBlue() + ")";
-
-                        for (int i = 0; i < coords.length; i++) {
-                            double x = (coords[i].x - extent.getMinX())
-                                    * sclfact + svgMarginLeft;
-                            double y = (coords[i].y - extent.getMinY())
+                    if (type == "Point" || type == "MultiPoint") {
+                        for (Coordinate coordinate : geometry.getCoordinates()) {
+                            x = (coordinate.x - extent.getMinX()) * sclfact
+                                    + svgMarginLeft;
+                            y = (coordinate.y - extent.getMinY())
                                     / extent.getHeight();
 
                             y = 1.0 - y;
                             y = y * extent.getHeight() * sclfact + svgMarginTop;
 
-                            out.println("		<rect fill=\"" + fillColorString
-                                    + "\" x=\"" + x + "\" y=\"" + y
+                            writer.println("		<rect fill=\"rgb("
+                                    + fillColor.getRed() + ","
+                                    + fillColor.getGreen() + ","
+                                    + fillColor.getBlue() + ")\" x=\"" + x
+                                    + "\" y=\"" + y
                                     + "\" width=\"2\" height=\"2\" />");
                         }
                     } else {
                         // Fill only a polygon.
-                        String fillColorString = "none";
-                        if (geomType == "Polygon" || geomType == "MultiPolygon") {
+                        fillColorString = "none";
+                        if (type == "Polygon" || type == "MultiPolygon") {
                             fillColorString = "rgb(" + fillColor.getRed() + ","
                                     + fillColor.getGreen() + ","
                                     + fillColor.getBlue() + ")";
                         }
 
-                        String geomPath = IOManager.geometryToSvgPath(geom,
-                                extent, sclfact, svgMarginLeft, svgWidth
+                        builder = new StringBuilder();
+                        IOManager.geometryToSVGPath(builder, geometry, extent,
+                                sclfact, svgMarginLeft, svgWidth
                                         - svgMarginRight, svgMarginTop,
                                 svgHeight - svgMarginBottom);
 
-                        if (geomPath != "") {
-                            out.print("		<path fill=\"" + fillColorString
+                        if (builder.length() > 0) {
+                            writer.print("		<path fill=\"" + fillColorString
                                     + "\" stroke=\"rgb(" + strokeColor.getRed()
                                     + "," + strokeColor.getGreen() + ","
                                     + strokeColor.getBlue()
                                     + ")\" stroke-width=\"0.5pt\" d=\"");
 
-                            out.print(geomPath);
+                            writer.print(builder.toString());
 
                             // Close the path if it is a polygon.
-                            if (geomType == "Polygon"
-                                    || geomType == "MultiPolygon") {
-                                out.print("z");
+                            if (type == "Polygon" || type == "MultiPolygon") {
+                                writer.print("z");
                             }
 
-                            out.println("\" />");
+                            writer.println("\" />");
                         }
                     }
                 }
 
                 // Close the layer group.
-                out.println("	</g>");
-                out.println("");
+                writer.println("	</g>");
+                writer.println("");
             }
 
             // Write the labels if there are any.
             // (There are typically for the legend layer.)
-            for (lyrcnt = nlyrs - 1; lyrcnt >= 0; lyrcnt--) {
-                Layer layer = aLayers[lyrcnt];
-
-                LabelStyle style = layer.getLabelStyle();
+            for (int i = nlyrs - 1; i >= 0; i--) {
+                style = aLayers[i].getLabelStyle();
                 if (style.isEnabled()) {
-                    out.println("<g>");
+                    writer.println("<g>");
 
-                    String attrName = style.getAttribute();
+                    attrName = style.getAttribute();
 
                     // Output every Feature label.
-                    FeatureCollection fc = layer.getFeatureCollectionWrapper();
                     @SuppressWarnings("unchecked")
-                    Iterator<Feature> featIter = fc.iterator();
-                    while (featIter.hasNext()) {
-                        Feature feat = featIter.next();
-                        Geometry geom = feat.getGeometry();
-                        Point center = geom.getCentroid();
+                    Iterator<Feature> iterator = aLayers[i]
+                            .getFeatureCollectionWrapper().iterator();
+                    while (iterator.hasNext()) {
+                        feature = iterator.next();
+                        center = feature.getGeometry().getCentroid();
 
-                        double x = (center.getX() - extent.getMinX()) * sclfact
+                        x = (center.getX() - extent.getMinX()) * sclfact
                                 + svgMarginLeft;
 
-                        double y = (center.getY() - extent.getMinY())
+                        y = (center.getY() - extent.getMinY())
                                 / extent.getHeight();
                         y = 1.0 - y;
                         y = y * extent.getHeight() * sclfact + svgMarginTop;
 
-                        out.print("<text x=\"" + x + "\" y=\"" + y
+                        writer.print("<text x=\"" + x + "\" y=\"" + y
                                 + "\" text-anchor=\"middle\">");
-                        out.print(feat.getAttribute(attrName));
-                        out.print("</text>");
+                        writer.print(feature.getAttribute(attrName));
+                        writer.print("</text>");
                     }
 
-                    out.println("</g>");
+                    writer.println("</g>");
                 }
             }
 
             // Write the SVG footer
-            out.print("</svg>");
+            writer.print("</svg>");
         } catch (IOException e) {
             logger.error("Exception writing SVG file", e);
         } finally {
-            if (out != null) {
+            if (writer != null) {
                 // Close the output stream.
-                out.close();
+                writer.close();
             }
         }
     }
@@ -445,6 +438,8 @@ public class IOManager {
     /**
      * Converts a Geometry into a SVG path sequence.
      * 
+     * @param aBuilder
+     *            the string builder
      * @param aGeom
      *            the Geometry to convert.
      * @param aEnveloppe
@@ -460,62 +455,50 @@ public class IOManager {
      *            min Y
      * @param aMaxY
      *            max
-     * @return a string for use in a SVG path element.
      */
-    private static String geometryToSvgPath(Geometry aGeom,
-            Envelope aEnveloppe, double aScaleFactor, double aMinX,
-            double aMaxX, double aMinY, double aMaxY) {
-        String path = "";
+    private static void geometryToSVGPath(StringBuilder aBuilder,
+            Geometry aGeom, Envelope aEnveloppe, double aScaleFactor,
+            double aMinX, double aMaxX, double aMinY, double aMaxY) {
         int ngeoms = aGeom.getNumGeometries();
-        int geomcnt = 0;
-
         if (ngeoms > 1) {
-            for (geomcnt = 0; geomcnt < ngeoms; geomcnt++) {
-                Geometry g = aGeom.getGeometryN(geomcnt);
-                String pathPart = IOManager.geometryToSvgPath(g, aEnveloppe,
-                        aScaleFactor, aMinX, aMaxX, aMinY, aMaxY);
-                path = path + pathPart;
+            for (int i = 0; i < ngeoms; i++) {
+                IOManager.geometryToSVGPath(aBuilder, aGeom.getGeometryN(i),
+                        aEnveloppe, aScaleFactor, aMinX, aMaxX, aMinY, aMaxY);
             }
         } else {
             // Get the type of the Geometry. If it is a Polygon, we should
-            // handle the exterior and interior rings
-            // in an appropriate way.
-            String geomType = aGeom.getGeometryType();
-
-            if (geomType == "Polygon") {
+            // handle the exterior and interior rings in an appropriate way
+            if (aGeom.getGeometryType() == "Polygon") {
                 // Exterior ring first.
-                Polygon p = (Polygon) aGeom;
-                Coordinate[] coords = p.getExteriorRing().getCoordinates();
-                String subPath = IOManager.coordinatesToSvgPath(coords,
-                        aEnveloppe, aScaleFactor, aMinX, aMinY);
-                path = path + subPath;
+                Polygon polygon = (Polygon) aGeom;
+                IOManager.coordinatesToSVGPath(aBuilder, polygon
+                        .getExteriorRing().getCoordinates(), aEnveloppe,
+                        aScaleFactor, aMinX, aMinY);
 
                 // Interior rings.
-                int nrings = p.getNumInteriorRing();
+                int nrings = polygon.getNumInteriorRing();
                 for (int i = 0; i < nrings; i++) {
-                    coords = p.getInteriorRingN(i).getCoordinates();
-                    subPath = IOManager.coordinatesToSvgPath(coords,
-                            aEnveloppe, aScaleFactor, aMinX, aMinY);
-                    path = path + subPath;
+                    IOManager.coordinatesToSVGPath(aBuilder, polygon
+                            .getInteriorRingN(i).getCoordinates(), aEnveloppe,
+                            aScaleFactor, aMinX, aMinY);
                 }
             } else {
-                Coordinate[] coords = aGeom.getCoordinates();
-                String subPath = IOManager.coordinatesToSvgPath(coords,
-                        aEnveloppe, aScaleFactor, aMinX, aMinY);
-                path = path + subPath;
+                IOManager.coordinatesToSVGPath(aBuilder,
+                        aGeom.getCoordinates(), aEnveloppe, aScaleFactor,
+                        aMinX, aMinY);
             }
         }
-
-        return path;
     }
 
     /**
      * Converts a Coordinate sequence into a SVG path sequence.
      * 
+     * @param aBuilder
+     *            the string builder
      * @param aCoordinates
-     *            the coordinates to convert (a Coordinate[]).
+     *            the coordinates to convert (a Coordinate[])
      * @param aEnveloppe
-     *            the envelope we use for the coordinate conversion.
+     *            the envelope we use for the coordinate conversion
      * @param aScaleFactor
      *            the scale factor
      * @param aMinX
@@ -523,15 +506,15 @@ public class IOManager {
      *            the envelope
      * @param aMinY
      *            min Y
-     * @return a string for use in a SVG path element.
      */
-    private static String coordinatesToSvgPath(Coordinate[] aCoordinates,
-            Envelope aEnveloppe, double aScaleFactor, double aMinX, double aMinY) {
-        String path = "M ";
+    private static void coordinatesToSVGPath(StringBuilder aBuilder,
+            Coordinate[] aCoordinates, Envelope aEnveloppe,
+            double aScaleFactor, double aMinX, double aMinY) {
         int ncoords = aCoordinates.length;
         if (ncoords == 0) {
-            return "";
+            return;
         }
+        aBuilder.append("M ");
 
         int coordcnt = 0;
         for (coordcnt = 0; coordcnt < ncoords; coordcnt++) {
@@ -541,14 +524,12 @@ public class IOManager {
                     / aEnveloppe.getHeight();
             y = 1.0 - y;
             y = y * aEnveloppe.getHeight() * aScaleFactor + aMinY;
-            path = path + x + " " + y + " ";
+            aBuilder.append(x + " " + y + " ");
 
             if (coordcnt < ncoords - 1) {
-                path = path + "L ";
+                aBuilder.append("L ");
             }
         }
-
-        return path;
     }
 }
 
@@ -561,8 +542,8 @@ class ShapeFilenameFilter implements FilenameFilter {
      * This is the method used for filtering.
      */
     @Override
-    public boolean accept(File aDir, String naNme) {
-        return naNme.toUpperCase().endsWith(".SHP");
+    public boolean accept(File aDir, String aName) {
+        return aName.toUpperCase().endsWith(".SHP");
     }
 }
 
@@ -606,18 +587,17 @@ class OpenLayerErrorDialog extends JDialog {
         setLayout(null);
         setModal(true);
 
-        JLabel noShapeFileLabel = new JLabel("Not a Shape file.");
-        noShapeFileLabel.setSize(260, 14);
-        noShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
-        noShapeFileLabel.setLocation(20, 20);
-        add(noShapeFileLabel);
+        JLabel label = new JLabel("Not a Shape file.");
+        label.setSize(260, 14);
+        label.setFont(new Font(null, Font.PLAIN, 11));
+        label.setLocation(20, 20);
+        add(label);
 
-        JLabel selectShapeFileLabel = new JLabel(
-                "Please select a file with the extension .shp.");
-        selectShapeFileLabel.setSize(260, 14);
-        selectShapeFileLabel.setFont(new Font(null, Font.PLAIN, 11));
-        selectShapeFileLabel.setLocation(20, 40);
-        add(selectShapeFileLabel);
+        label = new JLabel("Please select a file with the extension .shp.");
+        label.setSize(260, 14);
+        label.setFont(new Font(null, Font.PLAIN, 11));
+        label.setLocation(20, 40);
+        add(label);
 
         // Ok button
         JButton button = new JButton("OK");

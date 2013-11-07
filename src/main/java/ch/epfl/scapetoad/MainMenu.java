@@ -43,19 +43,19 @@ public class MainMenu extends JMenuBar {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The remove layer menu item
+     * The remove layer menu item.
      */
     private JMenuItem iRemoveLayer;
 
     /**
-     * The save layer menu item
+     * The save layer menu item.
      */
     private JMenuItem iSaveLayer;
 
     /**
-     * The export as SVG menu item
+     * The export as SVG menu item.
      */
-    private JMenuItem iExportAsSvg;
+    private JMenuItem iExportAsSVG;
 
     /**
      * The default constructor for the main menu. Creates the main menu.
@@ -65,11 +65,11 @@ public class MainMenu extends JMenuBar {
         JMenu fileMenu = new JMenu("File");
 
         // File > Add layer...
-        JMenuItem menuFile_AddLayer = new JMenuItem("Add layer...");
-        menuFile_AddLayer.addActionListener(new ActionLayerAdd());
-        menuFile_AddLayer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        fileMenu.add(menuFile_AddLayer);
+        JMenuItem addLayer = new JMenuItem("Add layer...");
+        addLayer.addActionListener(new ActionLayerAdd());
+        addLayer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit
+                .getDefaultToolkit().getMenuShortcutKeyMask()));
+        fileMenu.add(addLayer);
 
         // File > Remove layer
         iRemoveLayer = new JMenuItem("Remove layer");
@@ -80,8 +80,7 @@ public class MainMenu extends JMenuBar {
         fileMenu.add(iRemoveLayer);
 
         // Separator
-        JMenuItem sepMenu = new JMenuItem("-");
-        fileMenu.add(sepMenu);
+        fileMenu.add(new JMenuItem("-"));
 
         // File > Save layer...
         iSaveLayer = new JMenuItem("Export layer as Shape file...");
@@ -91,11 +90,11 @@ public class MainMenu extends JMenuBar {
         fileMenu.add(iSaveLayer);
 
         // File > Export as SVG...
-        iExportAsSvg = new JMenuItem("Export to SVG...");
-        iExportAsSvg.addActionListener(new ActionExportAsSvg());
-        iExportAsSvg.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+        iExportAsSVG = new JMenuItem("Export to SVG...");
+        iExportAsSVG.addActionListener(new ActionExportAsSvg());
+        iExportAsSVG.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        fileMenu.add(iExportAsSvg);
+        fileMenu.add(iExportAsSVG);
 
         // Add a quit menu if we are not on a Mac (on a Mac, there is a default
         // quit menu under the program name's menu).
@@ -103,30 +102,29 @@ public class MainMenu extends JMenuBar {
             fileMenu.add(new JMenuItem("-"));
 
             // File > Quit
-            JMenuItem menuFile_Quit = new JMenuItem("Quit ScapeToad");
-            menuFile_Quit.addActionListener(new ActionQuit());
-            menuFile_Quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            fileMenu.add(menuFile_Quit);
+            JMenuItem quit = new JMenuItem("Quit ScapeToad");
+            quit.addActionListener(new ActionQuit());
+            quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit
+                    .getDefaultToolkit().getMenuShortcutKeyMask()));
+            fileMenu.add(quit);
         }
-
-        add(fileMenu);
 
         // Add the Help menu
         JMenu helpMenu = new JMenu("Help");
-        JMenuItem menuHelp_Help = new JMenuItem("ScapeToad Help");
-        menuHelp_Help.addActionListener(new ActionShowHelp());
-        menuHelp_Help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        helpMenu.add(menuHelp_Help);
-        JMenuItem sepMenu3 = new JMenuItem("-");
-        helpMenu.add(sepMenu3);
+        JMenuItem help = new JMenuItem("ScapeToad Help");
+        help.addActionListener(new ActionShowHelp());
+        help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Toolkit
+                .getDefaultToolkit().getMenuShortcutKeyMask()));
+        helpMenu.add(help);
+        helpMenu.add(new JMenuItem("-"));
 
         // Add the About menu
-        JMenuItem menuHelp_About = new JMenuItem("About...");
-        menuHelp_About.addActionListener(new ActionShowAbout());
-        helpMenu.add(menuHelp_About);
+        JMenuItem about = new JMenuItem("About...");
+        about.addActionListener(new ActionShowAbout());
+        helpMenu.add(about);
 
+        // Add the menus
+        add(fileMenu);
         add(helpMenu);
     }
 
@@ -137,6 +135,6 @@ public class MainMenu extends JMenuBar {
         boolean layers = AppContext.layerManager.getLayers().size() > 0;
         iRemoveLayer.setEnabled(layers);
         iSaveLayer.setEnabled(layers);
-        iExportAsSvg.setEnabled(layers);
+        iExportAsSVG.setEnabled(layers);
     }
 }

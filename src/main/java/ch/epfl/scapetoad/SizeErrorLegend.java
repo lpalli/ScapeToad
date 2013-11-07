@@ -23,7 +23,6 @@ package ch.epfl.scapetoad;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -48,17 +47,16 @@ public class SizeErrorLegend extends JFrame {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * Constructor.
      */
     public SizeErrorLegend() {
         setTitle("Size Error");
         setBounds(10, 30, 120, 220);
         setVisible(false);
 
-        // Loading the size error legend image from the resources.
-        ClassLoader cldr = getClass().getClassLoader();
-        URL iconURL = cldr.getResource("resources/SizeErrorLegend.png");
-        ImageIcon sizeErrorImage = new ImageIcon(iconURL);
+        // Loading the size error legend image from the resources
+        ImageIcon sizeErrorImage = new ImageIcon(getClass().getClassLoader()
+                .getResource("resources/SizeErrorLegend.png"));
 
         // Create a new label containing the icon.
         JLabel iconLabel = new JLabel(sizeErrorImage);
@@ -80,7 +78,7 @@ public class SizeErrorLegend extends JFrame {
 class IconMouseListener extends MouseAdapter {
 
     /**
-     * The logger
+     * The logger.
      */
     private static Log logger = LogFactory.getLog(IconMouseListener.class);
 
