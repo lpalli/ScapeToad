@@ -30,16 +30,6 @@
         <version>1.07.00</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math</artifactId>
-        <version>2.2</version>
-    </dependency>
-    <dependency>
-        <groupId>com.github.rwl</groupId>
-        <artifactId>jtransforms</artifactId>
-        <version>2.4.0</version>
-    </dependency>
-    <dependency>
     	<groupId>com.vividsolutions</groupId>
     	<artifactId>jump-core</artifactId>
     	<version>1.2</version>
