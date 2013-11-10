@@ -12,9 +12,9 @@ import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.LabelStyle;
 
-import ch.epfl.scapetoad.compute.Cartogram;
-import ch.epfl.scapetoad.compute.CartogramLayer;
-import ch.epfl.scapetoad.compute.ICartogramStatus;
+import ch.epfl.scapetoad.Cartogram;
+import ch.epfl.scapetoad.CartogramLayer;
+import ch.epfl.scapetoad.ICartogramStatus;
 
 /**
  * The cartogram worker class is the computation manager class. It is a subclass

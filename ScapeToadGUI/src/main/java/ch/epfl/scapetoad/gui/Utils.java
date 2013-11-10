@@ -16,8 +16,8 @@ import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 
-import ch.epfl.scapetoad.compute.CartogramFeature;
-import ch.epfl.scapetoad.compute.CartogramLayer;
+import ch.epfl.scapetoad.CartogramFeature;
+import ch.epfl.scapetoad.CartogramLayer;
 
 /**
  * Utilities class to convert between JUMP and cartogram objects.

@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad.compute;
+package ch.epfl.scapetoad;
 
 import java.awt.Color;
 import java.util.ArrayList;

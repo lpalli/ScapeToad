@@ -73,8 +73,8 @@ import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
 import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.workbench.model.Layer;
 
-import ch.epfl.scapetoad.compute.Cartogram;
-import ch.epfl.scapetoad.compute.CartogramLayer;
+import ch.epfl.scapetoad.Cartogram;
+import ch.epfl.scapetoad.CartogramLayer;
 
 /**
  * The cartogram wizard guiding the user through the process of cartogram

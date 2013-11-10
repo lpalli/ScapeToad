@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad.compute;
+package ch.epfl.scapetoad;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -909,7 +909,7 @@ public class CartogramGrid {
         double dx = iNodeX[i][j + 1];
         double dy = iNodeY[i][j + 1];
 
-        return ch.epfl.scapetoad.compute.Geometry.intersectionOfSegments(ax
+        return ch.epfl.scapetoad.Geometry.intersectionOfSegments(ax
                 + ti * (bx - ax), ay + ti * (by - ay), dx + ti * (cx - dx), dy
                 + ti * (cy - dy), bx + tj * (cx - bx), by + tj * (cy - by), ax
                 + tj * (dx - ax), ay + tj * (dy - ay));
