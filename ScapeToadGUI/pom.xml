@@ -54,6 +54,11 @@
     	<version>1.7.5</version>
     	<scope>runtime</scope>
     </dependency>
+    <dependency>
+    	<groupId>li.lpal</groupId>
+    	<artifactId>ScapeToad</artifactId>
+    	<version>0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
