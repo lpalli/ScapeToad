@@ -1,4 +1,4 @@
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import javax.swing.SwingUtilities;
 

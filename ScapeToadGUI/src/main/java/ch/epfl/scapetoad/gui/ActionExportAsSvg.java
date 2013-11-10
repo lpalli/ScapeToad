@@ -19,20 +19,18 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import com.vividsolutions.jump.workbench.model.Layer;
-
 /**
- * This class is an action performed on an add layer event.
+ * This class is an action performed on a Export as SVG event.
  * 
  * @author christian@swisscarto.ch
  */
-public class ActionLayerAdd extends AbstractAction {
+public class ActionExportAsSvg extends AbstractAction {
 
     /**
      * 
@@ -40,18 +38,13 @@ public class ActionLayerAdd extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Shows an open dialog and adds the selected Shape file to the layer
-     * manager.
+     * This method is automatically called after a export as SVG event.
+     * 
+     * Writes the currently selected layers into a SVG file. A Save file dialog
+     * is presented to the user in order to choose the place on the disc.
      */
     @Override
     public void actionPerformed(ActionEvent aEvent) {
-        Layer aLayer = IOManager.openShapefile();
-        if (aLayer == null) {
-            AppContext.mainWindow
-                    .setStatusMessage("[Add layer...] Action has been cancelled.");
-            return;
-        }
-
-        AppContext.mainWindow.update();
+        MainWindow.exportSvgFile();
     }
 }

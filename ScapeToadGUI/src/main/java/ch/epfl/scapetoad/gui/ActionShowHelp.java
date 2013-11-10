@@ -19,18 +19,28 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.Ostermiller.util.Browser;
 
 /**
  * This class is an action performed on a quit event.
  * 
  * @author christian@swisscarto.ch
  */
-public class ActionQuit extends AbstractAction {
+public class ActionShowHelp extends AbstractAction {
+
+    /**
+     * The logger
+     */
+    private static Log logger = LogFactory.getLog(ActionShowHelp.class);
 
     /**
      * 
@@ -38,17 +48,15 @@ public class ActionQuit extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Terminates ScapeToad.
+     * Opens the browser and points it to the ScapeToad help web site.
      */
     @Override
     public void actionPerformed(ActionEvent aEvent) {
-
-        if (AppContext.cartogramWizard != null) {
-            AppContext.cartogramWizard.dispose();
+        try {
+            Browser.init();
+            Browser.displayURL("http://scapetoad.choros.ch/help/");
+        } catch (Exception exception) {
+            logger.error("", exception);
         }
-
-        AppContext.mainWindow.dispose();
-
-        System.exit(0);
     }
 }

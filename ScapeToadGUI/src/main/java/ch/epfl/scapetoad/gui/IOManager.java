@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.Color;
 import java.awt.FileDialog;

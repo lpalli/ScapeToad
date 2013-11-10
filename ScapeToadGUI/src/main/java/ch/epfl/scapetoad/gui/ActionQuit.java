@@ -19,18 +19,18 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
 /**
- * This class is an action performed on a save layer event.
+ * This class is an action performed on a quit event.
  * 
  * @author christian@swisscarto.ch
  */
-public class ActionLayerSave extends AbstractAction {
+public class ActionQuit extends AbstractAction {
 
     /**
      * 
@@ -38,13 +38,17 @@ public class ActionLayerSave extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * This method is automatically called after a save layer event.
-     * 
-     * Writes the currently selected layer into a Shape file. A Save file dialog
-     * is presented to the user in order to choose the place on the disc.
+     * Terminates ScapeToad.
      */
     @Override
     public void actionPerformed(ActionEvent aEvent) {
-        MainWindow.exportShapeFile();
+
+        if (AppContext.cartogramWizard != null) {
+            AppContext.cartogramWizard.dispose();
+        }
+
+        AppContext.mainWindow.dispose();
+
+        System.exit(0);
     }
 }

@@ -19,28 +19,20 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.Ostermiller.util.Browser;
+import com.vividsolutions.jump.workbench.model.Layer;
 
 /**
- * This class is an action performed on a quit event.
+ * This class is an action performed on an add layer event.
  * 
  * @author christian@swisscarto.ch
  */
-public class ActionShowHelp extends AbstractAction {
-
-    /**
-     * The logger
-     */
-    private static Log logger = LogFactory.getLog(ActionShowHelp.class);
+public class ActionLayerAdd extends AbstractAction {
 
     /**
      * 
@@ -48,15 +40,18 @@ public class ActionShowHelp extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Opens the browser and points it to the ScapeToad help web site.
+     * Shows an open dialog and adds the selected Shape file to the layer
+     * manager.
      */
     @Override
     public void actionPerformed(ActionEvent aEvent) {
-        try {
-            Browser.init();
-            Browser.displayURL("http://scapetoad.choros.ch/help/");
-        } catch (Exception exception) {
-            logger.error("", exception);
+        Layer aLayer = IOManager.openShapefile();
+        if (aLayer == null) {
+            AppContext.mainWindow
+                    .setStatusMessage("[Add layer...] Action has been cancelled.");
+            return;
         }
+
+        AppContext.mainWindow.update();
     }
 }

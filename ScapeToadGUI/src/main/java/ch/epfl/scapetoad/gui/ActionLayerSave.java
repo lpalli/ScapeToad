@@ -19,18 +19,18 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.gui;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
 /**
- * This class is an action performed on a Export as SVG event.
+ * This class is an action performed on a save layer event.
  * 
  * @author christian@swisscarto.ch
  */
-public class ActionExportAsSvg extends AbstractAction {
+public class ActionLayerSave extends AbstractAction {
 
     /**
      * 
@@ -38,13 +38,13 @@ public class ActionExportAsSvg extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
     /**
-     * This method is automatically called after a export as SVG event.
+     * This method is automatically called after a save layer event.
      * 
-     * Writes the currently selected layers into a SVG file. A Save file dialog
+     * Writes the currently selected layer into a Shape file. A Save file dialog
      * is presented to the user in order to choose the place on the disc.
      */
     @Override
     public void actionPerformed(ActionEvent aEvent) {
-        MainWindow.exportSvgFile();
+        MainWindow.exportShapeFile();
     }
 }
