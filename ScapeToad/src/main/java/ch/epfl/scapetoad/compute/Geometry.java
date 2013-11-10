@@ -19,7 +19,7 @@
 	
  */
 
-package ch.epfl.scapetoad;
+package ch.epfl.scapetoad.compute;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
