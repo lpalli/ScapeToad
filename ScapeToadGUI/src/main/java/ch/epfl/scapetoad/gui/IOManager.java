@@ -117,7 +117,7 @@ public class IOManager {
      * @throws IllegalParametersException
      *             exception in the parameters
      */
-    private static Layer readShapefile(String aShapePath)
+    public static Layer readShapefile(String aShapePath)
             throws IllegalParametersException, Exception {
         // Read the Shape file
         FeatureCollection features = new ShapefileReader()
@@ -135,13 +135,15 @@ public class IOManager {
         layer = AppContext.layerManager.addLayer("Original layers", layerName,
                 features);
 
-        // If the number of layers is 1, zoom to full extent in the
-        // layer view panel.
-        if (AppContext.layerManager.getLayers().size() == 1) {
-            AppContext.layerViewPanel.getViewport().zoomToFullExtent();
-        }
+        if (AppContext.layerViewPanel != null) {
+            // If the number of layers is 1, zoom to full extent in the layer
+            // view panel
+            if (AppContext.layerManager.getLayers().size() == 1) {
+                AppContext.layerViewPanel.getViewport().zoomToFullExtent();
+            }
 
-        AppContext.layerViewPanel.getViewport().update();
+            AppContext.layerViewPanel.getViewport().update();
+        }
 
         return layer;
     }

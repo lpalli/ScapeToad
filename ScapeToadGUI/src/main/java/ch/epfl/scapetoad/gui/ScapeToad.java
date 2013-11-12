@@ -21,19 +21,33 @@ package ch.epfl.scapetoad.gui;
 
  */
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JWindow;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jump.task.DummyTaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
+import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerManager;
+
+import ch.epfl.scapetoad.Cartogram;
+import ch.epfl.scapetoad.CartogramLayer;
+import ch.epfl.scapetoad.ICartogramStatus;
 
 /**
  * This class contains the main method of the ScapeToad application.
@@ -45,6 +59,36 @@ import com.vividsolutions.jump.workbench.model.LayerManager;
  * @version v1.2.0, 2010-03-03
  */
 public class ScapeToad {
+
+    /**
+     * The logger.
+     */
+    private static Log logger;
+
+    /**
+     * The main method for the ScapeToad application.
+     * 
+     * @param aArgs
+     *            the arguments
+     */
+    public static void main(String aArgs[]) {
+        // Initialize the logging system
+        try {
+            initLog();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        logger = LogFactory.getLog(ScapeToad.class);
+        logger.debug("Starting...");
+
+        // Launch the GUI if no arguments are givens
+        if (aArgs.length == 0) {
+            ScapeToad.launchGUI();
+            return;
+        }
+
+        commandLine(aArgs);
+    }
 
     /**
      * Initialize the logging system.
@@ -77,22 +121,9 @@ public class ScapeToad {
     }
 
     /**
-     * The main method for the ScapeToad application.
-     * 
-     * @param aArgs
-     *            the arguments
+     * Launch the cartogram GUI.
      */
-    public static void main(String aArgs[]) {
-        // Initialize the logging system
-        try {
-            initLog();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Log logger = LogFactory.getLog(ScapeToad.class);
-        logger.debug("Starting...");
-
+    private static void launchGUI() {
         // Set the Look & Feel and application name for for MacOS X
         // environments, on other environments, this properties does not have
         // any effect
@@ -104,7 +135,7 @@ public class ScapeToad {
         // creating a new workbench
         try {
             @SuppressWarnings("unused")
-            JUMPWorkbench jump = new JUMPWorkbench("ScapeToad", aArgs,
+            JUMPWorkbench jump = new JUMPWorkbench("ScapeToad", new String[0],
                     new ImageIcon("resources/scapetoad-icon-small.gif"),
                     new JWindow(), new DummyTaskMonitor());
         } catch (Exception e) {
@@ -120,5 +151,113 @@ public class ScapeToad {
         // Create the main window and display it
         AppContext.mainWindow = new MainWindow();
         AppContext.mainWindow.setVisible(true);
+    }
+
+    /**
+     * Command line management.
+     * 
+     * @param aArgs
+     *            the arguments
+     */
+    @SuppressWarnings("static-access")
+    private static void commandLine(String aArgs[]) {
+        // Configure the options
+        Options options = new Options();
+        options.addOption(OptionBuilder.withLongOpt("master")
+                .withType(File.class).isRequired()
+                .withDescription("master shape file").hasArg()
+                .withArgName("master.shp").create('m'));
+        options.addOption(OptionBuilder.withLongOpt("attribute").isRequired()
+                .withDescription("master attribute").hasArg()
+                .withArgName("Pop2006").create('a'));
+        options.addOption(OptionBuilder.withLongOpt("cartogram")
+                .withType(File.class).isRequired()
+                .withDescription("cartogram destination shape file").hasArg()
+                .withArgName("cartogram.shp").create('c'));
+        options.addOption("h", "help", false, "print this message");
+
+        HelpFormatter formatter = new HelpFormatter();
+        String commandLineSyntax = "master slaves [options]";
+        CommandLine line;
+        try {
+            CommandLineParser parser = new BasicParser();
+            line = parser.parse(options, aArgs);
+            line.getArgList();
+        } catch (ParseException e) {
+            logger.error("Exception parsing command line arguments: ", e);
+
+            System.out.println();
+            formatter.printHelp(commandLineSyntax, options);
+            System.exit(-1);
+            return;
+        }
+
+        // Print the help
+        if (line.hasOption('h')) {
+            formatter.printHelp(commandLineSyntax, options);
+            return;
+        }
+
+        File masterLayerFile = null;
+        String masterAttribute = null;
+        File cartogramLayerFile = null;
+        try {
+            masterLayerFile = (File) line.getParsedOptionValue("m");
+            masterAttribute = line.getOptionValue('a');
+            cartogramLayerFile = (File) line.getParsedOptionValue("c");
+        } catch (ParseException e) {
+            logger.error("Exception parsing command line arguments: ", e);
+            System.exit(-1);
+            return;
+        }
+
+        launch(masterLayerFile, masterAttribute, cartogramLayerFile);
+    }
+
+    /**
+     * Launch the cartogram in the CLI mode.
+     * 
+     * @param aMasterLayerFile
+     *            the master layer shape file
+     * @param aMasterAttribute
+     *            the master attribute
+     * @param aCartogramLayerFile
+     *            the destination cartogram layer shape file
+     */
+    private static void launch(File aMasterLayerFile, String aMasterAttribute,
+            File aCartogramLayerFile) {
+        // Create a new layer manager
+        AppContext.layerManager = new LayerManager();
+        AppContext.layerManager.addCategory("Original layers");
+
+        try {
+            // Load the master layer
+            Layer masterLayer = IOManager.readShapefile(aMasterLayerFile
+                    .getAbsolutePath());
+
+            // Configure the cartogram
+            ICartogramStatus status = new CartogramCLIStatus();
+            Cartogram cartogram = new Cartogram(status);
+            cartogram.setMasterLayer(Utils.convert(masterLayer));
+            cartogram.setMasterAttribute(aMasterAttribute);
+            cartogram.setMasterAttributeIsDensityValue(false);
+            cartogram.setAdvancedOptionsEnabled(false);
+
+            // Compute and finish
+            List<CartogramLayer> layers = cartogram.compute(false, false);
+
+            // Store the result
+            IOManager.writeShapefile(
+                    Utils.convert(layers.get(0), AppContext.layerManager)
+                            .getFeatureCollectionWrapper(), aCartogramLayerFile
+                            .getAbsolutePath());
+
+            // Close the program
+            System.exit(0);
+        } catch (Exception e) {
+            logger.error("Exception running cartogram: ", e);
+            System.exit(-1);
+            return;
+        }
     }
 }
