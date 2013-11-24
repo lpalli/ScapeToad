@@ -348,9 +348,10 @@ public class CartogramLayer {
         List<Double> attrVector = new ArrayList<Double>(set);
 
         // Get the indexes of the bounding features
-        double dblIndex = dblN / 100 * nfeat;
-        int lowerIndex = Math.round((float) Math.floor(dblIndex));
-        int upperIndex = Math.round((float) Math.ceil(dblIndex));
+        double index = dblN / 100 * nfeat;
+        int lowerIndex = Math.round((float) Math.floor(index));
+        int upperIndex = Math.min(Math.round((float) Math.ceil(index)),
+                attrVector.size() - 1);
 
         if (lowerIndex == upperIndex) {
             return attrVector.get(lowerIndex);
